@@ -44,10 +44,6 @@ package com.soren.exib {
     private var _generator:Generator   = new Generator(_supervisor)
     private var _container:Sprite
     
-    protected var _security_mode:Boolean = false
-    protected var _locked:Boolean        = false
-    protected var _checksum:String       = ''
-    
     /**
     * Constructor
     **/
@@ -66,15 +62,7 @@ package com.soren.exib {
     }
     
     private function XMLLoadCompleteListener(event:Event):void {
-      _config = new XML(_urlLoader.data)
-
-      if (_security_mode) {
-        var config_hash:String = MD5.encrypt(_config.toString())
-      
-        if (_locked && (config_hash != _checksum)) { return             }
-        else                                       { trace(config_hash) }
-      }
-      
+      _config = new XML(_urlLoader.data)      
       processXML(_config) 
     }
 
