@@ -1,0 +1,35 @@
+== TODO
+
+---
+
+* XML Syntax Update
+  - Documentation
+* Rake
+  - Create Stubs
+  
+---
+
+Questions For Shannon:
+
+1. If I turn the cycle knob while the washer is running a cycle, what happens?
+2. If I press the power button while the washer is running, what happens?
+3. What is the process if I press the Eco button?
+4. What is the process if I press the Deep Clean button?
+5. What determines what Cycle Summary displays?
+
+Screen Assets:
+
+1. Error
+   - Error Icon (Water)
+   - Error Container
+   - Text Positions / Sizes / Colors
+2. Cycle Summary
+  - Leaf icon
+  - Information Text
+  - Estimated savings graphics
+  - Text Positions / Sizes / Colors for estimations
+3. Delay Start
+  - Meter Container
+  - Meter graphic (The 'filled' state and a blank .png the exact same size)
+  - Info graphics (all the text except for the 3 Hours bit)
+  - The 'OK' graphic

@@ -1,0 +1,146 @@
+require 'rake'
+require 'rdiscount'
+
+task :default => :test
+
+task(:test) {}
+
+# Exib Tasks  ------------------------------------------------------------------
+
+DESTINATION = ENV['DEST'] || "../exib_project"
+BASE_DIRS   = %w(assets deploy deliver doc source)
+ASSET_DIRS  = %w(config fonts graphics sounds videos)
+RAKEFILE    = 'tasks/project_rakefile'
+CONFIGS     = %w(configs/config.exml)
+
+namespace :exib do
+  desc "Generates a new EXIB project"
+  task :build => [ :make_dir_structure, :copy_files, :create_rakefile, :generate_docs, :init_repo ]
+end
+
+# ActionScript Tasks -----------------------------------------------------------
+
+TEST_BASENAME = ENV['TEST'] || 'ExibTestRunner'
+
+namespace :as do
+  desc "Generates ASDoc documentation for the main EXIB project"
+  task :asdoc => [ :generate_asdocs ]
+  
+  desc "Runs ASUnit testing for the EXIB project"
+  task :test => [ :compile_asunit, :run_compiled_test ]
+end
+
+# Source Tasks -----------------------------------------------------------------
+
+REMOTE_LOGIN  = ENV['REMOTE_LOGIN']  || 'parkerselbert'
+REMOTE_SERVER = ENV['REMOTE_SERVER'] || 'greytwo.com'
+REMOTE_PATH   = ENV['REMOTE_PATH']   || '~/work/EXIB'
+
+namespace :source do
+  desc "Syncs the entire source base the an external server"
+  task :backup => [ :backup_source ]
+end
+
+# Make Directory Structure -----------------------------------------------------
+
+def make_dest_dirs(dirs, path = '.')
+  mkdir_p dirs.map { |dir| File.join(DESTINATION, path.to_s, dir) } 
+end
+
+desc "Make the directory structure for the new EXIB project"
+task :make_dir_structure => [ :make_base_dirs, :make_asset_dirs]
+
+task(:make_base_dirs)  { make_dest_dirs BASE_DIRS            }
+task(:make_asset_dirs) { make_dest_dirs ASSET_DIRS, 'assets' }
+
+# Copy Files -------------------------------------------------------------------
+
+def copy_file_list(files, path = '')
+  dest = File.join(DESTINATION, path)
+  files.each { |file| cp file, dest }
+end
+
+desc "Copy the necessary files"
+task :copy_files => [:copy_configs]
+
+task(:copy_configs) { copy_file_list CONFIGS, 'assets/config' }
+
+# Create Project Rakefile ------------------------------------------------------
+
+desc "Create the project rakefile"
+task :create_rakefile do
+  cp RAKEFILE, File.join(DESTINATION, 'rakefile')
+end
+
+# Generate Documentation -------------------------------------------------------
+
+desc "Generate the config API documentation"
+task :generate_docs do
+  require 'rdiscount'
+  source = 'doc/README.txt'
+  target = File.join(DESTINATION, 'doc', 'README.html')
+  
+  unless uptodate?(target, source)
+    File.open(target, "w") do |f|
+      f << RDiscount.new(File.read(source)).to_html
+    end
+  end
+end
+
+# Initialize Repository --------------------------------------------------------
+
+desc "Automate the common task of initializing a Mercurial repo for the project"
+task :init_repo do
+  ignore = %w(*._* *.DS_Store *.swf *.exe *.zip)
+  File.open("#{DESTINATION}/.gitignore", "w+") do |file|
+    file << "syntax: glob\n"
+    ignore.each { |glob| file << "#{glob}\n" }
+  end
+  
+  original_dir = pwd
+  chdir DESTINATION
+  
+  sh %{git init}
+  sh %{git add .}
+  sh %{git commit -m "#{File.basename(DESTINATION)} initialized"}
+  
+  chdir original_dir
+end
+
+# Generate ASDoc Structure -----------------------------------------------------
+
+desc "Generate ASDocs"
+task :generate_asdocs do
+  asdoc_bin  = '/opt/flex/bin/asdoc'
+  source_dir = File.expand_path('./source')
+  asdocs_dir = 'doc/asdoc'
+  
+  sh   %{#{asdoc_bin} -source-path #{source_dir} -doc-sources #{source_dir}}
+  mv   'asdoc-output/*', asdocs_dir
+  rm_r 'asdoc-output'
+end
+
+# Run ASUnit Tests -------------------------------------------------------------
+
+desc "Compile ASUnit tests"
+task :compile_asunit do
+  mxmlc_bin    = '/opt/flex/bin/mxmlc'
+  source_paths = ['/opt', '/Applications/Adobe\ Flash\ CS3/Configuration/ActionScript\ 3.0/Classes', '../source']
+  
+  cd 'test'
+  sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{TEST_BASENAME}.mxml}
+end
+
+desc "Runs the test compiled by compile_asunit"
+task :run_compiled_test do
+  # Assumes we are in the test directory already
+  sh %{open #{TEST_BASENAME}.swf}
+end
+
+# Sync Source ------------------------------------------------------------------
+
+desc "Sync the source to the external server"
+task :backup_source do
+  path = "#{REMOTE_LOGIN}@#{REMOTE_SERVER}:#{REMOTE_PATH}"
+  sh %{rsync -cav --progress --del -e 'ssh' ./* #{path}}
+end

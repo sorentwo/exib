@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+  <options>
+    <history>2</history>
+    <frame_rate>30</frame_rate>
+    <stage_height>600</stage_height>
+    <stage_width>800</stage_width>
+  </options>
+  
+  <models>
+  </models>
+
+  <services>
+  </services>
+
+  <hotkeys>
+  </hotkeys>
+
+  <media>  
+  </media>
+  
+  <formats>
+  </formats>
+  
+  <queues>
+  </queues>
+
+  <view>
+    <context bg="">
+    </context>
+    <screens pos="">
+    </screens>
+  </view>
+</config>
