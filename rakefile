@@ -11,7 +11,8 @@ DESTINATION = ENV['DEST'] || "../exib_project"
 BASE_DIRS   = %w(assets deploy deliver doc source)
 ASSET_DIRS  = %w(config fonts graphics sounds videos)
 RAKEFILE    = 'tasks/project_rakefile'
-CONFIGS     = %w(configs/config.exml)
+CONFIG      = 'template/config.exml'
+CLASS_DOC   = 'template/class_doc.as'
 
 namespace :exib do
   desc "Generates a new EXIB project"
@@ -55,15 +56,19 @@ task(:make_asset_dirs) { make_dest_dirs ASSET_DIRS, 'assets' }
 
 # Copy Files -------------------------------------------------------------------
 
-def copy_file_list(files, path = '')
-  dest = File.join(DESTINATION, path)
-  files.each { |file| cp file, dest }
-end
-
 desc "Copy the necessary files"
-task :copy_files => [:copy_configs]
+task :copy_files => [:copy_config, :copy_class_doc]
 
-task(:copy_configs) { copy_file_list CONFIGS, 'assets/config' }
+task(:copy_config)    { cp CONFIG,    File.join(DESTINATION, 'assets/config/config.exml') }
+task(:copy_class_doc) do
+  project = File.basename(DESTINATION)
+  source  = CLASS_DOC
+  target  = File.join(DESTINATION, "source/#{project}.as")
+  
+  File.open(target, 'w') do |f|
+    f << File.read(source).gsub(/#PROJECT_NAME#/, project.capitalize) 
+  end
+end
 
 # Create Project Rakefile ------------------------------------------------------
 

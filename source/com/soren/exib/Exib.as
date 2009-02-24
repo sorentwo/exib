@@ -53,6 +53,7 @@ package com.soren.exib {
     **/
     public function Exib() {
       XMLLoader()
+      trace('loading')
     }
     
     // ---
