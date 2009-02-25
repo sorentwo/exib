@@ -24,7 +24,6 @@ package com.soren.exib {
   import com.soren.exib.model.*
   import com.soren.exib.service.*
   import com.soren.exib.view.*
-  import com.soren.encryption.*
   import com.soren.util.*
   
   public class Exib extends Sprite {
@@ -35,6 +34,9 @@ package com.soren.exib {
     private const VIDEO_PATH:String    = '../assets/videos/'
     
     private const MANAGER_LIST:Array = ['actionable', 'format', 'video']
+    
+    //[Embed(source="assets/config/config.exml", mimeType="text/xml")]
+    //protected const EmbeddedXML:Class
     
     private var _config:XML
     private var _urlLoader:URLLoader
@@ -48,8 +50,9 @@ package com.soren.exib {
     * Constructor
     **/
     public function Exib() {
+      //var x:XML = XML(new EmbeddedXML())
+      //trace(x.toXMLString())
       XMLLoader()
-      trace('loading')
     }
     
     // ---
@@ -84,13 +87,14 @@ package com.soren.exib {
     }
     
     private function pre():void {
-      _container = _generator.genContainer(_config.view.screens)
-      
-      var scr_con:ScreenController = new ScreenController(_container, _options['history'])
-      _supervisor.add('actionable', scr_con, 'screen')
-      _supervisor.add('actionable', new Effect(scr_con), 'effect')
-      
-      addChild(_container)
+      if (_config.view.screens != undefined) {
+        _container = _generator.genContainer(_config.view.screens)
+        var scr_con:ScreenController = new ScreenController(_container, _options['history'])
+        _supervisor.add('actionable', scr_con, 'screen')
+        _supervisor.add('actionable', new Effect(scr_con), 'effect')
+        
+        addChild(_container)
+      }
     }
     
     private function post():void {
