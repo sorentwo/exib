@@ -37,8 +37,8 @@ package unit {
       sub_node_b.id = 'sub_node_b'
       
       var multi:MultiNode = new MultiNode()
-      multi.add(new ConditionalSet(con_a), sub_node_a)
-      multi.add(new ConditionalSet(con_b), sub_node_b)
+      multi.add(new ConditionalSet(con_a, 0), sub_node_a)
+      multi.add(new ConditionalSet(con_b, 0), sub_node_b)
       
       assertEquals(1, multi.numChildren)
       assertEquals('sub_node_a', (multi.getChildAt(0) as Node).id)

@@ -2,8 +2,8 @@
 * ConditionalSet
 *
 * A class to store multiple conditional objects and allow them to be evaluated
-* as a single condition, in which any conditional returning <code>false</code>
-* causes the entire set to return <code>false</code>
+* as a single condition. The set works according to standard boolean logic, using
+* chanined 'and' and 'or' statements.
 *
 * Copyright (c) 2008 Parker Selbert
 * 
@@ -12,31 +12,40 @@
 
 package com.soren.exib.helper {
 
-  public class ConditionalSet implements ISet {
-	
+  public class ConditionalSet {
+	  
+	  public static var LOGICAL_AND:uint = 0
+	  public static var LOGICAL_OR:uint  = 1
+	  
     private var _conditionals:Array = []
     
     /**
     * Constructor
     **/
-    public function ConditionalSet(...args) {
-      if (args.length > 0) this.push.apply(this, args)
+    public function ConditionalSet(element:* = undefined, operator:uint = 0) {
+      if (element != undefined) this.push(element, operator)
     }
 
     /**
-    * Returns an array of all the actions
+    * Returns an array of all the conditionals and their operator
     **/
     public function get set():Array { 
       return _conditionals
     }
 
     /**
-    * Adds any number of action items to the set. Can be overloaded.
+    * Adds an action item to the set.
     **/
-    public function push(...args):void {
-      for each (var conditional:Conditional in args) {
-        _conditionals.push(conditional)
+    public function push(element:*, operator:uint = 0):void {
+      if (!((element is Conditional) || (element is ConditionalSet))) {
+        throw new Error('ConditionalSet: Invalid conditional class -> ' + element)
       }
+      
+      if (operator > 1) {
+        throw new Error('ConditionalSet: Invalid operator -> ' + operator)
+      }
+      
+      _conditionals.push( {element: element, operator: operator} )
     }
     
     /**
@@ -47,18 +56,22 @@ package com.soren.exib.helper {
     }
     
     /**
-    * Atomically evaluates every condition in the set, returning false if any one
-    * element is false, and true if all elements return as true. Additionally, if
-    * the set is empty it will also return false.
+    * Sets chain together sub-elements and sub-sets and evaluate them based on the
+    * operator supplied, recursively.
     **/
     public function evaluate():Boolean {
       if (this.isEmpty()) return false
-
-      for each (var conditional:Conditional in _conditionals) {
-        if (!conditional.evaluate()) return false
+      
+      var set_result:Boolean = true
+      for each (var object:Object in _conditionals) {
+        var result:Boolean = object.element.evaluate()
+        switch (object.operator) {
+          case 0: set_result = set_result && result; break
+          case 1: set_result = set_result || result; break
+        }
       }
       
-      return true
+      return set_result
     }
     
     /**
@@ -69,9 +82,10 @@ package com.soren.exib.helper {
     * 
     * @see unregisterListener
     **/
-    public function registerListener(listener:Function):void {      
-      for each (var condition:Conditional in _conditionals) {
-        condition.registerListener(listener)
+    public function registerListener(listener:Function):void {     
+      for each (var object:Object in _conditionals) {
+        var element:* = object.element
+        if (element is Conditional) element.registerListener(listener)
       }
     }
     
@@ -84,8 +98,9 @@ package com.soren.exib.helper {
     * @see registerListener
     **/
     public function unregisterListener(listener:Function):void {
-      for each (var condition:Conditional in _conditionals) {
-        condition.unregisterListener(listener)
+      for each (var object:Object in _conditionals) {
+        var element:* = object.element
+        if (element is Conditional) element.unregisterListener(listener)
       }
     }
 	}

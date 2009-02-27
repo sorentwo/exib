@@ -26,9 +26,9 @@ package {
       
       // Generator Tests last
       
-      var model_gen_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest]
+      var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
       
-      iterateTestArray(model_gen_tests)
+      iterateTestArray(generator_tests)
     }
     
 	  // ---

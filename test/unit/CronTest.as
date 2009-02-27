@@ -100,7 +100,7 @@ package unit {
       var complete_set:ActionSet = new ActionSet(act_a)
       
       var cond:Conditional = new Conditional(_model_a, '==', 1)
-      var cond_set:ConditionalSet = new ConditionalSet(cond)
+      var cond_set:ConditionalSet = new ConditionalSet(cond, 0)
       
       var cron:Cron = new Cron(_delay, _repeat, null, complete_set, cond_set)
       

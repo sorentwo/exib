@@ -74,7 +74,7 @@ package unit {
       assertEquals(1, val_mod_a.value)
       
       var conditional:Conditional = new Conditional(val_mod_b, '==', 1)
-      var conditional_set:ConditionalSet = new ConditionalSet(conditional)
+      var conditional_set:ConditionalSet = new ConditionalSet(conditional, 0)
       
       val_act_b.conditional_set = conditional_set
       val_act_b.act()

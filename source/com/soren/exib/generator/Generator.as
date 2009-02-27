@@ -140,14 +140,7 @@ package com.soren.exib.generator {
         var action:Action = new Action(parsed.actionable, parsed.method, parsed.arguments)
         
         if (parsed.conditional) {
-          var conditional_strings:Array = parsed.conditional.toString().split(/\s+&&\s/)
-          var psuedo_xml:XML = <psuedo></psuedo>
-          
-          for each (var cond_string:String in conditional_strings) {
-            psuedo_xml.appendChild(<condition>{cond_string}</condition>)
-          }
-          
-          action.conditional_set = genConditionalSet(psuedo_xml.condition)
+          action.conditional_set = genConditionalSet(parsed.conditional.toString())
         }
         
         action_set.push(action)
@@ -156,14 +149,13 @@ package com.soren.exib.generator {
       return action_set
     }
     
-    public function genConditionalSet(xml_list:XMLList):ConditionalSet {
-      var conditional_set:ConditionalSet = new ConditionalSet()
-      for each (var xml_condition:XML in xml_list) {
-        var parsed:Object = parseCondition(xml_condition)
-        conditional_set.push(new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two))
-      }
-      
-      return conditional_set
+    public function genConditionalSet(statement:String):ConditionalSet {
+      var superset:ConditionalSet
+
+      if (statement != '') { superset = genSubset(statement) }
+      else {                 superset = new ConditionalSet() }
+
+      return superset
     }
     
     // Queue -->
@@ -323,13 +315,7 @@ package com.soren.exib.generator {
         if (xml_child.@id != undefined)    child_node.id = xml_child.@id
         if (xml_child.@group != undefined) child_node.group = xml_child.@group
         
-        var when_statements:Array = xml_child.@when.toString().split(/\s+&&\s+/)
-        var psuedo_xml:XML = <psuedo></psuedo>
-        
-        for each (var when:String in when_statements) { psuedo_xml.appendChild(<when>{when}</when>)}
-        
-        var conditional_set:ConditionalSet = genConditionalSet(psuedo_xml.when)
-        multi_node.add(conditional_set, child_node)
+        multi_node.add(genConditionalSet(xml_child.@when.toString()), child_node)
       }
       
       return multi_node
@@ -436,18 +422,56 @@ package com.soren.exib.generator {
     /**
     * @private
     **/
-    private function parseCondition(condition_string:String):Object {
-      var condition_pattern:RegExp = /^(?P<operand_one>[\w\d_]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w\d_]+)$/
-      var parsed:Object = condition_pattern.exec(condition_string)
-      
+    private function genSubset(statement:String):ConditionalSet {
+      var set:ConditionalSet = new ConditionalSet()
+      var results:Array
+      var result:Object
+
+      var parenthetical:RegExp = /(\s+(?P<operator>[&\|]{2})\s+)?\((?P<group>.+)\)/g
+      results = statement.match(parenthetical)
+
+      for each (var group:String in results) {
+        result = parenthetical.exec(group)
+        set.push(genSubset(result.group), resolveOperator(result.operator))
+      }
+
+      // Matching doesn't actually remove the strings, this will.
+      statement = statement.replace(parenthetical, '')
+
+      var naked:RegExp = /(\s+(?P<operator>[&\|]{2})\s+)?(?P<condition>.+)/g
+      results = statement.match(naked)
+
+      for each (var nude:String in results) {
+        result = naked.exec(nude)  
+        set.push(genCondition(nude), resolveOperator(result.operator))
+      }
+
+      return set
+    }
+    
+    /**
+    * @private
+    **/
+    private function resolveOperator(operator:*):uint {
+      operator = operator || '&&'
+      return (operator == '&&') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
+    }
+    
+    /**
+    * @private
+    **/
+    private function genCondition(statement:String):Conditional {
+      var pattern:RegExp = /^(?P<operand_one>[\w\d_]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w\d_]+)$/
+      var parsed:Object = pattern.exec(statement)
+
       parsed.operand_one = (_supervisor.has('actionable', parsed.operand_one))
                          ? _supervisor.get('actionable', parsed.operand_one)
                          : parsed.operand_one
       parsed.operand_two = (_supervisor.has('actionable', parsed.operand_two))
                          ? _supervisor.get('actionable', parsed.operand_two)
                          : parsed.operand_two
-                         
-      return parsed
+
+      return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
     }
     
     /**

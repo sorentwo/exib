@@ -36,28 +36,20 @@ package unit {
       }
             
       assertNull(error)
-      
-      try {
-        conditional_set = new ConditionalSet(new Conditional(true, '==', false),
-                                             new Conditional(true, '==', false))
-      } catch (e:Error) {
-        error = e
-      }
-            
-      assertNull(error)
     }
     
     public function testPublicMethods():void {
       var sta_mod:StateModel = new StateModel('ON', 'OFF')
+      var sec_mod:StateModel = new StateModel('harvard', 'tie')
       
       var cond_set:ConditionalSet = new ConditionalSet()
-      cond_set.push(new Conditional(sta_mod, '==', 'ON'))
-      cond_set.push(new Conditional(sta_mod, '!=', 'OFF'))
+      cond_set.push(new Conditional(sta_mod, '==', 'ON'),  ConditionalSet.LOGICAL_AND)
+      cond_set.push(new Conditional(sec_mod, '==', 'tie'))
       
-      assertTrue(cond_set.evaluate())
-      
-      cond_set.push(new Conditional(sta_mod, '==', 'OFF'))
       assertFalse(cond_set.evaluate())
+      
+      cond_set.push(new Conditional(sec_mod, '==', 'harvard'), ConditionalSet.LOGICAL_OR)
+      assertTrue(cond_set.evaluate())
     }
     
     public function testIsEmpty():void {
@@ -73,8 +65,8 @@ package unit {
       var sta_mod_b:StateModel = new StateModel('on', 'off')
       
       var cond_set:ConditionalSet = new ConditionalSet()
-      cond_set.push(new Conditional(sta_mod_a, '==', 'off'),
-                    new Conditional(sta_mod_b, '==', 'off'))
+      cond_set.push(new Conditional(sta_mod_a, '==', 'off'))
+      cond_set.push(new Conditional(sta_mod_b, '==', 'off'))
       
       cond_set.registerListener(eventListener)
       
