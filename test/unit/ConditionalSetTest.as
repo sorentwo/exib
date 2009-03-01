@@ -82,6 +82,42 @@ package unit {
       assertEquals(2, _changed_by_event)
     }
     
+    public function testGroupings():void {
+      var _harlan:StateModel = new StateModel('pepper', 'fleck')
+      var _rufus:StateModel = new StateModel('bloodhound', 'bassethound')
+      var _cookie:StateModel = new StateModel('dozens', 'hundreds')
+      var _buisybee:StateModel = new StateModel('fish', 'parrot')
+      
+      var and:uint = ConditionalSet.LOGICAL_AND
+      var or:uint  = ConditionalSet.LOGICAL_OR
+      
+      // (_harlan == pepper && _rufus == bloodhound) || (_cookie == hundreds)
+      var subset_a:ConditionalSet = new ConditionalSet()
+      var subset_b:ConditionalSet = new ConditionalSet()
+      subset_a.push(new Conditional(_harlan, '==', 'pepper'),     and)
+      subset_a.push(new Conditional(_rufus,  '==', 'bloodhound'), and)
+      subset_b.push(new Conditional(_cookie, '==', 'hundreds'),   and)
+      
+      var set_a:ConditionalSet = new ConditionalSet()
+      set_a.push(subset_a, and)
+      set_a.push(subset_b, or)
+      
+      assertTrue(set_a.evaluate())
+      
+      // (_buisybee == fish || _cookie == hundreds) && (_rufus == bloodhound || _harlan == fleck)
+      subset_a = subset_b = new ConditionalSet()
+      subset_a.push(new Conditional(_buisybee, '==', 'fish'),       and)
+      subset_a.push(new Conditional(_cookie,   '==', 'hundreds'),   or)
+      subset_b.push(new Conditional(_rufus,    '==', 'bloodhound'), and)
+      subset_b.push(new Conditional(_harlan,   '==', 'fleck'),      or)
+      
+      var set_b:ConditionalSet = new ConditionalSet()
+      set_b.push(subset_a, and)
+      set_b.push(subset_b, and)
+      
+      assertTrue(set_b.evaluate())
+    }
+    
     // ---
     
     private function eventListener(event:Event):void {
