@@ -116,6 +116,17 @@ package unit {
       set_b.push(subset_b, and)
       
       assertTrue(set_b.evaluate())
+      
+      // _harlan == fleck && (_rufus == bloodhound || _cookie == hundreds)
+      subset_a = new ConditionalSet()
+      subset_a.push(new Conditional(_rufus,  '==', 'bloodhound'), and)
+      subset_a.push(new Conditional(_cookie, '==', 'hundreds'),   or)
+      
+      var set_c:ConditionalSet = new ConditionalSet()
+      set_c.push(new Conditional(_harlan, '==', 'fleck'), and)
+      set_c.push(subset_a, and)
+      
+      assertFalse(set_c.evaluate())
     }
     
     // ---

@@ -424,26 +424,24 @@ package com.soren.exib.generator {
     **/
     private function genSubset(statement:String):ConditionalSet {
       var set:ConditionalSet = new ConditionalSet()
-      var results:Array
-      var result:Object
 
-      var parenthetical:RegExp = /(\s+(?P<operator>[&\|]{2})\s+)?\((?P<group>.+)\)/g
-      results = statement.match(parenthetical)
+      var group_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)\((?P<group>[^\)]+)\)/g
+      var group:Object = group_pattern.exec(statement)
 
-      for each (var group:String in results) {
-        result = parenthetical.exec(group)
-        set.push(genSubset(result.group), resolveOperator(result.operator))
+      while (group) {
+        set.push(genSubset(group.group), resolveOperator(group.operator))        
+        group = group_pattern.exec(statement)
       }
 
       // Matching doesn't actually remove the strings, this will.
-      statement = statement.replace(parenthetical, '')
-
-      var naked:RegExp = /(\s+(?P<operator>[&\|]{2})\s+)?(?P<condition>.+)/g
-      results = statement.match(naked)
-
-      for each (var nude:String in results) {
-        result = naked.exec(nude)  
-        set.push(genCondition(nude), resolveOperator(result.operator))
+      statement = statement.replace(group_pattern, '')
+      
+      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)(?P<condition>\w+\s+[<>=]{1,2}\s+\w+)/g
+      var ungrouped:Object = ungrouped_pattern.exec(statement)
+      
+      while (ungrouped) {
+        set.push(genCondition(ungrouped.condition), resolveOperator(ungrouped.operator))
+        ungrouped = ungrouped_pattern.exec(statement)
       }
 
       return set
