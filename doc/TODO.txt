@@ -1,1 +1,39 @@
 == TODO
+
+* Debugger / Logger
+  - Debug satelite and runlevel triggered by rake exib:compile:debug
+  - Create debugging satelite
+  - Logging levels (debug=0, warn=1, error=2)
+  - Singleton setup
+  - Syntax similar to:
+    
+    com.soren.debug.Log
+    
+    Log.setLevel(0) #--> This would be set at 'runtime', by the task calling it.
+    var log:Log = Log.getLog()
+    
+    log.debug('message', { klass: this, function: function })
+    log.info('message', [this, function])
+    log.warn('message', [this, function])
+    
+* Embedding
+  - XML at a minimum
+* Explore multiple-package solutions
+  - monolithic: Resulting in a single .swf with all assets included
+  - micro: A .swf and an open assets folder
+  - dat: Two part system, a .swf and a .dat file (.swf really) that includes all
+    assets internally
+* External Font Loading
+  - Because only .ttf files can be embedded Flash IDE is necessary for providing
+    suitable fonts. Move to a system where fonts are loaded from a .swf file in
+    assets/fonts/fonts.swf
+  - http://etcs.ru/pre/FontLoaderDemo/srcview/
+  - This removes the last reason to develop within the Flash IDE
+* Pre-loader
+  - Pretty difficult to do, possible with a singleton to count accumulated bytes
+    and generate a single bar. Not sure how well it would work with the multi
+    packaging ideas.
+* SWF Meta Loading
+  - One that works maybe...
+  - [SWF(width="650", height="500", frameRate="31", backgroundColor="#FFFFFF")]
+* Rake task for 'rake exib:freeze', identical to the rails notion
