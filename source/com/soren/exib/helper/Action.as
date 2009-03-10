@@ -66,7 +66,8 @@ package com.soren.exib.helper {
           throw new Error("Invalid method signature: "       +
                           "actionable: " + _actionable       + ", " +
                           "method: "     + _method           + ", " +
-                          "arguments: "  + values.toString())
+                          "arguments: "  + values.toString() + "\n" +
+                          "caught: "     + e)
         }
       }
     }

@@ -71,14 +71,14 @@ package com.soren.exib.effect {
       if (_supervisor && !_screen_controller) _screen_controller = _supervisor.get('actionable', 'screen')
       
       clearCallback()
-      
+
       if (_supervisor && Boolean(action_string)) {
         var psuedo_xml:XML = <psuedo><action>{action_string}</action></psuedo>
         setCallback(new Generator(_supervisor).genActionSet(psuedo_xml.action))
       }
-      
-      _after_wait = _before[_before.length - 1].options.duration * 1000 || 0
 
+      _after_wait = (_before.length > 0) ? _before[_before.length - 1].options.duration * 1000 || 0 : 0
+      
       if      (_before.length > 0)              { process(_before, true) }
       else if (_before.length < 1 && _callback) { triggerCallback()      }
       else                                      { process(_after)        }

@@ -469,7 +469,6 @@ package com.soren.exib.generator {
                          ? _supervisor.get('actionable', parsed.operand_two)
                          : parsed.operand_two
 
-      trace(parsed.operand_one + ' ' + parsed.operator + ' ' + parsed.operand_two)
       return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
     }
     
