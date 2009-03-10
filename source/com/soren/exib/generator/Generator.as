@@ -306,6 +306,9 @@ package com.soren.exib.generator {
           case 'mgraphic':
             child_node = genGraphicNode(xml_child, path)
             break
+          case 'mmeter':
+            child_node = genMeterNode(xml_child, path)
+            break
           case 'mtext':
             child_node = genTextNode(xml_child)
             break

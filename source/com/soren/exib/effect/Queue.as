@@ -79,9 +79,9 @@ package com.soren.exib.effect {
 
       _after_wait = (_before.length > 0) ? _before[_before.length - 1].options.duration * 1000 || 0 : 0
       
-      if      (_before.length > 0)              { process(_before, true) }
-      else if (_before.length < 1 && _callback) { triggerCallback()      }
-      else                                      { process(_after)        }
+      if      (_before.length > 0)               { process(_before, true)             }
+      else if (_before.length < 1 && _callback)  { triggerCallback(); process(_after) }
+      else if (_before.length < 1 && !_callback) { process(_after)                    }
     }
     
     // ---
