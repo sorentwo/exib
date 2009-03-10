@@ -94,6 +94,18 @@ package com.soren.util {
 
     /**
     **/
+    public static function toD(input:Number):String {
+      return Pad.padFloat(input / 10, 1)
+    }
+    
+    /**
+    **/
+    public static function toC(input:Number):String {
+      return Pad.padFloat(input / 100, 1)
+    }
+    
+    /**
+    **/
     public static function toK(input:Number):String {
       return Pad.padFloat(input / 1000, 1)
     }

@@ -91,7 +91,7 @@ package com.soren.exib.service {
     /**
     * Forces the cron to reset and triggers the complete actions simultaneously
     **/
-    public function forceComplete():void {
+    public function complete():void {
       reset()
       completeHandler(new TimerEvent(TimerEvent.TIMER_COMPLETE))
     }
@@ -115,7 +115,7 @@ package com.soren.exib.service {
     
     public function conditionalChangeListener(event:Event):void {
       if (Boolean(_conditional_set) && _conditional_set.evaluate()) {
-        forceComplete()
+        complete()
       }
     }
     

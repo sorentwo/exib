@@ -27,7 +27,7 @@
   </queues>
 
   <view>
-    <context bg='0,0'>
+    <context bg=''>
     </context>
     <screens pos='0,0'>
     </screens>

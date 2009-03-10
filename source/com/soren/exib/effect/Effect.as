@@ -185,6 +185,18 @@ package com.soren.exib.effect {
     
     /**
     **/
+    public function kill():void {
+      _blur_tween.fforward()
+      _fade_tween.fforward()
+      _slide_tween.fforward()
+      
+      _blur_tween.stop()
+      _fade_tween.stop()
+      _slide_tween.stop()
+    }
+    
+    /**
+    **/
     public function reset():void {
       defineDefaultOptions()
     }

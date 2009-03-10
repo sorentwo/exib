@@ -47,11 +47,13 @@ package com.soren.util {
     private static const DATE_SECONDS_TOKEN:String     = 'S'
 
     // convs formatting tokens
-    private static const CONVERSION_TOKENS:String        = 'cEfIklOu'
+    private static const CONVERSION_TOKENS:String        = 'ceEdfIklOu'
     private static const CONVERT_CELSIUS_TOKEN:String    = 'c'
     private static const CONVERT_FAHRENHEIT_TOKEN:String = 'f'
     private static const CONVERT_CUPS_TOKEN:String       = 'u'
     private static const CONVERT_LITRES_TOKEN:String     = 'l'
+    private static const CONVERT_TO_D:String             = 'd'
+    private static const CONVERT_TO_C:String             = 'e'
     private static const CONVERT_TO_K:String             = 'k'
     private static const CONVERT_MOD_HOURS:String        = 'O'
     private static const CONVERT_MOD_MINUTES:String      = 'I'
@@ -257,6 +259,12 @@ package com.soren.util {
                 break
               case CONVERT_LITRES_TOKEN:
                 match.replacement = ConversionUtil.toLitres(replacement)
+                break
+              case CONVERT_TO_D:
+                match.replacement = ConversionUtil.toD(replacement)
+                break
+              case CONVERT_TO_C:
+                match.replacement = ConversionUtil.toC(replacement)
                 break
               case CONVERT_TO_K:
                 match.replacement = ConversionUtil.toK(replacement)

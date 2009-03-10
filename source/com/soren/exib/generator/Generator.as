@@ -79,11 +79,11 @@ package com.soren.exib.generator {
     }
     
     public function genValueModel(xml:XML):ValueModel {
-      var range_pattern:RegExp = /^(\d+)\.{2}(\d+)$/
+      var range_pattern:RegExp = /^([\d-]+)\.{2}([\d-]+)$/
       
-      var min:uint = uint(xml.@range.toString().replace(range_pattern, "$1"))
-      var max:uint = uint(xml.@range.toString().replace(range_pattern, "$2"))
-      var def:uint = uint(xml.@def)
+      var min:int = int(xml.@range.toString().replace(range_pattern, "$1"))
+      var max:int = int(xml.@range.toString().replace(range_pattern, "$2"))
+      var def:int = int(xml.@def)
       
       return new ValueModel(def, min, max)
     }
@@ -405,7 +405,7 @@ package com.soren.exib.generator {
     * @private
     **/
     private function parseAction(action_string:String):Object {
-      var action_pattern:RegExp = /^(?P<actionable>[\w_]+)\.(?P<method>[\w_]+)\((?P<arguments>.*)\)(\s+if\s+(?P<conditional>.*))?$/
+      var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*)\)(\s+if\s+(?P<conditional>.*))?$/
       if (!action_pattern.test(action_string)) throw new Error(action_string)
       var parsed:Object = action_pattern.exec(action_string)
 
@@ -436,7 +436,7 @@ package com.soren.exib.generator {
       // Matching doesn't actually remove the strings, this will.
       statement = statement.replace(group_pattern, '')
       
-      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)(?P<condition>\w+\s+[<>=]{1,2}\s+\w+)/g
+      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)(?P<condition>\w+\s+[!<>=]{1,2}\s+\w+)/g
       var ungrouped:Object = ungrouped_pattern.exec(statement)
       
       while (ungrouped) {
@@ -469,6 +469,7 @@ package com.soren.exib.generator {
                          ? _supervisor.get('actionable', parsed.operand_two)
                          : parsed.operand_two
 
+      trace(parsed.operand_one + ' ' + parsed.operator + ' ' + parsed.operand_two)
       return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
     }
     
