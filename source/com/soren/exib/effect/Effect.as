@@ -186,13 +186,10 @@ package com.soren.exib.effect {
     /**
     **/
     public function kill():void {
-      _blur_tween.fforward()
-      _fade_tween.fforward()
-      _slide_tween.fforward()
-      
-      _blur_tween.stop()
-      _fade_tween.stop()
-      _slide_tween.stop()
+      if (_blur_tween  != null)      { _blur_tween.stop();  _blur_tween.rewind()  }
+      if (_fade_tween  != null)      { _fade_tween.stop();  _fade_tween.rewind()  }
+      if (_slide_tween != null)      { _slide_tween.stop(); _slide_tween.rewind() }
+      if (_pulse_tweens.length != 0) { for each (var tween:Tween in _pulse_tweens) { tween.stop(); tween.obj.alpha = tween.finish; }}
     }
     
     /**
@@ -249,8 +246,8 @@ package com.soren.exib.effect {
     private function pulseTweenFinish(event:TweenEvent):void {
       _pulse_count += 1
       
-      if (_pulse_count >= _options['times']) { _pulse_count = 0 }
-      else { for each(var tween:Tween in _pulse_tweens) { tween.yoyo() }}
+      if (_pulse_count >= _options['times'])            { _pulse_count = 0; _pulse_tweens = [] }
+      else { for each(var tween:Tween in _pulse_tweens) { tween.yoyo() } }
     }
     
     /**
