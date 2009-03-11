@@ -169,9 +169,7 @@ package com.soren.exib.view {
       var raw_val:int = _value_model.value
       var max_val:int = _value_model.max
       
-      _units = (raw_val == max_val)
-             ? _segments
-             : Math.ceil(raw_val / AdvancedMath.gcd(raw_val, max_val))
+      _units = uint(_segments * (raw_val / max_val))
       
       var to_add:Array = []
       if (_units == _segments) {
