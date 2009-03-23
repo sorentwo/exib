@@ -30,6 +30,9 @@ namespace :as do
   
   desc "Runs ASUnit testing for the EXIB project"
   task :test => [ :compile_asunit, :run_compiled_test ]
+  
+  desc "Open the Logger Satelite for debugging"
+  task :satelite => [ :open_logger_satelite ]
 end
 
 # Source Tasks -----------------------------------------------------------------
@@ -124,6 +127,13 @@ task :generate_asdocs do
   sh   %{#{asdoc_bin} -source-path #{source_dir} -doc-sources #{source_dir}}
   mv   'asdoc-output/*', asdocs_dir
   rm_r 'asdoc-output'
+end
+
+# Logger Satelite --------------------------------------------------------------
+
+desc "Opens the logger satelite"
+task :open_logger_satelite do
+  sh %{open satelite/LoggerSatelite.swf}
 end
 
 # Run ASUnit Tests -------------------------------------------------------------

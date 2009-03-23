@@ -7,23 +7,7 @@
     and generate a single bar. Not sure how well it would work with the multi
     packaging ideas.
   - Progress setup in Exib subclass
-* Multiple 'group/class'es per node
-* Debugger / Logger
-  - Debug satelite and runlevel triggered by rake exib:compile:debug
-  - Create debugging satelite
-  - Logging levels (debug=0, warn=1, error=2)
-  - Singleton setup
-  - Syntax similar to:
-    
-    com.soren.debug.Log
-    
-    Log.setLevel(0) #--> This would be set at 'runtime', by the task calling it.
-    var log:Log = Log.getLog()
-    
-    log.debug('message', { klass: this, function: function })
-    log.info('message', [this, function])
-    log.warn('message', [this, function])
-    
+* Multiple 'group/class'es per node    
 * Embedding
   - XML at a minimum
 * Explore multiple-package solutions
