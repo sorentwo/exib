@@ -6,7 +6,7 @@
 * Copyright (c) 2008 Parker Selbert
 **/
 
-package com.soren.exib.generator {
+package com.soren.exib.core {
 
   import flash.display.DisplayObject
   import flash.text.TextField

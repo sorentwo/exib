@@ -18,7 +18,7 @@ package com.soren.exib {
   import flash.net.URLRequest
   import flash.text.TextFormat
   import com.soren.exib.effect.*
-  import com.soren.exib.generator.*
+  import com.soren.exib.core.*
   import com.soren.exib.helper.*
   import com.soren.exib.manager.*
   import com.soren.exib.model.*

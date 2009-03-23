@@ -2,7 +2,7 @@ package generator {
 
   import asunit.framework.TestCase
   import flash.text.TextFormat
-  import com.soren.exib.generator.*
+  import com.soren.exib.core.*
   import com.soren.exib.manager.*
   import com.soren.exib.service.Sound
   import com.soren.exib.view.VideoNode

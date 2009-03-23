@@ -2,7 +2,7 @@ package generator {
 
   import asunit.framework.TestCase
   import flash.display.Sprite
-  import com.soren.exib.generator.*
+  import com.soren.exib.core.*
   import com.soren.exib.manager.*
   import com.soren.exib.model.ValueModel
   import com.soren.exib.service.*

@@ -12,7 +12,7 @@ package com.soren.exib.effect {
 
   import flash.utils.Timer
   import flash.events.TimerEvent
-  import com.soren.exib.generator.Generator
+  import com.soren.exib.core.Generator
   import com.soren.exib.helper.ActionSet
   import com.soren.exib.helper.IActionable
   import com.soren.exib.manager.Supervisor

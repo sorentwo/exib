@@ -1,7 +1,7 @@
 package generator {
 
   import asunit.framework.TestCase
-  import com.soren.exib.generator.Generator
+  import com.soren.exib.core.Generator
   import com.soren.exib.manager.Supervisor
   import com.soren.exib.model.*
   
