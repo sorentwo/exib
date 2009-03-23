@@ -134,8 +134,8 @@ task :compile_asunit do
   puts banner
   
   mxmlc_bin    = '/opt/flex/bin/mxmlc'
-  source_paths = ['/opt', '/Applications/Adobe\ Flash\ CS3/Configuration/ActionScript\ 3.0/Classes', '../source']
-  
+  source_paths = ['/opt', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/', '../source']
+
   cd 'test'
   sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{TEST_BASENAME}.mxml}
   puts banner
