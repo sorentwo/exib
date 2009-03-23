@@ -24,7 +24,7 @@ package com.soren.debug {
     private static var _instance:Log = new Log()
     private static var _connection:LocalConnection = new LocalConnection()
     
-    private static var _level:uint      = DEBUG
+    private static var _level:uint = DEBUG
     private static var _satelite:String = 'satelite'
     private static var _throw_on_error:Boolean = false
     
@@ -50,6 +50,7 @@ package com.soren.debug {
     * Set the warning level to one of the valid levels, 0-3, DEBUG through FATAL.
     **/
     public function set level(level:uint):void {
+      if (level > DEBUG && level < FATAL) throw new Error('Invalid level provided: ' + level)
       _level = level
     }
     

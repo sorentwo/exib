@@ -9,6 +9,8 @@ package {
   public class AllTests extends TestSuite {
     
     public function AllTests () {
+      Log.getLog().level = Log.DEBUG
+      Log.getLog().throwOnError = true
       Log.getLog().clear()
       
       super()

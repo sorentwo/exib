@@ -14,11 +14,14 @@ package com.soren.exib.view {
   import flash.media.Video
   import flash.net.NetConnection
   import flash.net.NetStream
+  import com.soren.debug.Log
+  import com.soren.exib.core.Preloader
   import com.soren.exib.helper.IActionable
 
   public class VideoNode extends Node implements IActionable {
 
     private const VALID_URL:RegExp = /\.flv$/
+    private const DEFAULT_BUFFER_TIME:uint = 60
     
     private var _video_url:String
     private var _video_height:uint
@@ -32,11 +35,10 @@ package com.soren.exib.view {
     /**
     * Constructor
     **/
-    public function VideoNode(url:String, video_width:uint,
-                              video_height:uint, loop:Boolean = true) {
-      if (VALID_URL.test(url)) { _video_url = url }
-      else { throw new Error("Video: Invalid URL = " + url) }
+    public function VideoNode(url:String, video_width:uint, video_height:uint, loop:Boolean = true) {
+      validateURL(url)
       
+      _video_url    = url
       _video_width  = video_width
       _video_height = video_height
       _loop         = loop
@@ -47,6 +49,7 @@ package com.soren.exib.view {
     }
     
     /**
+    * Play the video. Doing so will add it to the display list of this node.
     **/
     public function play():void {
       _stream.play(_video_url)
@@ -54,6 +57,7 @@ package com.soren.exib.view {
     }
     
     /**
+    * Stop the video. Doing so will remove it from the display list of this node.
     **/
     public function stop():void {
       _stream.pause()
@@ -69,24 +73,31 @@ package com.soren.exib.view {
     **/
     private function netStatusHandler(event:NetStatusEvent):void {
       switch (event.info.code) {
-        case "NetConnection.Connect.Success":
+        case 'NetConnection.Connect.Success':
           connectStream()
           break
-        case "NetStream.Play.Stop":
+        case 'NetStream.Play.Stop':
           if (_loop) _stream.play(_video_url)
           break
-        case "NetStream.Play.StreamNotFound":
-          throw new Error("Unable to locate video url: " + _video_url)
+        case 'NetStream.Play.StreamNotFound':
+          Log.getLog().error('Unable to locate video url: ' + _video_url)
           break
       }
     }
+    
+    // ---
     
     /**
     * @private
     **/
     private function connectStream():void {
       _stream = new NetStream(_connection)
+      _stream.bufferTime = DEFAULT_BUFFER_TIME
       _stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler)
+      
+      // The video is tracked as a 'preloaded' asset. Note that the buffer is set
+      // to 60 seconds, far longer than we expect any video in EXIB to be.
+      Preloader.getPreloader().registerDispatcher(Preloader.VIDEO, _stream)
     
       // Handle onMetaData errors silently, we have no use for them
       var net_client:Object = new Object()
@@ -96,8 +107,14 @@ package com.soren.exib.view {
       _video = new Video()
       _video.width  = _video_width
       _video.height = _video_height
-    
       _video.attachNetStream(_stream)
     } 
+  
+    /**
+    * @private
+    **/
+    private function validateURL(url:String):void {
+      if (!VALID_URL.test(url)) Log.getLog().error('Invalid URL: ' + url)
+    }
   }
 }

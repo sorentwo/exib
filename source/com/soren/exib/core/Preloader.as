@@ -18,6 +18,7 @@ package com.soren.exib.core {
   import flash.events.IEventDispatcher
   import flash.events.ProgressEvent
   import flash.media.Sound
+  import flash.net.NetStream
   import flash.net.URLLoader
   import flash.utils.Dictionary
   
@@ -115,9 +116,12 @@ package com.soren.exib.core {
     }
     
     /**
+    * Register an asset's loader client to track progress. Valid dispatchers are
+    * Loader, URLLoader, Sound, and NetStream
     **/
     public function registerDispatcher(asset_index:uint, dispatcher:IEventDispatcher):void {
       verifyAssetIndex(asset_index)
+      verifyDispatcher(dispatcher)
       
       var progress_handler:Function
       var complete_handler:Function
@@ -205,17 +209,15 @@ package com.soren.exib.core {
     * @private
     **/
     private function progressHandler(asset_index:uint, event:ProgressEvent):void {
-      Log.getLog().debug('Asset acitve: ' + _assets[asset_index].active)
       if (_assets[asset_index].active == false) return
       
       if (isInitialEvent(asset_index, event.target)) {
-        Log.getLog().debug('Initial Event tracked for: ' + event.target)
         _assets[asset_index].pool[event.target] = true // Tracked, toggle the boolean
         _assets[asset_index].bytes_total += event.bytesTotal
         
         calculateGlobalBytesTotal()
       }
-      Log.getLog().debug('Progress Event tracked for: ' + event.target)
+      
       _assets[asset_index].bytes_loaded += event.bytesLoaded
       calculateGlobalBytesLoaded()
     }
@@ -261,15 +263,15 @@ package com.soren.exib.core {
     * @private
     **/
     private function verifyAssetIndex(asset_index:uint):void {
-      if (asset_index < AUDIO || asset_index > VIDEO) throw new Error('Unknown asset code: ' + asset_index)
+      if (asset_index < AUDIO || asset_index > VIDEO) Log.getLog().error('Unknown asset code: ' + asset_index)
     }
     
     /**
     * @private
     **/
     private function verifyDispatcher(dispatcher:IEventDispatcher):void {
-      if (!(dispatcher is URLLoader) || !(dispatcher is LoaderInfo) || !(dispatcher is Sound)) {
-        throw new Error('Unusable dispatcher: ' + dispatcher + ', URLLoader or LoaderInfo required')
+      if (!((dispatcher is URLLoader) || (dispatcher is LoaderInfo) || (dispatcher is Sound) || (dispatcher is NetStream))) {
+        Log.getLog().error('Unusable dispatcher: ' + dispatcher)
       }
     }
   }
