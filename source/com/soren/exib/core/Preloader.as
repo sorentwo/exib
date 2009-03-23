@@ -11,11 +11,14 @@
 
 package com.soren.exib.core {
   
-  import com.soren.exib.debug.Log
+  import com.soren.debug.Log
+  import flash.display.LoaderInfo
   import flash.events.Event
   import flash.events.EventDispatcher
   import flash.events.IEventDispatcher
   import flash.events.ProgressEvent
+  import flash.media.Sound
+  import flash.net.URLLoader
   import flash.utils.Dictionary
   
   public class Preloader extends EventDispatcher {
@@ -25,11 +28,11 @@ package com.soren.exib.core {
     public static const GRAPHIC:uint  = 2
     public static const VIDEO:uint    = 3
     
-    public static const AUDIO_COMPLETE:uint   = 0
-    public static const CONFIG_COMPLETE:uint  = 1
-    public static const GRAPHIC_COMPLETE:uint = 2
-    public static const VIDEO_COMPLETE:uint   = 3
-    public static const COMPLETE:uint         = 4
+    public static const AUDIO_COMPLETE:String   = 'audio_complete'
+    public static const CONFIG_COMPLETE:String  = 'config_complete'
+    public static const GRAPHIC_COMPLETE:String = 'graphic_complete'
+    public static const VIDEO_COMPLETE:String   = 'video_complete'
+    public static const COMPLETE:String         = 'complete'
     
     private static var _instance:Preloader = new Preloader()
     private static var _bytes_loaded:uint  = 0
@@ -51,24 +54,24 @@ package com.soren.exib.core {
     
     // ---
     
-    public static function get bytesLoaded():uint        { return _bytes_loaded }
-    public static function get audioBytesLoaded():uint   { return _assets[AUDIO].bytes_loaded   }
-    public static function get configBytesLoaded():uint  { return _assets[CONFIG].bytes_loaded  }
-    public static function get graphicBytesLoaded():uint { return _assets[GRAPHIC].bytes_loaded }
-    public static function get videoBytesLoaded():uint   { return _assets[VIDEO].bytes_loaded   }
+    public function get bytesLoaded():uint        { return _bytes_loaded }
+    public function get audioBytesLoaded():uint   { return _assets[AUDIO].bytes_loaded   }
+    public function get configBytesLoaded():uint  { return _assets[CONFIG].bytes_loaded  }
+    public function get graphicBytesLoaded():uint { return _assets[GRAPHIC].bytes_loaded }
+    public function get videoBytesLoaded():uint   { return _assets[VIDEO].bytes_loaded   }
 
-    public static function get bytesTotal():uint        { return _bytes_total }    
-    public static function get audioBytesTotal():uint   { return _assets[AUDIO].bytes_total   }
-    public static function get configBytesTotal():uint  { return _assets[CONFIG].bytes_total  }
-    public static function get graphicBytesTotal():uint { return _assets[GRAPHIC].bytes_total }
-    public static function get videoBytesTotal():uint   { return _assets[VIDEO].bytes_total   }
+    public function get bytesTotal():uint        { return _bytes_total }    
+    public function get audioBytesTotal():uint   { return _assets[AUDIO].bytes_total   }
+    public function get configBytesTotal():uint  { return _assets[CONFIG].bytes_total  }
+    public function get graphicBytesTotal():uint { return _assets[GRAPHIC].bytes_total }
+    public function get videoBytesTotal():uint   { return _assets[VIDEO].bytes_total   }
     
     // ---
     
     /**
     * Return the bytes loaded for a particular asset by supplying its index.
     **/
-    public static function assetBytesLoaded(asset_index:uint):uint {
+    public function assetBytesLoaded(asset_index:uint):uint {
       verifyAssetIndex(asset_index)
       return _assets[asset_index].bytes_loaded
     }
@@ -76,7 +79,7 @@ package com.soren.exib.core {
     /**
     * Return the bytes total for a particular asset by supplying its index.
     **/
-    public static function assetBytesTotal(asset_index:uint):uint {
+    public function assetBytesTotal(asset_index:uint):uint {
       verifyAssetIndex(asset_index)
       return _assets[asset_index].bytes_total
     }
@@ -84,21 +87,21 @@ package com.soren.exib.core {
     /**
     * Disable tracking of multiple assets by supplying an array of indecies.
     **/
-    public static function batchDisableAssets(asset_map:Array):void {
+    public function batchDisableAssets(asset_map:Array):void {
       for each (var asset_index:uint in asset_map) { disableAssetTracking(asset_index) }
     }    
     
     /**
     * Enable tracking of multiple assets by supplying an array of indecies.
     **/
-    public static function batchEnableAssets(asset_map:Array):void {
+    public function batchEnableAssets(asset_map:Array):void {
       for each (var asset_index:uint in asset_map) { enableAssetTracking(asset_index) }
     }
     
     /**
     * Disable tracking a particular asset by supplying its index.
     **/
-    public static function disableAssetTracking(asset_index:uint):void {
+    public function disableAssetTracking(asset_index:uint):void {
       verifyAssetIndex(asset_index)
       _assets[asset_index].active = false
     }
@@ -106,14 +109,14 @@ package com.soren.exib.core {
     /**
     * Enable tracking a particular asset by supplying its index.
     **/
-    public static function enableAssetTracking(asset:String):void {
+    public function enableAssetTracking(asset_index:uint):void {
       verifyAssetIndex(asset_index)
       _assets[asset_index].active = true
     }
     
     /**
     **/
-    public static function registerDispatcher(asset_index:uint, dispatcher:IEventDispatcher):void {
+    public function registerDispatcher(asset_index:uint, dispatcher:IEventDispatcher):void {
       verifyAssetIndex(asset_index)
       
       var progress_handler:Function
@@ -154,7 +157,7 @@ package com.soren.exib.core {
       // Duplicate code. DRYing this up introduces redundancy in itself, a little lazy
       var progress_handler:Function
       var complete_handler:Function
-      var dispatch_code:uint
+      var dispatch_code:String
       
       switch (asset_index) {
         case AUDIO:
@@ -202,15 +205,17 @@ package com.soren.exib.core {
     * @private
     **/
     private function progressHandler(asset_index:uint, event:ProgressEvent):void {
+      Log.getLog().debug('Asset acitve: ' + _assets[asset_index].active)
       if (_assets[asset_index].active == false) return
       
       if (isInitialEvent(asset_index, event.target)) {
+        Log.getLog().debug('Initial Event tracked for: ' + event.target)
         _assets[asset_index].pool[event.target] = true // Tracked, toggle the boolean
         _assets[asset_index].bytes_total += event.bytesTotal
         
         calculateGlobalBytesTotal()
       }
-      
+      Log.getLog().debug('Progress Event tracked for: ' + event.target)
       _assets[asset_index].bytes_loaded += event.bytesLoaded
       calculateGlobalBytesLoaded()
     }
@@ -224,7 +229,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function calculateGlobalBytesLoaded():void {
-      for each (var asset_info:Object in assets) {
+      for each (var asset_info:AssetInfo in _assets) {
         if (asset_info.active) _bytes_loaded += asset_info.bytes_loaded
       }
     }
@@ -234,7 +239,7 @@ package com.soren.exib.core {
     **/
     private function calculateGlobalBytesTotal():void {
       _bytes_total = 0
-      for each (var asset_info:Object in assets) {
+      for each (var asset_info:AssetInfo in _assets) {
         if (asset_info.active) _bytes_total += asset_info.bytes_total
       }
     }
@@ -242,7 +247,7 @@ package com.soren.exib.core {
     /**
     * @private
     **/
-    private function isInitialEvent(asset_index:uint, dispatcher:IEventDispatcher):Boolean {
+    private function isInitialEvent(asset_index:uint, dispatcher:Object):Boolean {
       var initial_event:Boolean
       var pool:Dictionary = _assets[asset_index].pool
       
@@ -263,7 +268,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function verifyDispatcher(dispatcher:IEventDispatcher):void {
-      if (!(dispatcher is URLLoader) || !(dispatcher is LoaderInfo)) {
+      if (!(dispatcher is URLLoader) || !(dispatcher is LoaderInfo) || !(dispatcher is Sound)) {
         throw new Error('Unusable dispatcher: ' + dispatcher + ', URLLoader or LoaderInfo required')
       }
     }

@@ -86,6 +86,7 @@ package com.soren.debug {
     **/
     public function error(message:String):void {
       write(ERROR, message)
+      throw new Error(message)
     }
     
     /**
@@ -98,7 +99,7 @@ package com.soren.debug {
     /**
     * Clears the currently displayed trace statements.
     **/
-    public static function clear():void {
+    public function clear():void {
       _connection.send(_satelite, 'clear')
     }
     

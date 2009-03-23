@@ -4,10 +4,13 @@ package {
 	import asunit.framework.TestSuite
 	import unit.*
 	import generator.*
+	import com.soren.debug.Log
 	
   public class AllTests extends TestSuite {
     
     public function AllTests () {
+      Log.getLog().clear()
+      
       super()
       
       var helper_tests:Array    = [ConditionalTest, ConditionalSetTest, ActionTest, ActionSetTest]
@@ -16,16 +19,13 @@ package {
       var service_tests:Array   = [CronTest, DaemonTest, HotkeyTest, SoundTest]
       var util_tests:Array      = [TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
       var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
+      var core_tests:Array      = [PreloaderTest]
 
-      iterateTestArray(helper_tests)
-      iterateTestArray(manager_tests)
-      iterateTestArray(model_tests)
-      iterateTestArray(service_tests)
-      iterateTestArray(util_tests)
-      iterateTestArray(view_tests)
+      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests, core_tests]) {
+        iterateTestArray(test_array)
+      }
       
       // Generator Tests last
-      
       var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
       
       iterateTestArray(generator_tests)

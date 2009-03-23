@@ -14,7 +14,10 @@ package com.soren.exib.service {
   import flash.events.Event
   import flash.media.Sound
   import flash.media.SoundChannel
+  import flash.net.URLLoader
   import flash.net.URLRequest
+  import com.soren.debug.Log
+  import com.soren.exib.core.Preloader
   import com.soren.exib.helper.IActionable
   
   public class Sound implements IActionable {
@@ -29,9 +32,15 @@ package com.soren.exib.service {
     **/
     public function Sound(url:String) {
       var request:URLRequest = new URLRequest(url)
+
+      try {
+        _sound = new flash.media.Sound(request)
+      } catch (error:Error) {
+        Log.getLog().error('Unable to load requested sound: ' + url)
+      }
       
-      _sound = new flash.media.Sound(request)
       _sound.addEventListener(Event.COMPLETE, loadComplete)
+      Preloader.getPreloader().registerDispatcher(Preloader.AUDIO, _sound)
     }
     
     /**
