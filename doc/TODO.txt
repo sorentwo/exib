@@ -1,5 +1,13 @@
 == TODO
 
+* <init></init>
+  - Will run a set of startup items
+* Pre-loader
+  - Pretty difficult to do, possible with a singleton to count accumulated bytes
+    and generate a single bar. Not sure how well it would work with the multi
+    packaging ideas.
+  - Progress setup in Exib subclass
+* Multiple 'group/class'es per node
 * Debugger / Logger
   - Debug satelite and runlevel triggered by rake exib:compile:debug
   - Create debugging satelite
@@ -29,10 +37,6 @@
     assets/fonts/fonts.swf
   - http://etcs.ru/pre/FontLoaderDemo/srcview/
   - This removes the last reason to develop within the Flash IDE
-* Pre-loader
-  - Pretty difficult to do, possible with a singleton to count accumulated bytes
-    and generate a single bar. Not sure how well it would work with the multi
-    packaging ideas.
 * SWF Meta Loading
   - One that works maybe...
   - [SWF(width="650", height="500", frameRate="31", backgroundColor="#FFFFFF")]
