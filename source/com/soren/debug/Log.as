@@ -22,18 +22,13 @@ package com.soren.debug {
     public static var LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
 
     private static var _instance:Logger = new Log()
-    private static var _level:uint      = DEBUG
     private static var _connection:LocalConnection = new LocalConnection()
+    
+    private static var _level:uint      = DEBUG
+    private static var _satelite:String = 'satelite'
     
     public function Log() {
       if (_instance) throw new Error("Can only be accessed through Logger.getLogger()")
-    }
-    
-    /**
-    * Returns *the* Logger instance.
-    **/
-    public static function getLogger():Logger {
-      return _instance
     }
     
     /**
@@ -50,22 +45,61 @@ package com.soren.debug {
       _level = level
     }
     
+    /**
+    **/
+    public static function get satelite():String {
+      return _satelite
+    }
+    
+    /**
+    **/
+    public static function set satelite(satelite:String):void {
+      _satelite = satelite
+    }
+    
     // ---
     
+    /**
+    * Returns *the* Logger instance.
+    **/
+    public static function getLogger():Logger {
+      return _instance
+    }
+    
+    /**
+    * Write out a trace statement at the debug level. This is the default trace
+    * level.
+    **/
     public function debug(message:String):void {
       write(DEBUG, message)
     }
     
+    /**
+    * Write out a trace statement at the warning level.
+    **/
     public function warn(message:String):void {
       write(WARN, message)      
     }
     
+    /**
+    * Write out a trace statement at the error level.
+    **/
     public function error(message:String):void {
       write(ERROR, message)
     }
     
+    /**
+    * Write out a trace statement at the fatal level.
+    **/
     public function fatal(message:String):void {
       write(FATAL, message)
+    }
+    
+    /**
+    * Clears the currently displayed trace statements.
+    **/
+    public static function clear():void {
+      _connection.send(_satelite, 'clear')
     }
     
     // ---
@@ -74,13 +108,14 @@ package com.soren.debug {
     * @private
     * Writes out a formatted trace statement. If a local connection is present it
     * will write to the satelite as well.
-    * 
     **/
     private function write(level:uint, message:String):void {
       if (level >= _level) {
         var output:String = LEVELS[level] + ': ' + message + '\n'
         
-        _connection.send('_logger', 'write', output)
+        _connection.send(_satelite, 'write', output)
+        
+        // Fallback to Flash's trace
         trace(output)
       }
     }
