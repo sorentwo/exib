@@ -60,7 +60,7 @@ package unit {
     }
     
     // Because of the delayed nature of the Cron class it isn't possible to do a
-    // straight forward test, we're forcing it by using the forceComplete method.
+    // straight forward test, we're forcing it by using the complete method.
     public function testForceComplete():void {      
       var act_a:Action = new Action(_model_a, 'change', 1)
       var act_b:Action = new Action(_model_a, 'set',    0)
@@ -73,7 +73,7 @@ package unit {
       act_a.act()
       assertEquals(1, _model_a.value)
       
-      cron.forceComplete()
+      cron.complete()
       assertEquals(0, _model_a.value)
     }
     
@@ -90,7 +90,7 @@ package unit {
       var initial_a_value:* = _model_a.value
       var initial_b_value:* = _model_b.value
       
-      cron.forceComplete()
+      cron.complete()
       assertFalse(initial_a_value == _model_a.value)
       assertFalse(initial_b_value == _model_b.value)
     }
