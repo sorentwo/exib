@@ -15,49 +15,22 @@ package com.soren.debug {
 
   public class Log {
 
-    public static var DEBUG:uint = 0
-    public static var WARN:uint  = 1
-    public static var ERROR:uint = 2
-    public static var FATAL:uint = 3
-    public static var LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
+    public static const DEBUG:uint = 0
+    public static const WARN:uint  = 1
+    public static const ERROR:uint = 2
+    public static const FATAL:uint = 3
+    public static const LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
 
     private static var _instance:Log = new Log()
     private static var _connection:LocalConnection = new LocalConnection()
     
     private static var _level:uint      = DEBUG
     private static var _satelite:String = 'satelite'
+    private static var _throw_on_error:Boolean = false
     
     public function Log() {
       if (_instance) throw new Error("Can only be accessed through Logger.getLog()")
     }
-    
-    /**
-    * Returns the warning level that will be used.
-    **/
-    public static function get level():uint {
-      return _level
-    }
-    
-    /**
-    * Set the warning level to one of the valid levels, 0-3, DEBUG through FATAL.
-    **/
-    public static function set level(level:uint):void {
-      _level = level
-    }
-    
-    /**
-    **/
-    public static function get satelite():String {
-      return _satelite
-    }
-    
-    /**
-    **/
-    public static function set satelite(satelite:String):void {
-      _satelite = satelite
-    }
-    
-    // ---
     
     /**
     * Returns *the* Logger instance.
@@ -65,6 +38,51 @@ package com.soren.debug {
     public static function getLog():Log {
       return _instance
     }
+    
+    /**
+    * Returns the warning level that will be used.
+    **/
+    public function get level():uint {
+      return _level
+    }
+    
+    /**
+    * Set the warning level to one of the valid levels, 0-3, DEBUG through FATAL.
+    **/
+    public function set level(level:uint):void {
+      _level = level
+    }
+    
+    /**
+    * Retrieves the name of the logger satelite, the other half of the local
+    * connection to which messages are sent.
+    **/
+    public function get satelite():String {
+      return _satelite
+    }
+    
+    /**
+    * Change the name of the logger satelite.
+    **/
+    public function set satelite(satelite:String):void {
+      _satelite = satelite
+    }
+    
+    /**
+    * Set whether logging an error will also throw an exception.
+    **/
+    public function get throwOnError():Boolean {
+      return _throw_on_error
+    }
+    
+    /**
+    * 
+    **/
+    public function set throwOnError(throw_on_error:Boolean):void {
+      _throw_on_error = throw_on_error
+    }
+    
+    // ---
     
     /**
     * Write out a trace statement at the debug level. This is the default trace
@@ -86,7 +104,7 @@ package com.soren.debug {
     **/
     public function error(message:String):void {
       write(ERROR, message)
-      throw new Error(message)
+      if (_throw_on_error) throw new Error('ERROR: ' + message)
     }
     
     /**
@@ -94,6 +112,7 @@ package com.soren.debug {
     **/
     public function fatal(message:String):void {
       write(FATAL, message)
+      throw new Error('FATAL: ' + message)
     }
     
     /**
@@ -114,7 +133,7 @@ package com.soren.debug {
       if (level >= _level) {
         var output:String = LEVELS[level] + ': ' + message + '\n'
 
-        _connection.send('satelite', 'write', output)
+        _connection.send(_satelite, 'write', output)
         
         // Fallback to Flash's trace
         trace(output)
