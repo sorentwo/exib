@@ -28,7 +28,7 @@ package com.soren.debug {
     private static var _satelite:String = 'satelite'
     
     public function Log() {
-      if (_instance) throw new Error("Can only be accessed through Logger.getLogger()")
+      if (_instance) throw new Error("Can only be accessed through Logger.getLog()")
     }
     
     /**
