@@ -12,6 +12,7 @@
 
 package com.soren.exib.model {
 
+  import com.soren.debug.Log
   import com.soren.util.ExtendedArray
 
   public class StateModel extends Model {
@@ -31,6 +32,8 @@ package com.soren.exib.model {
       for each (var state:String in ea) {
         this.add(state)
       }
+      
+      Log.getLog().debug('args')
     }
 
     /**

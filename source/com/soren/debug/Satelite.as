@@ -1,7 +1,8 @@
 /**
 * Satelite
 *
-* Class Description.
+* Other half of the logger local connection. When open this will display any
+* statements traced by Log.
 *
 * Copyright (c) 2009 Parker Selbert
 *
