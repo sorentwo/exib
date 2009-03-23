@@ -33,7 +33,7 @@ package com.soren.exib.model {
         this.add(state)
       }
       
-      Log.getLog().debug('args')
+      Log.getLog().debug(args.toString())
     }
 
     /**

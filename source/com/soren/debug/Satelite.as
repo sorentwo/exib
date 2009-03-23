@@ -19,7 +19,7 @@ package com.soren.debug {
   
   public class Satelite extends Sprite implements ISatelite {
     
-    private var _output:String = 'Wild and crazy stuff'
+    private var _output:String = 'Satelite Launched:\n\n'
     private var _text_field:TextField
     private var _connection:LocalConnection
     
@@ -29,7 +29,14 @@ package com.soren.debug {
     public function Satelite() {
       _connection = new LocalConnection()
       _connection.allowDomain('*')
-      _connection.connect('satelite')
+      _connection.client = this
+
+      try {
+        _connection.connect('satelite')
+      } catch (error:ArgumentError) {
+        throw new Error("Can't connect...the connection name is already being used by another SWF")
+      }
+      
       
       _text_field = new TextField()
       
@@ -56,7 +63,7 @@ package com.soren.debug {
     **/
     public function write(output:String):void {
       _output += output
-      
+
       update()
     }
     

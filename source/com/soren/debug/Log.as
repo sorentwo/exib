@@ -21,7 +21,7 @@ package com.soren.debug {
     public static var FATAL:uint = 3
     public static var LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
 
-    private static var _instance:Logger = new Log()
+    private static var _instance:Log = new Log()
     private static var _connection:LocalConnection = new LocalConnection()
     
     private static var _level:uint      = DEBUG
@@ -62,7 +62,7 @@ package com.soren.debug {
     /**
     * Returns *the* Logger instance.
     **/
-    public static function getLogger():Logger {
+    public static function getLog():Log {
       return _instance
     }
     
@@ -112,8 +112,8 @@ package com.soren.debug {
     private function write(level:uint, message:String):void {
       if (level >= _level) {
         var output:String = LEVELS[level] + ': ' + message + '\n'
-        
-        _connection.send(_satelite, 'write', output)
+
+        _connection.send('satelite', 'write', output)
         
         // Fallback to Flash's trace
         trace(output)
