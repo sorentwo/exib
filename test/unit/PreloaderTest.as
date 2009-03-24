@@ -1,6 +1,7 @@
 package unit {
 
   import asunit.framework.TestCase
+  import flash.events.Event
   import com.soren.debug.Log
   import com.soren.exib.core.Preloader
   
@@ -52,6 +53,28 @@ package unit {
       // It is assumed this test is running last, meaning audio, graphic, and
       // video assets have loaded.
       
+      assertTrue(_preloader.assetBytesTotal(Preloader.AUDIO) > 0)
+      assertTrue(_preloader.assetBytesTotal(Preloader.GRAPHIC) > 0)
+      //assertTrue(_preloader.assetBytesTotal(Preloader.VIDEO) > 0)
+      
+      assertTrue(_preloader.assetBytesLoaded(Preloader.AUDIO) > 0)
+      assertTrue(_preloader.assetBytesLoaded(Preloader.GRAPHIC) > 0)
+      //assertTrue(_preloader.assetBytesTotal(Preloader.VIDEO) > 0)
+      
+      assertTrue(_preloader.bytesTotal > 0)
+      assertTrue(_preloader.bytesLoaded > 0)
+    }
+    
+    public function testEventListeners():void {
+      _preloader.addEventListener(Preloader.AUDIO_COMPLETE, eventListener)
+      _preloader.addEventListener(Preloader.GRAPHIC_COMPLETE, eventListener)
+      _preloader.addEventListener(Preloader.COMPLETE, eventListener)
+    }
+    
+    // ---
+    
+    private function eventListener(event:Event):void {
+      Log.getLog().debug('Listener triggered: ' + event)
     }
   }
 }

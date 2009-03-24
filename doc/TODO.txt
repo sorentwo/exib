@@ -2,11 +2,6 @@
 
 * <init></init>
   - Will run a set of startup items
-* Pre-loader
-  - Pretty difficult to do, possible with a singleton to count accumulated bytes
-    and generate a single bar. Not sure how well it would work with the multi
-    packaging ideas.
-  - Progress setup in Exib subclass
 * Multiple 'group/class'es per node    
 * Embedding
   - XML at a minimum

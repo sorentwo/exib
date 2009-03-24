@@ -48,5 +48,12 @@ package com.soren.exib.core {
     public function get pool():Dictionary {
       return _pool
     }
+    
+    // ---
+
+    public function calculateBytesLoaded():void {
+      _bytes_loaded = 0
+      for (var key:Object in _pool) { _bytes_loaded += uint(_pool[key]) }
+    }
   }
 }

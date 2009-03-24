@@ -89,30 +89,30 @@ package com.soren.debug {
     * Write out a trace statement at the debug level. This is the default trace
     * level.
     **/
-    public function debug(message:String):void {
-      write(DEBUG, message)
+    public function debug(message:*):void {
+      write(DEBUG, message.toString())
     }
     
     /**
     * Write out a trace statement at the warning level.
     **/
-    public function warn(message:String):void {
-      write(WARN, message)      
+    public function warn(message:*):void {
+      write(WARN, message.toString())
     }
     
     /**
     * Write out a trace statement at the error level.
     **/
-    public function error(message:String):void {
-      write(ERROR, message)
+    public function error(message:*):void {
+      write(ERROR, message.toString())
       if (_throw_on_error) throw new Error('ERROR: ' + message)
     }
     
     /**
     * Write out a trace statement at the fatal level.
     **/
-    public function fatal(message:String):void {
-      write(FATAL, message)
+    public function fatal(message:*):void {
+      write(FATAL, message.toString())
       throw new Error('FATAL: ' + message)
     }
     

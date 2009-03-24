@@ -55,17 +55,8 @@ package com.soren.exib.core {
     
     // ---
     
-    public function get bytesLoaded():uint        { return _bytes_loaded }
-    public function get audioBytesLoaded():uint   { return _assets[AUDIO].bytes_loaded   }
-    public function get configBytesLoaded():uint  { return _assets[CONFIG].bytes_loaded  }
-    public function get graphicBytesLoaded():uint { return _assets[GRAPHIC].bytes_loaded }
-    public function get videoBytesLoaded():uint   { return _assets[VIDEO].bytes_loaded   }
-
-    public function get bytesTotal():uint        { return _bytes_total }    
-    public function get audioBytesTotal():uint   { return _assets[AUDIO].bytes_total   }
-    public function get configBytesTotal():uint  { return _assets[CONFIG].bytes_total  }
-    public function get graphicBytesTotal():uint { return _assets[GRAPHIC].bytes_total }
-    public function get videoBytesTotal():uint   { return _assets[VIDEO].bytes_total   }
+    public function get bytesLoaded():uint { return _bytes_loaded }
+    public function get bytesTotal():uint  { return _bytes_total  }
     
     // ---
     
@@ -148,8 +139,8 @@ package com.soren.exib.core {
       dispatcher.addEventListener(ProgressEvent.PROGRESS, progress_handler)
       dispatcher.addEventListener(Event.COMPLETE, complete_handler)
       
-      // Here 'false' indicates that that dispatcher's target hasn't been totaled
-      _assets[asset_index].pool[dispatcher] = false
+      // Here 0 indicates that that dispatcher's target hasn't been totaled
+      _assets[asset_index].pool[dispatcher] = 0
     }
     
     // ---
@@ -190,12 +181,12 @@ package com.soren.exib.core {
       event.target.removeEventListener(Event.COMPLETE, complete_handler)
       
       // Asset type specific
-      if (_assets[asset_index].bytes_loaded == _assets[asset_index].bytes_total) {
+      if (_assets[asset_index].bytes_loaded >= _assets[asset_index].bytes_total) {
         dispatchEvent(new Event(dispatch_code))
       }
-      
+
       // Global
-      if (_bytes_loaded == _bytes_total) {
+      if (_bytes_loaded >= _bytes_total) {
         dispatchEvent(new Event(Preloader.COMPLETE))
       }
     }
@@ -212,25 +203,26 @@ package com.soren.exib.core {
       if (_assets[asset_index].active == false) return
       
       if (isInitialEvent(asset_index, event.target)) {
-        _assets[asset_index].pool[event.target] = true // Tracked, toggle the boolean
-        _assets[asset_index].bytes_total += event.bytesTotal
-        
+        _assets[asset_index].bytes_total += event.bytesTotal * .5
         calculateGlobalBytesTotal()
       }
       
-      _assets[asset_index].bytes_loaded += event.bytesLoaded
+      _assets[asset_index].pool[event.target] = event.bytesLoaded
+      _assets[asset_index].calculateBytesLoaded()
+      
       calculateGlobalBytesLoaded()
     }
     
-    private function audioProgressHandler(event:ProgressEvent):void   { progressHandler(AUDIO, event) }
-    private function configProgressHandler(event:ProgressEvent):void  { progressHandler(CONFIG, event) }
+    private function audioProgressHandler(event:ProgressEvent):void   { progressHandler(AUDIO, event)   }
+    private function configProgressHandler(event:ProgressEvent):void  { progressHandler(CONFIG, event)  }
     private function graphicProgressHandler(event:ProgressEvent):void { progressHandler(GRAPHIC, event) }
-    private function videoProgressHandler(event:ProgressEvent):void   { progressHandler(VIDEO, event) }
+    private function videoProgressHandler(event:ProgressEvent):void   { progressHandler(VIDEO, event)   }
     
     /**
     * @private
     **/
     private function calculateGlobalBytesLoaded():void {
+      _bytes_loaded = 0
       for each (var asset_info:AssetInfo in _assets) {
         if (asset_info.active) _bytes_loaded += asset_info.bytes_loaded
       }
@@ -250,13 +242,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function isInitialEvent(asset_index:uint, dispatcher:Object):Boolean {
-      var initial_event:Boolean
-      var pool:Dictionary = _assets[asset_index].pool
-      
-      if (pool[dispatcher] == false) { initial_event = true }
-      else                           { initial_event = false  }
-      
-      return initial_event
+      return (_assets[asset_index].pool[dispatcher] == 0) ? true : false
     }
     
     /**

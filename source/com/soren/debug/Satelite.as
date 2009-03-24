@@ -47,7 +47,6 @@ package com.soren.debug {
       
       _text_field = new TextField()
       
-      _text_field.autoSize        = TextFieldAutoSize.LEFT
       _text_field.background      = true
       _text_field.backgroundColor = _background_color
       _text_field.antiAliasType   = AntiAliasType.ADVANCED
