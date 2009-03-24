@@ -15,7 +15,7 @@ package com.soren.exib.view {
   import flash.net.NetConnection
   import flash.net.NetStream
   import com.soren.debug.Log
-  import com.soren.exib.core.Preloader
+  import com.soren.exib.core.Aggregator
   import com.soren.exib.helper.IActionable
 
   public class VideoNode extends Node implements IActionable {
@@ -97,7 +97,7 @@ package com.soren.exib.view {
       
       // The video is tracked as a 'preloaded' asset. Note that the buffer is set
       // to 60 seconds, far longer than we expect any video in EXIB to be.
-      Preloader.getPreloader().registerDispatcher(Preloader.VIDEO, _stream)
+      Aggregator.getAggregator().registerDispatcher(Aggregator.VIDEO, _stream)
     
       // Handle onMetaData errors silently, we have no use for them
       var net_client:Object = new Object()

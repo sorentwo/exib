@@ -1,5 +1,5 @@
 /**
-* Preloader
+* Aggregator
 *
 * Singleton for gathering and reporting the load status of all, or any combination,
 * of assets being loaded by EXIB for any given application.
@@ -22,7 +22,7 @@ package com.soren.exib.core {
   import flash.net.URLLoader
   import flash.utils.Dictionary
   
-  public class Preloader extends EventDispatcher {
+  public class Aggregator extends EventDispatcher {
     
     public static const AUDIO:uint    = 0
     public static const CONFIG:uint   = 1
@@ -35,7 +35,7 @@ package com.soren.exib.core {
     public static const VIDEO_COMPLETE:String   = 'video_complete'
     public static const COMPLETE:String         = 'complete'
     
-    private static var _instance:Preloader = new Preloader()
+    private static var _instance:Aggregator = new Aggregator()
     private static var _bytes_loaded:uint  = 0
     private static var _bytes_total:uint   = 0
     
@@ -45,11 +45,11 @@ package com.soren.exib.core {
     /**
     * Singleton, has no constructor
     **/
-    public function Preloader() {
-      if (_instance) throw new Error('Can only be accessed through Preloader.getPreloader()')
+    public function Aggregator() {
+      if (_instance) throw new Error('Can only be accessed through Aggregator.getAggregator()')
     }
     
-    public static function getPreloader():Preloader {
+    public static function getAggregator():Aggregator {
       return _instance
     }
     
@@ -158,22 +158,22 @@ package com.soren.exib.core {
         case AUDIO:
           progress_handler = audioProgressHandler
           complete_handler = audioCompleteHandler
-          dispatch_code    = Preloader.AUDIO_COMPLETE
+          dispatch_code    = Aggregator.AUDIO_COMPLETE
           break
         case CONFIG:
           progress_handler = configProgressHandler
           complete_handler = configCompleteHandler
-          dispatch_code    = Preloader.CONFIG_COMPLETE
+          dispatch_code    = Aggregator.CONFIG_COMPLETE
           break
         case GRAPHIC:
           progress_handler = graphicProgressHandler
           complete_handler = graphicCompleteHandler
-          dispatch_code    = Preloader.GRAPHIC_COMPLETE
+          dispatch_code    = Aggregator.GRAPHIC_COMPLETE
           break
         case VIDEO:
           progress_handler = videoProgressHandler
           complete_handler = videoCompleteHandler
-          dispatch_code    = Preloader.VIDEO_COMPLETE
+          dispatch_code    = Aggregator.VIDEO_COMPLETE
           break
       }
       
@@ -187,7 +187,7 @@ package com.soren.exib.core {
 
       // Global
       if (_bytes_loaded >= _bytes_total) {
-        dispatchEvent(new Event(Preloader.COMPLETE))
+        dispatchEvent(new Event(Aggregator.COMPLETE))
       }
     }
     

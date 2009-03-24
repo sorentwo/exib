@@ -1,7 +1,7 @@
 /**
 * AssetInfo
 *
-* Ad Hoc container class to assist Preloader
+* Ad Hoc container class to assist Aggregator
 *
 * Copyright (c) 2009 Parker Selbert
 *
