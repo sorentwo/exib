@@ -1,5 +1,14 @@
 == TODO
 
+* Aggregate -> Preloader
+  - Tasks performed by Preloader are:
+    - Display a customizable progress indicator
+    - Provide a gateway / transition as the simulation loads. The gateway is to
+      be based on particular assets, or a portion of them, being loaded.
+    - Is this all part of Exib by default? The *very* important bits here are two
+      fold — allow for a customizable loading page (what assets are loading,
+      different progress bars, text...all things that can be acheived with either
+      a separate class or a set of overridable options within the main EXIB class.)
 * <init></init>
   - Will run a set of startup items
 * Multiple 'group/class'es per node    

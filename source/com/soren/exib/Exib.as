@@ -35,13 +35,11 @@ package com.soren.exib {
     
     private const MANAGER_LIST:Array = ['actionable', 'format', 'video']
     
-    //[Embed(source="assets/config/config.exml", mimeType="text/xml")]
-    //protected const EmbeddedXML:Class
-    
     private var _config:XML
     private var _urlLoader:URLLoader
     
     private var _options:Object        = new Object()
+    private var _preloader:Preloader   = new Preloader()
     private var _supervisor:Supervisor = new Supervisor(MANAGER_LIST)
     private var _generator:Generator   = new Generator(_supervisor)
     private var _container:Sprite
@@ -50,8 +48,6 @@ package com.soren.exib {
     * Constructor
     **/
     public function Exib() {
-      //var x:XML = XML(new EmbeddedXML())
-      //trace(x.toXMLString())
       XMLLoader()
     }
     
