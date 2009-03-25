@@ -15,7 +15,7 @@ package com.soren.exib.view {
   import flash.display.Sprite
   import flash.events.*
   import com.soren.exib.helper.IActionable
-  import com.soren.exib.manager.Manager
+  import com.soren.exib.manager.SimpleManager
   import com.soren.exib.model.Model  
   import com.soren.exib.model.HistoryModel
 
@@ -24,7 +24,7 @@ package com.soren.exib.view {
     private static const EVENT_TYPE:String = Model.CHANGED
     
     private var _screen_container:Sprite
-    private var _screen_manager:Manager
+    private var _screen_manager:SimpleManager
     private var _screen_model:HistoryModel
     
     /**
@@ -110,7 +110,7 @@ package com.soren.exib.view {
     **/
     private function instantiateHistoryAndManager(screen_history:uint):void {
       _screen_model     = new HistoryModel(screen_history)
-      _screen_manager   = new Manager()
+      _screen_manager   = new SimpleManager()
     }
     
     /**

@@ -16,7 +16,7 @@ package {
       super()
       
       var helper_tests:Array    = [ConditionalTest, ConditionalSetTest, ActionTest, ActionSetTest]
-      var manager_tests:Array   = [ManagerTest, SupervisorTest]
+      var manager_tests:Array   = [ManagerTest]
       var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
       var service_tests:Array   = [CronTest, DaemonTest, HotkeyTest, SoundTest]
       var util_tests:Array      = [TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]

@@ -5,7 +5,7 @@ package unit {
   
   public class ManagerTest extends TestCase {
     
-    private var _instance:Manager
+    private var _instance:Manager = Manager.getManager()
 
     public function ManagerTest(testMethod:String) {
       super(testMethod)
@@ -16,15 +16,13 @@ package unit {
     * Invoked by TestCase.runMethod function.
     **/
     protected override function setUp():void {
-      _instance = new Manager()
+      _instance.reset()
     }
 
     /**
     * Clean up after test, delete instance of class that we were testing.
     **/
-    protected override function tearDown():void {
-      _instance = null
-    }
+    protected override function tearDown():void { }
 
     // ---
     
@@ -121,7 +119,7 @@ package unit {
       _instance.add(new Object(), 'new_1_menu')
       _instance.add(new Object(), 'new_alpha_menu')
       
-      assertEquals(2, _instance.grep('btn.*').length)
+      assertEquals(3, _instance.grep('btn.*').length)
       assertEquals(2, _instance.grep('b.{2}_.*').length)
       assertEquals(5, _instance.grep('.*').length)
       assertEquals(2, _instance.grep('new_.*_menu').length)

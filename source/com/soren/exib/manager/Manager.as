@@ -10,15 +10,26 @@
 package com.soren.exib.manager {
 
   import flash.utils.getQualifiedClassName
+  import com.soren.debug.Log
 
-  public class Manager {
+  public class Manager implements IManager {
     
-    private var _managed:Object = {}
+    private static var _instance:Manager = new Manager()
+    private static var _managed:Object   = {}
     
     /**
     * Constructor
     **/
-    public function Manager() {}
+    public function Manager() {
+      if (_instance) throw new Error('Can only be accessed through Manager.getManager()')
+    }
+    
+    /**
+    * Returns the singleton instance.
+    **/
+    public static function getManager():Manager {
+      return _instance
+    }
     
     /**
     * Add a new object to be managaged. Objects are stored and retrieved by id
@@ -30,7 +41,7 @@ package com.soren.exib.manager {
     **/
     public function add(object:*, object_id:String):void {
       if (this.has(object_id)) {
-        throw new Error("Putting  " + object_id + " failed, id already exists.")
+        Log.getLog().error('Adding ' + object_id + ' failed, id already exists.')
       }
       
       _managed[object_id.toLowerCase()] = object
@@ -46,7 +57,7 @@ package com.soren.exib.manager {
       var found:Object = _managed[object_id.toLowerCase()]
       
       if (found) { return found }
-      else       { throw new Error("Object with id: " + object_id + " not found") }
+      else       { Log.getLog().error('Object with id: ' + object_id + ' not found') }
     }
     
     /**
@@ -98,7 +109,7 @@ package com.soren.exib.manager {
     * @param  object_id   The id used to register the object
     * @return Boolean     True if the object is managed, false otherwise
     **/
-    public function has(object_id:String):Boolean {      
+    public function has(object_id:String):Boolean {
       return _managed.hasOwnProperty(object_id.toLowerCase())
     }
     
@@ -122,5 +133,12 @@ package com.soren.exib.manager {
     public function remove(object_id:String):void {
       delete _managed[object_id.toLowerCase()]
     }
+	
+	  /**
+	  * Return the manager to an empty state.
+	  **/
+	  public function reset():void {
+	    _managed = {}
+	  }
 	}
 }

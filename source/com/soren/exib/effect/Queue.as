@@ -15,12 +15,12 @@ package com.soren.exib.effect {
   import com.soren.exib.core.Generator
   import com.soren.exib.helper.ActionSet
   import com.soren.exib.helper.IActionable
-  import com.soren.exib.manager.Supervisor
+  import com.soren.exib.manager.Manager
   import com.soren.exib.view.ScreenController
   
   public class Queue implements IActionable {
 
-    private var _supervisor:Supervisor
+    private var _manager:Manager = Manager.getManager()
     private var _screen_controller:ScreenController
     
     private var _before:Array  = []
@@ -34,9 +34,7 @@ package com.soren.exib.effect {
     /**
     * Constructor
     **/
-    public function Queue(supervisor:Supervisor = null) {
-      _supervisor = supervisor
-    }
+    public function Queue() {}
       
     /**
     **/
@@ -68,13 +66,13 @@ package com.soren.exib.effect {
     public function start(action_string:String = ''):void {
       if (_waiting.length > 0) return // We don't want to interrupt a queue already going
       
-      if (_supervisor && !_screen_controller) _screen_controller = _supervisor.get('actionable', 'screen')
+      if (_manager && !_screen_controller) _screen_controller = _manager.get('screen')
       
       clearCallback()
 
-      if (_supervisor && Boolean(action_string)) {
+      if (_manager && Boolean(action_string)) {
         var psuedo_xml:XML = <psuedo><action>{action_string}</action></psuedo>
-        setCallback(new Generator(_supervisor).genActionSet(psuedo_xml.action))
+        setCallback(new Generator().genActionSet(psuedo_xml.action))
       }
 
       _after_wait = (_before.length > 0) ? _before[_before.length - 1].options.duration * 1000 || 0 : 0
@@ -142,8 +140,6 @@ package com.soren.exib.effect {
         after_timer.start()
         
         _processing_before = false
-      } else {
-        
       }
     }
   }
