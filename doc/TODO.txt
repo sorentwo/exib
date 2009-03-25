@@ -1,5 +1,19 @@
 == TODO
 
+* Issues:
+  - Does *any* class actually use manager, other than Supervisor?
+  - Each class utilizing Supervisor must know the name of the Manager, this is
+    highly breakable and pretty much useless.
+  - The 'actionable' space is really the only usable space.
+* Solution:
+  - Consolodate the classes, Supervisor -> Manager || Manager -> Supervisor, or
+    implement a new class name?
+  - Allow the supervisor / manager class itself to break objects up by type for
+    faster retrieval.
+  - Update EXIB, Generator, etc.
+  
+---
+
 * Aggregate -> Preloader
   - Tasks performed by Preloader are:
     - Display a customizable progress indicator

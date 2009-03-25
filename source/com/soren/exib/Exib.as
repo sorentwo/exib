@@ -103,6 +103,7 @@ package com.soren.exib {
       if (_options['scale_stage'] == 'no')  stage.scaleMode    = StageScaleMode.NO_SCALE
       if (_options['fullscreen']  == 'yes') stage.displayState = StageDisplayState.FULL_SCREEN
     }
+    
     // ---
     
     private function populateOptions(options:XMLList):void {
