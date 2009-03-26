@@ -35,17 +35,6 @@ namespace :as do
   task :satelite => [ :open_logger_satelite ]
 end
 
-# Source Tasks -----------------------------------------------------------------
-
-REMOTE_LOGIN  = ENV['REMOTE_LOGIN']  || 'parkerselbert'
-REMOTE_SERVER = ENV['REMOTE_SERVER'] || 'greytwo.com'
-REMOTE_PATH   = ENV['REMOTE_PATH']   || '~/work/EXIB'
-
-namespace :source do
-  desc "Syncs the entire source base the an external server"
-  task :backup => [ :backup_source ]
-end
-
 # Make Directory Structure -----------------------------------------------------
 
 def make_dest_dirs(dirs, path = '.')
