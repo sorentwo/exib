@@ -1,9 +1,8 @@
 == TODO
 
 * Solution:
-  - Allow the supervisor / manager class itself to break objects up by type for
-    faster retrieval.
-  
+  - Breaking items up into separate pools is only helpful if a transparent system
+    is used.
 ---
 
 * Aggregate -> Preloader
