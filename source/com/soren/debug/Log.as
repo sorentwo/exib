@@ -134,7 +134,8 @@ package com.soren.debug {
       if (level >= _level) {
         var output:String = LEVELS[level] + ': ' + message + '\n'
 
-        _connection.send(_satelite, 'write', output)
+        try { _connection.send(_satelite, 'write', output) }
+        catch(e:Error) { }
         
         // Fallback to Flash's trace
         trace(output)

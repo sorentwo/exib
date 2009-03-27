@@ -13,9 +13,9 @@
 package com.soren.exib.view {
 
   import flash.events.Event
+  import com.soren.debug.Log
   import com.soren.exib.model.Model
   import com.soren.exib.model.ValueModel
-  import com.soren.math.AdvancedMath
   
   public class MeterNode extends Node {
     
@@ -32,9 +32,9 @@ package com.soren.exib.view {
     private var _mid_empties:Array = []
     private var _mid_fulls:Array   = []
     
-    private var _units:uint         = 0
-    private var _segments:uint      = 0
     private var _spacing:int        = 0
+    private var _full_segments:uint = 0
+    private var _segments:uint      = 0
     private var _total_assets:uint  = 0
     private var _assets_loaded:uint = 0
     
@@ -51,9 +51,11 @@ package com.soren.exib.view {
       _value_model = value_model
       _value_model.addEventListener(Model.CHANGED, changeListener)
       
-      this.segments = segments
-      this.spacing  = spacing
-      _total_assets = 4 // One for left empty, full, right empty, full
+      _segments = segments
+      _spacing  = spacing
+      
+      // One for left empty, full, right empty, full
+      _total_assets = 4
       
       _left_empty  = new GraphicNode(left_empty_url)
       _left_full   = new GraphicNode(left_full_url)
@@ -65,7 +67,8 @@ package com.soren.exib.view {
         _mid_empties.push(new GraphicNode(mid_empty_url))
         _mid_fulls.push(new GraphicNode(mid_full_url))
         
-        _total_assets += 2 // One for each mid, empty and full
+        // One for each mid, empty and full
+        _total_assets += 2
       }
 
       addRemoveListeners([_left_full, _left_empty, _right_empty, _right_full], true)
@@ -73,43 +76,146 @@ package com.soren.exib.view {
     }
     
     /**
+    * Set a new Value Model to track.
     **/
-    public function set segments(segments:uint):void {
-      if (segments < MIN_SEGMENTS) throw new Error("Meter Node: Minimum Segments = " + MIN_SEGMENTS)
-      _segments = segments
+    public function set model(model:ValueModel):void {
+      _value_model.removeEventListener(Model.CHANGED, changeListener)
+      _value_model = model
+      _value_model.addEventListener(Model.CHANGED, changeListener)
+      
+      // Die silently if assets aren't finished loading.
+      try {
+        update()
+      } catch (e:Error) {}
     }
     
     /**
+    * Returns the current Value Model.
+    **/
+    public function get model():ValueModel {
+      return _value_model
+    }
+    
+    /**
+    * Set the total number of segments that will be used. This number includes
+    * the left, right, and middle segments.
+    **/
+    public function set segments(segments:uint):void {
+      if (segments < MIN_SEGMENTS) Log.getLog().error('Meter Node: Minimum Segments = ' + MIN_SEGMENTS)
+      _segments = segments
+      
+      // Die silently, update isn't possible if assets aren't loaded.
+      try {
+        update()
+      } catch (e:Error) {}
+    }
+    
+    /**
+    * Returns the currently set number of segments.
     **/
     public function get segments():uint {
       return _segments
     }
     
     /**
+    * Set the spacing between segments. This can be a negative value to pack
+    * segments closer together.
     **/
     public function set spacing(spacing:int):void {
       _spacing = spacing
+      
+      // Die silently on a position / update if this is triggered before assets
+      // are loaded.
+      try {
+        positionAssets()
+        update()
+      } catch (e:Error) {}
     }
       
     /**
+    * Returns the current spacing.
     **/
     public function get spacing():int {
       return _spacing
     }
     
     /**
-    * Read Only. Set by the supplied ValueModel.
+    * Read Only. Returns the calculated number of full segments. For example,
+    * with a supplied value model with a maximum of 10, a current value of 5,
+    * and 6 segments total—the +full+ value returned would be 3.
     **/
-    public function get units():uint {
-      return _units
+    public function get full():uint {
+      return _full_segments
     }
     
     /**
+    * Read Only. Returns the number of segments that will appear empty. This is
+    * the number of total segments minus the number of full segments.
     **/
+    public function get empty():uint {
+      return _segments - _full_segments
+    }
+
     override public function update():void {
+      calculateFullSegments()
       showMeterLevel()
     }
-        
+      
+    // ---
+    
+    /**
+    * @private
+    * 
+    * Places all empty and full segments according to the number of segments and
+    * spacing. Assets remain hidden after placement.
+    **/
+    protected function positionAssets():void {
+      var current_x:uint = 0
+      
+      _left_empty.x = _left_full.x = current_x
+      
+      for (var i:int = 0; i < _mid_empties.length; i++) {
+        current_x = _left_empty.width
+                  + (i * _mid_empties[i].width)
+                  + ((i + 1) * _spacing)
+                  
+        _mid_empties[i].x = _mid_fulls[i].x = current_x
+      }
+      
+      current_x = _mid_empties[_mid_empties.length - 1].x
+                + _mid_empties[0].width
+                + _spacing
+      
+      _right_empty.x = _right_full.x = current_x
+    }
+    
+    /**
+    * @private
+    **/
+    protected function showMeterLevel():void {
+      while (this.numChildren > 0) { removeChildAt(0) }
+      
+      var to_add:Array = []
+      if (_full_segments == _segments) {
+        to_add = [_left_full, _right_full].concat(_mid_fulls)
+      } else if (_full_segments == 0) {
+        to_add = [_left_empty, _right_empty].concat(_mid_empties)
+      } else {
+        to_add = [_left_full, _right_empty]
+        to_add = to_add.concat(_mid_fulls.slice(0, _full_segments - 1))
+        to_add = to_add.concat(_mid_empties.slice(_full_segments - 1, _mid_empties.length))
+      }
+      
+      for each (var node:GraphicNode in to_add) { this.addChild(node) }
+    }
+  
+    /**
+    * @private
+    **/
+    protected function calculateFullSegments():void {
+      _full_segments = uint(_segments * ((_value_model.value - _value_model.min) / (_value_model.max - _value_model.min)))
+    }
+    
     // ---
     
     /**
@@ -132,57 +238,8 @@ package com.soren.exib.view {
         addRemoveListeners([_left_full, _left_empty, _right_empty, _right_full], false)
         addRemoveListeners(_mid_empties.concat(_mid_fulls), false)
         positionAssets()
+        update()
       }
-    }
-      
-    /**
-    * @private
-    **/
-    private function positionAssets():void {
-      var current_x:uint = 0
-      
-      _left_empty.x = _left_full.x = current_x
-      
-      for (var i:int = 0; i < _mid_empties.length; i++) {
-        current_x = _left_empty.width
-                  + (i * _mid_empties[i].width)
-                  + ((i + 1) * _spacing)
-                  
-        _mid_empties[i].x = _mid_fulls[i].x = current_x
-      }
-      
-      current_x = _mid_empties[_mid_empties.length - 1].x
-                + _mid_empties[0].width
-                + _spacing
-      
-      _right_empty.x = _right_full.x = current_x
-      
-      showMeterLevel()
-    }
-    
-    /**
-    * @private
-    **/
-    private function showMeterLevel():void {
-      while (this.numChildren > 0) { removeChildAt(0) }
-      
-      var raw_val:int = _value_model.value
-      var max_val:int = _value_model.max
-      
-      _units = uint(_segments * (raw_val / max_val))
-      
-      var to_add:Array = []
-      if (_units == _segments) {
-        to_add = [_left_full, _right_full].concat(_mid_fulls)
-      } else if (_units == 0) {
-        to_add = [_left_empty, _right_empty].concat(_mid_empties)
-      } else {
-        to_add = [_left_full, _right_empty]
-        to_add = to_add.concat(_mid_fulls.slice(0, _units - 1))
-        to_add = to_add.concat(_mid_empties.slice(_units - 1, _mid_empties.length))
-      }
-      
-      for each (var node:GraphicNode in to_add) { this.addChild(node) }
     }
   }
 }
