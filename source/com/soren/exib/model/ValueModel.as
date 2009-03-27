@@ -85,15 +85,14 @@ package com.soren.exib.model {
     **/
     public function set min(value:int):void {
       if (value > _max) {
-        throw new Error("Minimum value can not be greater than maximum value " +
-                        ": min -> " + value + ", max -> " + _max)
+        Log.getLog().error('Minimum value can not be greater than maximum value: ' + _max)
       }
     }
     
     /**
     * Accessor method for retrieving the minimum value of the model
     **/
-    public function get min():int { 
+    public function get min():int {
       return _min
     }
     
@@ -102,8 +101,7 @@ package com.soren.exib.model {
     **/
     public function set max(value:int):void {
       if (value < _min) {
-        throw new Error("Maximum value can not be less than minimum value " +
-                        ": min -> " + _min + ", max -> " + value)
+        Log.getLog().error('Maximum value can not be less than minimum value: ' + _min)
       }
     }
     
@@ -123,13 +121,29 @@ package com.soren.exib.model {
     }
     
     /**
+    * Alternate method to change the minimum value. Accessor methods can't be
+    * called by the EXIB runtime.
+    **/
+    public function min(value:int):void {
+      this.min = value
+    }
+    
+    /**
+    * Alternate method to change the maximum value. Accessor methods can't be
+    * called by the EXIB runtime.
+    **/
+    public function max(value:int):void {
+      this.max = value
+    }
+    
+    /**
     **/
     public function set(value:int):void {
       this.value = value
     }
      
     /**
-    * Reset the model back to the default value
+    * Reset the model back to the default value.
     **/
     public override function reset():void {
       this.value = _initial

@@ -15,7 +15,7 @@ package com.soren.exib.view {
   import flash.text.TextField
   import flash.text.TextFieldAutoSize
   import flash.text.TextFormat
-  import com.soren.exib.helper.AxibHelper
+  import com.soren.exib.helper.IEvaluatable
   import com.soren.exib.model.Model
   import com.soren.util.ExtendedArray
   import com.soren.util.StringUtil
@@ -64,7 +64,7 @@ package com.soren.exib.view {
       _arguments = arguments
       
       for each (var argument:* in _arguments) {
-        if (AxibHelper.returnsValue(argument)) {
+        if (argument is IEvaluatable) {
           argument.addEventListener(Model.CHANGED, changeListener)
         }
       }
@@ -155,8 +155,8 @@ package com.soren.exib.view {
     /**
     * @private
     **/
-    private function extractValues(evaluatable:*, index:int, array:Array):* {
-      return (AxibHelper.returnsValue(evaluatable)) ? evaluatable.value : evaluatable
+    private function extractValues(object:*, index:int, array:Array):* {
+      return (object is IEvaluatable) ? object.value : object
     }
   }
 }

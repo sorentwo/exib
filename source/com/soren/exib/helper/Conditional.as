@@ -51,11 +51,11 @@ package com.soren.exib.helper {
     * @return A boolean value indicating the evaluation
     **/
     public function evaluate():Boolean {
-      var op_one_value:* = (AxibHelper.returnsValue(_operand_one))
+      var op_one_value:* = (_operand_one is IEvaluatable)
                          ? _operand_one.value
                          : _operand_one
       
-      var op_two_value:* = (AxibHelper.returnsValue(_operand_two))
+      var op_two_value:* = (_operand_two is IEvaluatable)
                          ? _operand_two.value
                          : _operand_two
       
@@ -120,7 +120,7 @@ package com.soren.exib.helper {
       if (!(operand is Boolean) &&
           !(operand is Number)  &&
           !(operand is String)  &&
-          !(AxibHelper.returnsValue(operand))) {
+          !(operand is IEvaluatable)) {
         
         throw new Error(getQualifiedClassName(operand) + " is not a valid operand")
       }

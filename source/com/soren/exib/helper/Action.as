@@ -81,7 +81,7 @@ package com.soren.exib.helper {
     * (i.e. a actionable), the value that is returned.
     **/
     private function toValue(element:*, index:int, arr:Array):* {
-      return (AxibHelper.returnsValue(element)) ? element.value : element
+      return (element is IEvaluatable) ? element.value : element
     }
 	}
 }

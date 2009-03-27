@@ -1,5 +1,8 @@
 == TODO
 
+-> Evaluate the use of IActionable and IEvaluatable.
+-> Formula class
+
 * Aggregate -> Preloader
   - Tasks performed by Preloader are:
     - Display a customizable progress indicator
