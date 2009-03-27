@@ -13,7 +13,8 @@
 package com.soren.exib.view {
   
   import flash.display.Sprite
-  import flash.events.*
+  import flash.events.Event
+  import flash.events.EventDispatcher
   import com.soren.exib.helper.IActionable
   import com.soren.exib.manager.Manager
   import com.soren.exib.model.Model  
@@ -115,8 +116,6 @@ package com.soren.exib.view {
     
     /**
     * @private
-    * 
-    * F'in goofy
     **/
     private function dispatch():void {
       dispatchEvent(new Event(EVENT_TYPE))

@@ -34,9 +34,9 @@ package com.soren.exib.effect {
     private var _options:Object
     private var _screen_controller:ScreenController
     
-    private var _blur_tween:Tween   // Possibly redundant
-    private var _fade_tween:Tween   // Possibly redundant
-    private var _slide_tween:Tween  // Possibly redundant
+    private var _blur_tween:Tween
+    private var _fade_tween:Tween
+    private var _slide_tween:Tween
     
     private var _blurred:Array      = []
     private var _pulse_tweens:Array = []

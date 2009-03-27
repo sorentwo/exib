@@ -17,7 +17,7 @@ package com.soren.exib.model {
   
   import com.soren.exib.helper.IActionable
   
-  public class HistoryModel extends Model implements IActionable {
+  public class HistoryModel extends Model {
     
     private var _states:Array          = []
     private var _state_pointer:uint    = 0

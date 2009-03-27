@@ -76,6 +76,14 @@ package unit {
       assertEquals(1, _changed_by_event)
 	 	}
 	 	
+	 	public function testSendAccessorMethod():void {
+	 	 var vm:ValueModel = new ValueModel(0, 0, 10)
+	 	 
+	 	 assertEquals(0, vm['min'])
+	 	 vm['min'] = 5
+	 	 assertEquals(5, vm['min'])
+	 	}
+	 	
 	 	// ---
 	 	
 	 	private function changeListener(event:Event):void {

@@ -11,6 +11,8 @@
 
 package com.soren.exib.model {
 
+  import com.soren.debug.Log
+  
   public class ValueModel extends Model {
 
     private var _value:int
@@ -26,7 +28,6 @@ package com.soren.exib.model {
     * @param  max       Maximum value possible
     **/
     public function ValueModel(initial:int = 0, min:int = 0, max:int = 10) {
-      
       _min = min
       _max = max
       _value = _initial = initial
@@ -86,6 +87,8 @@ package com.soren.exib.model {
     public function set min(value:int):void {
       if (value > _max) {
         Log.getLog().error('Minimum value can not be greater than maximum value: ' + _max)
+      } else {
+        _min = value
       }
     }
     
@@ -102,6 +105,8 @@ package com.soren.exib.model {
     public function set max(value:int):void {
       if (value < _min) {
         Log.getLog().error('Maximum value can not be less than minimum value: ' + _min)
+      } else {
+        _max = value
       }
     }
     
@@ -119,23 +124,7 @@ package com.soren.exib.model {
     public function change(value:int):void {
       this.value += value
     }
-    
-    /**
-    * Alternate method to change the minimum value. Accessor methods can't be
-    * called by the EXIB runtime.
-    **/
-    public function min(value:int):void {
-      this.min = value
-    }
-    
-    /**
-    * Alternate method to change the maximum value. Accessor methods can't be
-    * called by the EXIB runtime.
-    **/
-    public function max(value:int):void {
-      this.max = value
-    }
-    
+      
     /**
     **/
     public function set(value:int):void {
