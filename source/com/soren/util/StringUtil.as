@@ -58,7 +58,21 @@ package com.soren.util {
     private static const CONVERT_MOD_HOURS:String        = 'O'
     private static const CONVERT_MOD_MINUTES:String      = 'I'
     private static const CONVERT_MOD_SECONDS:String      = 'E'
-
+    
+    // Sprintf regex and sections. Pushed outside of the sprintf method for speed.
+    private static const CONVERSION_RE:String = "(\\{(?P<conversion_token>[" + CONVERSION_TOKENS + "]{1})\\})?"
+    private static const DATE_RE:String       = "(\\{(?P<date_token>[" + DATE_TOKENS +"]{1})\\})?"
+    private static const TRANSPOSE_RE:String  = "(\\{(?P<tr_token>\\/.*\\/.*\\/)\\})?"
+    private static const PADDING_RE:String    = "(?P<padding>0[0-9])?"
+    private static const PRECISION_RE:String  = "(\\.(?P<precision>[0-9]))?"
+    private static const FORMAT_RE:String     = "(?P<format_token>[" + FORMAT_TOKENS + "])"
+    
+    private static const SPRINTF:RegExp = new RegExp('%' + PADDING_RE + CONVERSION_RE + DATE_RE +
+                                                     TRANSPOSE_RE + PRECISION_RE + FORMAT_RE, 'g')
+    
+    /**
+    * Singleton, non-used constructor.
+    **/
     public function StringUtil() {
       throw new Error('StringUtil class is a static container only')
     }
@@ -137,19 +151,9 @@ package com.soren.util {
     **/
     public static function sprintf(raw:String, ...args):String {
       args = new ExtendedArray(args).flatten().flatten()
-      
-      var conversion_re:String = "(\\{(?P<conversion_token>[" + CONVERSION_TOKENS + "]{1})\\})?"
-      var date_re:String       = "(\\{(?P<date_token>[" + DATE_TOKENS +"]{1})\\})?"
-      var transpose_re:String  = "(\\{(?P<tr_token>\\/.*\\/.*\\/)\\})?"
-      var padding_re:String    = "(?P<padding>0[0-9])?"
-      var precision_re:String  = "(\\.(?P<precision>[0-9]))?"
-      var format_re:String     = "(?P<format_token>[" + FORMAT_TOKENS + "])"
-
-      var sub:RegExp = new RegExp("%" + padding_re + conversion_re + date_re +
-                                  transpose_re + precision_re + format_re, "g")
 
       var matches:Array = []
-      var result:Object = sub.exec(raw)
+      var result:Object = SPRINTF.exec(raw)
 
       while (result) {
         var conversion_token:String = result.conversion_token.replace(/\{|\}/, '')
@@ -290,7 +294,7 @@ package com.soren.util {
         if (Boolean(padding)) match.replacement = Pad.zeroPad(match.replacement, padding)
         
         matches.push(match)
-        result = sub.exec(raw)
+        result = SPRINTF.exec(raw)
       }
 
       // Return either the initial unsubstituted string, or our replacement
