@@ -90,21 +90,21 @@ package com.soren.debug {
     * level.
     **/
     public function debug(message:*):void {
-      write(DEBUG, message.toString())
+      write(DEBUG, homogenize(message))
     }
     
     /**
     * Write out a trace statement at the warning level.
     **/
     public function warn(message:*):void {
-      write(WARN, message.toString())
+      write(WARN, homogenize(message))
     }
     
     /**
     * Write out a trace statement at the error level.
     **/
     public function error(message:*):void {
-      write(ERROR, message.toString())
+      write(ERROR, homogenize(message))
       if (_throw_on_error) throw new Error('ERROR: ' + message)
     }
     
@@ -112,7 +112,7 @@ package com.soren.debug {
     * Write out a trace statement at the fatal level.
     **/
     public function fatal(message:*):void {
-      write(FATAL, message.toString())
+      write(FATAL, homogenize(message))
       throw new Error('FATAL: ' + message)
     }
     
@@ -124,6 +124,19 @@ package com.soren.debug {
     }
     
     // ---
+    
+    /**
+    * @private
+    **/
+    private function homogenize(message:*):String {
+      var homogenized:String = ''
+      
+      if (message == null)           { homogenized = 'null'             }
+      else if (message == undefined) { homogenized = 'undefined'        }
+      else                           { homogenized = message.toString() }
+      
+      return homogenized
+    }
     
     /**
     * @private
