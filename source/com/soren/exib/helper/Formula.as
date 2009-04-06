@@ -91,7 +91,17 @@ package com.soren.exib.helper {
         pattern = new RegExp(operand_one + operators[op_index] + operand_two)
       }
       
-      return Number(formula)
+      var final_value:Number = Number(formula)
+
+      if (_options['abs']) final_value = Math.abs(final_value)
+      
+      switch (_options['round']) { // 0 is no round, it can be skipped
+        case 1: final_value = Math.round(final_value); break
+        case 2: final_value = int(final_value) + 1; break
+        case 3: final_value = int(final_value); break
+      }
+      
+      return final_value
     }
     
     // ---
@@ -105,7 +115,7 @@ package com.soren.exib.helper {
       _options['round'] = DEFAULT_ROUND
       _options['abs']   = DEFAULT_ABS
     }
-    
+        
     /**
     * @private
     * 

@@ -136,7 +136,7 @@ package unit {
       assertEquals(0, formula.yield())
       
       formula.store('0 + -1', { abs: true })
-      assertEquals(1, formula.yield)
+      assertEquals(1, formula.yield())
       
       // Compound options
       formula.store('0 + -.1', { round: Formula.CEIL, abs: true })
@@ -144,6 +144,18 @@ package unit {
       
       formula.store('2 + -.1', { round: Formula.FLOOR, abs: true })
       assertEquals(1, formula.yield())
+    }
+    
+    public function testVariableExtraction():void {
+      var formula:Formula = new Formula('0 + 0')
+      var val_a:ValueModel = new ValueModel(0, 1, 10)
+      var val_b:ValueModel = new ValueModel(0, 250, 500)
+      var val_c:ValueModel = new ValueModel(-100, 0, 100)
+      
+      
+      
+      formula.store('val_a + 1')
+      assertEquals(2, formula.yield())
     }
   }
 }
