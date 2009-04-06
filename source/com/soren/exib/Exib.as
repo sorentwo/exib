@@ -33,15 +33,13 @@ package com.soren.exib {
     private const SOUNDS_PATH:String   = '../assets/sounds/'
     private const VIDEO_PATH:String    = '../assets/videos/'
     
-    private const MANAGER_LIST:Array = ['actionable', 'format', 'video']
-    
     private var _config:XML
     private var _urlLoader:URLLoader
     
-    private var _options:Object        = new Object()
-    private var _preloader:Preloader   = new Preloader()
-    private var _supervisor:Supervisor = new Supervisor(MANAGER_LIST)
-    private var _generator:Generator   = new Generator(_supervisor)
+    private var _options:Object      = new Object()
+    private var _preloader:Preloader = new Preloader()
+    private var _generator:Generator = new Generator()
+    private var _manager:Manager     = Manager.getManager()
     private var _container:Sprite
     
     /**
@@ -86,15 +84,15 @@ package com.soren.exib {
       if (_config.view.screens != undefined) {
         _container = _generator.genContainer(_config.view.screens)
         var scr_con:ScreenController = new ScreenController(_container, _options['history'])
-        _supervisor.add('actionable', scr_con, 'screen')
-        _supervisor.add('actionable', new Effect(scr_con), 'effect')
+        _manager.add(scr_con, 'screen')
+        _manager.add(new Effect(scr_con), 'effect')
         
         addChild(_container)
       }
     }
     
     private function post():void {
-      _supervisor.get('actionable', 'screen').load(_config.view.screens.screen[0].@id)
+      _manager.get('screen').load(_config.view.screens.screen[0].@id)
       
       stage.frameRate    = _options['frame_rate']   || 30
       stage.stageHeight  = _options['stage_height'] || 350
@@ -103,6 +101,7 @@ package com.soren.exib {
       if (_options['scale_stage'] == 'no')  stage.scaleMode    = StageScaleMode.NO_SCALE
       if (_options['fullscreen']  == 'yes') stage.displayState = StageDisplayState.FULL_SCREEN
     }
+    
     // ---
     
     private function populateOptions(options:XMLList):void {
@@ -115,26 +114,26 @@ package com.soren.exib {
       for each (var xml_mod:XML in models.*) {
         switch (xml_mod.name().toString()) {
         case 'clock':
-          _supervisor.add('actionable', _generator.genClockModel(xml_mod), xml_mod.@id)
+          _manager.add(_generator.genClockModel(xml_mod), xml_mod.@id)
           break
         case 'history':                               
-          _supervisor.add('actionable', _generator.genHistoryModel(xml_mod), xml_mod.@id)
+          _manager.add(_generator.genHistoryModel(xml_mod), xml_mod.@id)
           break
         case 'preset':                                
-          _supervisor.add('actionable', _generator.genPresetModel(xml_mod), xml_mod.@id)
+          _manager.add(_generator.genPresetModel(xml_mod), xml_mod.@id)
           break
         case 'state':                                 
-          _supervisor.add('actionable', _generator.genStateModel(xml_mod), xml_mod.@id)
+          _manager.add(_generator.genStateModel(xml_mod), xml_mod.@id)
           break
         case 'value':
-          _supervisor.add('actionable', _generator.genValueModel(xml_mod), xml_mod.@id)
+          _manager.add(_generator.genValueModel(xml_mod), xml_mod.@id)
         }
       }
     }
     
     private function populateFormats(formats:XMLList):void {
       for each (var xml_format:XML in formats.*) {
-        _supervisor.add('format', _generator.genFormat(xml_format), xml_format.@id)
+        _manager.add(_generator.genFormat(xml_format), xml_format.@id)
       }
     }
     
@@ -148,19 +147,18 @@ package com.soren.exib {
       for each (var xml_media:XML in media.*) {
         switch (xml_media.name().toString()) {
           case 'sound':
-            _supervisor.add('actionable', _generator.genSound(xml_media, SOUNDS_PATH), xml_media.@id)
+            _manager.add(_generator.genSound(xml_media, SOUNDS_PATH), xml_media.@id)
             break
           case 'video':
             var video:VideoNode = _generator.genVideo(xml_media, VIDEO_PATH)
-            _supervisor.add('actionable', video, xml_media.@id)
-            _supervisor.add('video', video, xml_media.@id)
+            _manager.add(video, xml_media.@id)
         }
       }
     }
     
     private function populateQueues(queues:XMLList):void {
       for each (var xml_queue:XML in queues.*) {
-        _supervisor.add('actionable', _generator.genQueue(xml_queue), xml_queue.@id)
+        _manager.add(_generator.genQueue(xml_queue), xml_queue.@id)
       }
     }
     
@@ -168,10 +166,10 @@ package com.soren.exib {
       for each (var xml_ser:XML in services.*) {
         switch (xml_ser.name().toString()) {
           case 'cron':
-            _supervisor.add('actionable', _generator.genCron(xml_ser), xml_ser.@id)
+            _manager.add(_generator.genCron(xml_ser), xml_ser.@id)
             break
           case 'daemon':
-            _supervisor.add('actionable', _generator.genDaemon(xml_ser), xml_ser.@id)
+            _manager.add(_generator.genDaemon(xml_ser), xml_ser.@id)
         }
       }
     }
@@ -192,7 +190,7 @@ package com.soren.exib {
     }
     
     private function populateScreens(screens:XMLList):void {
-      var scr_con:ScreenController = _supervisor.get('actionable', 'screen')
+      var scr_con:ScreenController = _manager.get('screen')
       for each (var xml_screen:XML in screens) {
         var screen:ScreenNode = new ScreenNode()
         if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(GRAPHICS_PATH + xml_screen.@bg))

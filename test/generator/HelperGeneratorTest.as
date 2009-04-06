@@ -9,7 +9,7 @@ package generator {
 
   public class HelperGeneratorTest extends TestCase {
 
-    private var _supervisor:Supervisor
+    private var _manager:Manager = Manager.getManager()
     private var _generator:Generator
     private var _xml:XML
 
@@ -22,15 +22,14 @@ package generator {
     * Invoked by TestCase.runMethod function.
     **/
     protected override function setUp():void {
-      _supervisor = new Supervisor(['actionable'])
-      _generator  = new Generator(_supervisor)
+      _generator  = new Generator()
     }
 
     /**
     * Clean up after test, delete instance of class that we were testing.
     **/
     protected override function tearDown():void {
-      _supervisor = null
+      _manager.reset()
       _generator  = null
     }
 
@@ -42,10 +41,10 @@ package generator {
       var _men:StateModel     = new StateModel('darlings', 'pigs')
       var _fairies:StateModel = new StateModel('real', 'imaginary')
       
-      _supervisor.add('actionable', _power,   '_power')
-      _supervisor.add('actionable', _car,     '_car')
-      _supervisor.add('actionable', _men,     '_men')
-      _supervisor.add('actionable', _fairies, '_fairies')
+      _manager.add(_power,   '_power')
+      _manager.add(_car,     '_car')
+      _manager.add(_men,     '_men')
+      _manager.add(_fairies, '_fairies')
       
       var true_cons:Array =  ['_power == on && _car == slow',
                               '(_power == on) && (_car == slow)',

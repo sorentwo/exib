@@ -1,5 +1,9 @@
 == TODO
 
+* Solution:
+  - Breaking items up into separate pools is only helpful if a transparent system
+    is used.
+---
 -> Evaluate the use of IActionable and IEvaluatable.
 -> Formula class
 

@@ -2,13 +2,13 @@ package generator {
 
   import asunit.framework.TestCase
   import com.soren.exib.core.Generator
-  import com.soren.exib.manager.Supervisor
+  import com.soren.exib.manager.Manager
   import com.soren.exib.model.*
   
   public class ModelGenerationTest extends TestCase {
     
     private var _generator:Generator
-    private var _supervisor:Supervisor
+    private var _manager:Manager = Manager.getManager()
     private var _xml:XML
     
     public function ModelGenerationTest(testMethod:String) {
@@ -16,12 +16,11 @@ package generator {
     }
     
     protected override function setUp():void {
-      _supervisor = new Supervisor(['actionable'])
-      _generator = new Generator(_supervisor)
+      _generator = new Generator()
     }
     
     protected override function tearDown():void {
-      _supervisor = null
+      _manager.reset()
       _generator = null
     }
     
@@ -57,7 +56,7 @@ package generator {
                <model id='value_model' value='1' />
              </preset>
       
-      _supervisor.add('actionable', new ValueModel(0, 0, 1), 'value_model')
+      _manager.add(new ValueModel(0, 0, 1), 'value_model')
       var preset:PresetModel = _generator.genPresetModel(_xml)
       
       assertEquals('--', preset.value.toString())

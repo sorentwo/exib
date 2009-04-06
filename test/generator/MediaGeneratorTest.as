@@ -3,13 +3,11 @@ package generator {
   import asunit.framework.TestCase
   import flash.text.TextFormat
   import com.soren.exib.core.*
-  import com.soren.exib.manager.*
   import com.soren.exib.service.Sound
   import com.soren.exib.view.VideoNode
 
   public class MediaGeneratorTest extends TestCase {
 
-    private var _supervisor:Supervisor
     private var _generator:Generator
     private var _xml:XML
     
@@ -22,15 +20,13 @@ package generator {
     * Invoked by TestCase.runMethod function.
     **/
     protected override function setUp():void {
-      _supervisor = new Supervisor(['actionable', 'video'])
-      _generator  = new Generator(_supervisor)
+      _generator  = new Generator()
     }
 
     /**
     * Clean up after test, delete instance of class that we were testing.
     **/
     protected override function tearDown():void {
-      _supervisor = null
       _generator  = null
     }
     
