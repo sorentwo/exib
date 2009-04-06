@@ -91,7 +91,7 @@ package unit {
     public function testCompoundOperations():void {
       var formula:Formula = new Formula('0 + 0')
       
-      formula.store('0 + 5')
+      formula.store('0 + 0 + 5')
       assertEquals(5, formula.yield())
       
       formula.store('1 + 1 + 1')
@@ -107,17 +107,43 @@ package unit {
       assertEquals(-1, formula.yield())
       
       formula.store('1 + 1 * 2')
-      assertEquals(4, formula.yield())
+      assertEquals(3, formula.yield())
       
       formula.store('1 * 1 * 2')
       assertEquals(2, formula.yield())
       
       formula.store('1 + 5 / 5')
       assertEquals(2, formula.yield())
+      
+      formula.store('5 % 2 + 1')
+      assertEquals(2, formula.yield())
     }
     
     public function testOptionUsage():void {
+      var formula:Formula = new Formula('0 + 0')
       
+      formula.store('.4 + .5', { round: Formula.ROUND })
+      assertEquals(1, formula.yield())
+      
+      // Test persistence of the option
+      formula.store('.1 + .3')
+      assertEquals(0, formula.yield())
+      
+      formula.store('0 + .1', { round: Formula.CEIL })
+      assertEquals(1, formula.yield())
+      
+      formula.store('0 + .9', { round: Formula.FLOOR })
+      assertEquals(0, formula.yield())
+      
+      formula.store('0 + -1', { abs: true })
+      assertEquals(1, formula.yield)
+      
+      // Compound options
+      formula.store('0 + -.1', { round: Formula.CEIL, abs: true })
+      assertEquals(1, formula.yield())
+      
+      formula.store('2 + -.1', { round: Formula.FLOOR, abs: true })
+      assertEquals(1, formula.yield())
     }
   }
 }

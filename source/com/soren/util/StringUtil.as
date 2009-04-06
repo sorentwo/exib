@@ -67,9 +67,6 @@ package com.soren.util {
     private static const PRECISION_RE:String  = "(\\.(?P<precision>[0-9]))?"
     private static const FORMAT_RE:String     = "(?P<format_token>[" + FORMAT_TOKENS + "])"
     
-    private static const SPRINTF:RegExp = new RegExp('%' + PADDING_RE + CONVERSION_RE + DATE_RE +
-                                                     TRANSPOSE_RE + PRECISION_RE + FORMAT_RE, 'g')
-    
     /**
     * Singleton, non-used constructor.
     **/
@@ -153,7 +150,10 @@ package com.soren.util {
       args = new ExtendedArray(args).flatten().flatten()
 
       var matches:Array = []
-      var result:Object = SPRINTF.exec(raw)
+      var sprintf:RegExp = new RegExp('%' + PADDING_RE + CONVERSION_RE + DATE_RE +
+                                      TRANSPOSE_RE + PRECISION_RE + FORMAT_RE, 'g')
+                                      
+      var result:Object = sprintf.exec(raw)
 
       while (result) {
         var conversion_token:String = result.conversion_token.replace(/\{|\}/, '')
@@ -294,7 +294,7 @@ package com.soren.util {
         if (Boolean(padding)) match.replacement = Pad.zeroPad(match.replacement, padding)
         
         matches.push(match)
-        result = SPRINTF.exec(raw)
+        result = sprintf.exec(raw)
       }
 
       // Return either the initial unsubstituted string, or our replacement

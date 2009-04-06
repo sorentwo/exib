@@ -19,12 +19,11 @@ package com.soren.exib.helper {
     public static const ROUND:uint    = 1
     public static const CEIL:uint     = 2
     public static const FLOOR:uint    = 3
-    public static const ABS:Boolean   = false
     
     private static const DEFAULT_ROUND:uint  = 0
     private static const DEFAULT_ABS:Boolean = false
     
-    private static const VALID_FORMULA:RegExp = /-?[\d\w\.]+\s*[-\+\/\*%]{1}\s*-?[\d\w\.]+/
+    private static const FORMULA_PATTERN:RegExp = /-?[\d\w\.]+\s*[-\+\/\*%]{1}\s*-?[\d\w\.]+/
     
     private var _formula:String
     private var _options:Object
@@ -59,13 +58,13 @@ package com.soren.exib.helper {
     * 'variables' within the formula are re-evaluated every time yield is called.
     **/
     public function yield():Number {
-      var formula:String = _formula
+      var formula:String     = _formula
       var operand_one:String = "((?P<op_one>-?[\\d\\.]+)\\s*(?P<op>"
       var operand_two:String = ")\\s*(?P<op_two>-?[\\d\\.]+))"
-      var operators:Array    = ['\\+', '-', '\\*', '%', '\\/']
+      var operators:Array    = ['\\*', '\\/', '%', '-', '\\+']
       var op_index:uint      = 0
 
-      var pattern:RegExp = new RegExp(operand_one + operators[op_index] + operand_two, 'g')
+      var pattern:RegExp = new RegExp(operand_one + operators[op_index] + operand_two)
       
       while (op_index < operators.length) {
 
@@ -89,7 +88,7 @@ package com.soren.exib.helper {
         }
         
         op_index += 1
-        pattern = new RegExp(operand_one + operators[op_index] + operand_two, 'g')
+        pattern = new RegExp(operand_one + operators[op_index] + operand_two)
       }
       
       return Number(formula)
@@ -127,7 +126,7 @@ package com.soren.exib.helper {
     * two operands and one operator.
     **/
     private function validateFormula(formula:String):void {
-      if (!VALID_FORMULA.test(formula)) {
+      if (!FORMULA_PATTERN.test(formula)) {
         Log.getLog().error('Attempt to store invalid formula: ' + formula)
       }
     }
