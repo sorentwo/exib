@@ -2,9 +2,11 @@ package unit {
 
   import asunit.framework.TestCase
   import com.soren.exib.helper.Formula
+  import com.soren.exib.manager.Manager
+  import com.soren.exib.model.ValueModel
 
   public class FormulaTest extends TestCase {
-
+    
     public function FormulaTest(testMethod:String) {
       super(testMethod)
     }
@@ -13,7 +15,7 @@ package unit {
     * Prepare for test, create instance of class that we are testing.
     * Invoked by TestCase.runMethod function.
     **/
-    protected override function setUp():void { }
+    protected override function setUp():void {}
 
     /**
     * Clean up after test, delete instance of class that we were testing.
@@ -148,14 +150,25 @@ package unit {
     
     public function testVariableExtraction():void {
       var formula:Formula = new Formula('0 + 0')
-      var val_a:ValueModel = new ValueModel(0, 1, 10)
-      var val_b:ValueModel = new ValueModel(0, 250, 500)
-      var val_c:ValueModel = new ValueModel(-100, 0, 100)
+      var manager:Manager = Manager.getManager()
       
+      manager.reset()
       
+      manager.add(new ValueModel(1, 0, 10),     'var_a')
+      manager.add(new ValueModel(250, 0, 500),  'var_b')
+      manager.add(new ValueModel(-50, -100, 0), 'var_c')
       
-      formula.store('val_a + 1')
+      formula.store('var_a + 1')
       assertEquals(2, formula.yield())
+      
+      formula.store('var_b * 2')
+      assertEquals(500, formula.yield())
+      
+      formula.store('var_c + 50')
+      assertEquals(0, formula.yield())
+      
+      formula.store('var_a * var_b * -1')
+      assertEquals(-250, formula.yield())
     }
   }
 }

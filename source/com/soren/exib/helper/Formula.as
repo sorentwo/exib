@@ -13,6 +13,7 @@
 package com.soren.exib.helper {
 
   import com.soren.debug.Log
+  import com.soren.exib.manager.Manager
 
   public class Formula implements IActionable {
     public static const NO_ROUND:uint = 0
@@ -23,10 +24,11 @@ package com.soren.exib.helper {
     private static const DEFAULT_ROUND:uint  = 0
     private static const DEFAULT_ABS:Boolean = false
     
-    private static const FORMULA_PATTERN:RegExp = /-?[\d\w\.]+\s*[-\+\/\*%]{1}\s*-?[\d\w\.]+/
+    private static const FORMULA_PATTERN:RegExp = /-?[\w\.]+\s*[-\+\/\*%]{1}\s*-?[\w\.]+/
     
     private var _formula:String
     private var _options:Object
+    private var _manager:Manager = Manager.getManager()
     
     /**
     * 
@@ -59,8 +61,8 @@ package com.soren.exib.helper {
     **/
     public function yield():Number {
       var formula:String     = _formula
-      var operand_one:String = "((?P<op_one>-?[\\d\\.]+)\\s*(?P<op>"
-      var operand_two:String = ")\\s*(?P<op_two>-?[\\d\\.]+))"
+      var operand_one:String = "((?P<op_one>-?[\\w\\.]+)\\s*(?P<op>"
+      var operand_two:String = ")\\s*(?P<op_two>-?[\\w\\.]+))"
       var operators:Array    = ['\\*', '\\/', '%', '-', '\\+']
       var op_index:uint      = 0
 
@@ -71,8 +73,8 @@ package com.soren.exib.helper {
         var result:Object = pattern.exec(formula)
 
         while (result != null) {  
-          var op_one:Number = Number(result.op_one)
-          var op_two:Number = Number(result.op_two)
+          var op_one:Number = resolveVariable(result.op_one)
+          var op_two:Number = resolveVariable(result.op_two)
           var value:Number  = 0
 
           switch (result.op) { // Cases in order of perceived usage
@@ -87,7 +89,7 @@ package com.soren.exib.helper {
           result  = pattern.exec(formula)
         }
         
-        op_index += 1
+        op_index ++
         pattern = new RegExp(operand_one + operators[op_index] + operand_two)
       }
       
@@ -127,6 +129,24 @@ package com.soren.exib.helper {
         if (_options[prop] == 'false') { _options[prop] = false }
         if (_options[prop] == 'true')  { _options[prop] = true }
       }
+    }
+    
+    /**
+    * @private
+    **/
+    private function resolveVariable(value:String):Number {
+      var return_value:Number = 0
+      if (/[\d\.]+/.test(value)) {
+        return_value = Number(value)
+      } else {
+        if (_manager.has(value)) {
+          return_value = Number(_manager.get(value).value)
+        } else {
+          Log.getLog().error('Unknown or unmanaged variable: ' + value)
+        }
+      }
+      
+      return return_value
     }
     
     /**
