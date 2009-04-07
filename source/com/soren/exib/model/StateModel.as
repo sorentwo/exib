@@ -26,11 +26,9 @@ package com.soren.exib.model {
     * parameters, and will automatically add each as an initial state
     **/
     public function StateModel(...args) {
-      var ea:Array = new ExtendedArray(args).flatten().flatten()
+      var ea:Array = new ExtendedArray(args).flatten()
       
-      for each (var state:String in ea) {
-        this.add(state)
-      }
+      for each (var state:String in ea) { this.add(state) }
     }
 
     /**

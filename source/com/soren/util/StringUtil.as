@@ -147,7 +147,7 @@ package com.soren.util {
     * @return   The formatted string containing all replaced values
     **/
     public static function sprintf(raw:String, ...args):String {
-      args = new ExtendedArray(args).flatten().flatten()
+      args = new ExtendedArray(args).flatten()
 
       var matches:Array = []
       var sprintf:RegExp = new RegExp('%' + PADDING_RE + CONVERSION_RE + DATE_RE +

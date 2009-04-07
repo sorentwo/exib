@@ -29,16 +29,12 @@ package unit {
     }
     
     public function testFlatten():void {
-      assertEquals(['cat', 'dog'].toString(),
-                   new ExtendedArray('cat', 'dog').flatten().toString())
-      assertEquals(['cat', 'dog', 'frog'].toString(),
-                   new ExtendedArray('cat', ['dog', 'frog']).flatten().toString())
-      assertEquals(['cat', 'lion', 'tiger', 'frog'].toString(),
-                    new ExtendedArray('cat', ['lion', 'tiger'], 'frog').flatten().toString())
-      assertEquals(['cat', 'dog'].toString(),
-                   new ExtendedArray(['cat', 'dog']).flatten().toString())
-      assertEquals(['cat'].toString(),
-                   new ExtendedArray([[[[[['cat']]]]]]).flatten().toString())
+      assertFalse(new ExtendedArray('cat', 'dog').flatten().containsArray())
+      assertFalse(new ExtendedArray('cat', ['dog', 'frog']).flatten().containsArray())
+      assertFalse(new ExtendedArray('cat', ['lion', 'tiger'], 'frog').flatten().containsArray())
+      assertFalse(new ExtendedArray(['cat', 'dog']).flatten().containsArray())
+      assertFalse(new ExtendedArray([[[[[['cat']]]]]]).flatten().containsArray())
+      assertFalse(new ExtendedArray([['cat', 'dog'], ['frog', 'liger']]).flatten().containsArray())
     }
   }  
 }
