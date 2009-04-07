@@ -21,16 +21,19 @@ package com.soren.exib.helper {
     public static const CEIL:uint     = 2
     public static const FLOOR:uint    = 3
     
+    // This is made public to DRY up potential formula detection by other classes
+    public static const FORMULA_PATTERN:RegExp = /-?[\w\.]+\s*[-\+\/\*%]{1}\s*-?[\w\.]+/
+    
     private static const DEFAULT_ROUND:uint  = 0
     private static const DEFAULT_ABS:Boolean = false
     
-    private static const FORMULA_PATTERN:RegExp = /-?[\w\.]+\s*[-\+\/\*%]{1}\s*-?[\w\.]+/
-    
+    private var _manager:Manager = Manager.getManager()
     private var _formula:String
     private var _options:Object
-    private var _manager:Manager = Manager.getManager()
     
     /**
+    * Constructs a new formula object. An initial formula must be provided, but
+    * it may be overridden through the +store+ method at any point after.
     * 
     * @param  formula   A string containing a mathematical formula. May contain
     *                   numbers or IEvaluatable objects. <br />
@@ -47,6 +50,13 @@ package com.soren.exib.helper {
     /**
     * Takes a mathematical formula in the form of a string and stores it for
     * evaluation later.
+    * 
+    * @param  formula   A string containing a mathematical formula. May contain
+    *                   numbers or IEvaluatable objects. <br />
+    *                   The +store()+ method may be used after construction to
+    *                   update the formula.
+    * @param  options   An object hash of options that modify the output of the
+    *                   formula.
     **/
     public function store(formula:String, options:Object = null):void {
       validateFormula(formula)
