@@ -9,7 +9,7 @@ package generator {
 
   public class ServiceGeneratorTest extends TestCase {
 
-    private var _manager:Manager = Manager.getManager()
+    private var _space:Space = Space.getSpace()
     private var _generator:Generator
     private var _xml:XML
 
@@ -22,7 +22,7 @@ package generator {
     * Invoked by TestCase.runMethod function.
     **/
     protected override function setUp():void {
-      _manager.reset()
+      _space.reset()
       _generator  = new Generator()
     }
 
@@ -42,7 +42,7 @@ package generator {
                <complete_when>value_a == 2</complete_when>
              </cron>
       
-      _manager.add(new ValueModel(0, 0, 2), 'value_a')
+      _space.add(new ValueModel(0, 0, 2), 'value_a')
       
       var cron:Cron = _generator.genCron(_xml)
     }
@@ -54,7 +54,7 @@ package generator {
                <complete_when>value_a == 2</complete_when>
              </daemon>
       
-      _manager.add(new ValueModel(0, 0, 2), 'value_a')
+      _space.add(new ValueModel(0, 0, 2), 'value_a')
       
       var daemon:Daemon = _generator.genDaemon(_xml)
     }
@@ -64,7 +64,7 @@ package generator {
                <action>value_a.set(2)</action>
              </hotkey>
       
-      _manager.add(new ValueModel(0, 0, 2), 'value_a')
+      _space.add(new ValueModel(0, 0, 2), 'value_a')
       
       var sprite:Sprite = new Sprite()
       var hotkey:Hotkey = _generator.genHotkey(_xml, sprite)

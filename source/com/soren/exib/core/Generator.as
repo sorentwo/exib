@@ -21,7 +21,7 @@ package com.soren.exib.core {
 
   public class Generator {
     
-    private var _manager:Manager = Manager.getManager()
+    private var _space:Space = Space.getSpace()
     
     /**
      * Constructor
@@ -57,7 +57,7 @@ package com.soren.exib.core {
       if (xml.@default_text != undefined) model.default_text = xml.@default_text
       
       for each (var xml_model:XML in xml.model) {
-        model.watch(_manager.get(xml_model.@id))
+        model.watch(_space.get(xml_model.@id))
       }
       
       return model
@@ -283,7 +283,7 @@ package com.soren.exib.core {
     }
     
     public function genMeterNode(xml:XML, path:String):MeterNode {
-      var model:ValueModel = _manager.get(xml.@model) as ValueModel
+      var model:ValueModel = _space.get(xml.@model) as ValueModel
       
       return new MeterNode(model,
                            path + xml.@left_empty,  path + xml.@left_full,
@@ -330,7 +330,7 @@ package com.soren.exib.core {
     }
     
     public function genTextNode(xml:XML):TextNode {
-      var format:TextFormat = _manager.get(xml.@format)
+      var format:TextFormat = _space.get(xml.@format)
       var align:String      = (xml.@align != undefined) ? xml.@align : 'left'
       
       var charcase:String
@@ -463,11 +463,11 @@ package com.soren.exib.core {
       var pattern:RegExp = /^(?P<operand_one>[\w\d_]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w\d_]+)$/
       var parsed:Object = pattern.exec(statement)
 
-      parsed.operand_one = (_manager.has(parsed.operand_one))
-                         ? _manager.get(parsed.operand_one)
+      parsed.operand_one = (_space.has(parsed.operand_one))
+                         ? _space.get(parsed.operand_one)
                          : parsed.operand_one
-      parsed.operand_two = (_manager.has(parsed.operand_two))
-                         ? _manager.get(parsed.operand_two)
+      parsed.operand_two = (_space.has(parsed.operand_two))
+                         ? _space.get(parsed.operand_two)
                          : parsed.operand_two
 
       return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
@@ -491,14 +491,14 @@ package com.soren.exib.core {
     * @private
     **/
     private function retrieveActionable(actionable_id:String):IActionable {
-      return _manager.get(actionable_id)
+      return _space.get(actionable_id)
     }
     
     /**
     * @private
     **/
     private function retrieveVideoReference(xml:XML):Node {
-      var video_node:VideoNode = _manager.get(xml.@id)
+      var video_node:VideoNode = _space.get(xml.@id)
           video_node.position(xml.@pos)
 
       return video_node

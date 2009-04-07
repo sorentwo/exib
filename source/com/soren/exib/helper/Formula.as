@@ -13,7 +13,7 @@
 package com.soren.exib.helper {
 
   import com.soren.debug.Log
-  import com.soren.exib.manager.Manager
+  import com.soren.exib.core.Space
 
   public class Formula implements IActionable {
     public static const NO_ROUND:uint = 0
@@ -27,7 +27,7 @@ package com.soren.exib.helper {
     private static const DEFAULT_ROUND:uint  = 0
     private static const DEFAULT_ABS:Boolean = false
     
-    private var _manager:Manager = Manager.getManager()
+    private var _space:Space = Space.getSpace()
     private var _formula:String
     private var _options:Object
     
@@ -149,8 +149,8 @@ package com.soren.exib.helper {
       if (/[\d\.]+/.test(value)) {
         return_value = Number(value)
       } else {
-        if (_manager.has(value)) {
-          return_value = Number(_manager.get(value).value)
+        if (_space.has(value)) {
+          return_value = Number(_space.get(value).value)
         } else {
           Log.getLog().error('Unknown or unmanaged variable: ' + value)
         }

@@ -2,7 +2,7 @@ package unit {
 
   import asunit.framework.TestCase
   import com.soren.exib.helper.Formula
-  import com.soren.exib.manager.Manager
+  import com.soren.exib.core.Space
   import com.soren.exib.model.ValueModel
 
   public class FormulaTest extends TestCase {
@@ -150,13 +150,11 @@ package unit {
     
     public function testVariableExtraction():void {
       var formula:Formula = new Formula('0 + 0')
-      var manager:Manager = Manager.getManager()
+      var space:Space = Space.getSpace()
       
-      manager.reset()
-      
-      manager.add(new ValueModel(1, 0, 10),     'var_a')
-      manager.add(new ValueModel(250, 0, 500),  'var_b')
-      manager.add(new ValueModel(-50, -100, 0), 'var_c')
+      space.add(new ValueModel(1, 0, 10),     'var_a')
+      space.add(new ValueModel(250, 0, 500),  'var_b')
+      space.add(new ValueModel(-50, -100, 0), 'var_c')
       
       formula.store('var_a + 1')
       assertEquals(2, formula.yield())

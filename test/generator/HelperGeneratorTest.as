@@ -4,12 +4,11 @@ package generator {
   import flash.display.Sprite
   import com.soren.exib.core.*
   import com.soren.exib.helper.*
-  import com.soren.exib.manager.*
   import com.soren.exib.model.StateModel
 
   public class HelperGeneratorTest extends TestCase {
 
-    private var _manager:Manager = Manager.getManager()
+    private var _space:Space = Space.getSpace()
     private var _generator:Generator
     private var _xml:XML
 
@@ -29,7 +28,7 @@ package generator {
     * Clean up after test, delete instance of class that we were testing.
     **/
     protected override function tearDown():void {
-      _manager.reset()
+      _space.reset()
       _generator  = null
     }
 
@@ -41,10 +40,10 @@ package generator {
       var _men:StateModel     = new StateModel('darlings', 'pigs')
       var _fairies:StateModel = new StateModel('real', 'imaginary')
       
-      _manager.add(_power,   '_power')
-      _manager.add(_car,     '_car')
-      _manager.add(_men,     '_men')
-      _manager.add(_fairies, '_fairies')
+      _space.add(_power,   '_power')
+      _space.add(_car,     '_car')
+      _space.add(_men,     '_men')
+      _space.add(_fairies, '_fairies')
       
       var true_cons:Array =  ['_power == on && _car == slow',
                               '(_power == on) && (_car == slow)',

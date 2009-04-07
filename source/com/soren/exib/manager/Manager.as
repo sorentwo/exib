@@ -9,27 +9,16 @@
 
 package com.soren.exib.manager {
 
-  import flash.utils.getQualifiedClassName
   import com.soren.debug.Log
 
   public class Manager implements IManager {
     
-    private static var _instance:Manager = new Manager()
-    private static var _managed:Object   = {}
+    private var _managed:Object = {}
     
     /**
     * Constructor
     **/
-    public function Manager() {
-      if (_instance) throw new Error('Can only be accessed through Manager.getManager()')
-    }
-    
-    /**
-    * Returns the singleton instance.
-    **/
-    public static function getManager():Manager {
-      return _instance
-    }
+    public function Manager() {}
     
     /**
     * Add a new object to be managaged. Objects are stored and retrieved by id

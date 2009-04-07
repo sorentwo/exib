@@ -13,14 +13,14 @@ package com.soren.exib.effect {
   import flash.utils.Timer
   import flash.events.TimerEvent
   import com.soren.exib.core.Generator
+  import com.soren.exib.core.Space
   import com.soren.exib.helper.ActionSet
   import com.soren.exib.helper.IActionable
-  import com.soren.exib.manager.Manager
   import com.soren.exib.view.ScreenController
   
   public class Queue implements IActionable {
 
-    private var _manager:Manager = Manager.getManager()
+    private var _space:Space = Space.getSpace()
     private var _screen_controller:ScreenController
     
     private var _before:Array  = []
@@ -66,11 +66,11 @@ package com.soren.exib.effect {
     public function start(action_string:String = ''):void {
       if (_waiting.length > 0) return // We don't want to interrupt a queue already going
       
-      if (_manager && !_screen_controller) _screen_controller = _manager.get('screen')
+      if (_space && !_screen_controller) _screen_controller = _space.get('screen')
       
       clearCallback()
 
-      if (_manager && Boolean(action_string)) {
+      if (_space && Boolean(action_string)) {
         var psuedo_xml:XML = <psuedo><action>{action_string}</action></psuedo>
         setCallback(new Generator().genActionSet(psuedo_xml.action))
       }

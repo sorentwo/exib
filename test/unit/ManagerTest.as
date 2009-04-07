@@ -1,11 +1,11 @@
 package unit {
 
   import asunit.framework.TestCase
-  import com.soren.exib.manager.*
+  import com.soren.exib.manager.Manager
   
   public class ManagerTest extends TestCase {
     
-    private var _instance:Manager = Manager.getManager()
+    private var _instance:Manager = new Manager()
 
     public function ManagerTest(testMethod:String) {
       super(testMethod)

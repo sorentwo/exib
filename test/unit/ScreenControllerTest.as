@@ -2,7 +2,7 @@ package unit {
 
   import asunit.framework.TestCase
   import flash.display.Sprite
-  import com.soren.exib.manager.Manager
+  import com.soren.exib.core.Space
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.ScreenNode
 
