@@ -4,8 +4,6 @@
 * A collection of simple methods for manipulating time values.
 *
 * Copyright (c) 2008 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 package com.soren.util {
 

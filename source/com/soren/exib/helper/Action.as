@@ -7,8 +7,6 @@
 * sent unpacked.
 *
 * Copyright (c) 2008 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.helper {

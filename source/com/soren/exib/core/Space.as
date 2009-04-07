@@ -7,8 +7,6 @@
 * each pool pattern and directed to that pool.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.core {

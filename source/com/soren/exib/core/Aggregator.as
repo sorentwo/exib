@@ -5,8 +5,6 @@
 * of assets being loaded by EXIB for any given application.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.core {

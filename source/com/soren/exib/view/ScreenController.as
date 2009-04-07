@@ -6,8 +6,6 @@
 * an manager tied to effects then effects may be used.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.view {

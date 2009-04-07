@@ -4,8 +4,6 @@
 * Simple static class for retrieiving key codes.
 *
 * Copyright (c) 2008 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.util {

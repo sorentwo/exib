@@ -6,8 +6,6 @@
 * reference to any object that has a value accessor.
 *
 * Copyright (c) 2008 Parker Selbert
-* 
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.helper {

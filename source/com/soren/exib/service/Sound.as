@@ -5,8 +5,6 @@
 * process and provides shortcuts for controlling playback.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.service {

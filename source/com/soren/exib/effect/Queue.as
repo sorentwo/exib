@@ -4,8 +4,6 @@
 * A queueing class for creating more complex and sequenced effect chains.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.effect {

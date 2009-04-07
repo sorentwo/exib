@@ -9,8 +9,6 @@
 * HistoryModel keeps track of all <b>previous</b> states as well.</p>
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.model {

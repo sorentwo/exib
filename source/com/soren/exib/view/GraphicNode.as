@@ -4,8 +4,6 @@
 * An extension of Node to simplify loading external assets.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.view {

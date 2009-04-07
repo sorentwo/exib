@@ -4,8 +4,6 @@
 * A dynamic progress bar based on the value retrieved from a ValueModel.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.view {

@@ -5,8 +5,6 @@
 * statements and to additionally tie into the debugging satelite.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.debug {

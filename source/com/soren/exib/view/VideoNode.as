@@ -4,8 +4,6 @@
 * Node for loading and controlling .flv video clips.
 *
 * Copyright (c) 2009 Parker Selbert
-*
-* See LICENSE.txt for full license information.
 **/
 
 package com.soren.exib.view {
