@@ -1,8 +1,8 @@
 package unit {
 
   import asunit.framework.TestCase
+  import com.soren.exib.core.Space
   import com.soren.exib.helper.*
-  import com.soren.exib.manager.*
   import com.soren.exib.model.*
   
   public class ActionTest extends TestCase {
@@ -85,6 +85,39 @@ package unit {
       val_mod_b.set(1)
       val_act_b.act()
       assertTrue(conditional.evaluate())
+      assertEquals(0, val_mod_a.value)
+    }
+    
+    public function testActWithFormula():void {
+      var val_mod_a:ValueModel = new ValueModel(0,0,10)
+      
+      // Some vanilla examples
+      new Action(val_mod_a, 'set', '2 + 2').act()
+      assertEquals(4, val_mod_a.value)
+      
+      new Action(val_mod_a, 'set', '2 - 2').act()
+      assertEquals(0, val_mod_a.value)
+      
+      new Action(val_mod_a, 'set', '2 * 2').act()
+      assertEquals(4, val_mod_a.value)
+      
+      new Action(val_mod_a, 'set', '2 / 2').act()
+      assertEquals(1, val_mod_a.value)
+    }
+    
+    public function testActWithFormulaVariableRetrieval():void {
+      var val_mod_a:ValueModel = new ValueModel(0,0,10)
+      var val_mod_b:ValueModel = new ValueModel(2,0,10)
+      
+      var space:Space = Space.getSpace()
+      
+      space.reset()
+      space.add(val_mod_b, 'val_mod_b')
+      
+      new Action(val_mod_a, 'set', '2 * val_mod_b').act()
+      assertEquals(4, val_mod_a.value)
+      
+      new Action(val_mod_a, 'set', 'val_mod_b % 2').act()
       assertEquals(0, val_mod_a.value)
     }
   }
