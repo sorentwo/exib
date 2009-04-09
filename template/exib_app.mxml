@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Description
+-->
+
+<Exib xmlns="com.soren.exib.*" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initialize()">
+  <mx:Script>
+    <![CDATA[
+      import com.soren.exib.Exib
+      
+      public function initialize():void {
+        new Exib()
+      }
+    ]]>
+  </mx:Script>
+</Exib>
