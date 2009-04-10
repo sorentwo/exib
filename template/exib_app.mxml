@@ -4,12 +4,26 @@
   Description
 -->
 
-<Exib xmlns="com.soren.exib.*" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initialize()">
+<Exib xmlns="com.soren.exib.*"
+      xmlns:mx="http://www.adobe.com/2006/mxml"
+      creationComplete="init()"
+      controlBar="null"
+      frameRate="24"
+      layout="absolute"
+      pageTitle"Exib"
+      resetHistory="true"
+      scriptRecursionLimit="100"
+      scriptTimeLimit="10"
+      usePreloader="true">
+
   <mx:Script>
     <![CDATA[
       import com.soren.exib.Exib
       
-      public function initialize():void {
+      <!-- START EMBED -->
+      <!--  END EMBED  -->
+      
+      public function init():void {
         new Exib()
       }
     ]]>

@@ -7,17 +7,16 @@ ARCHIVE_BASENAME    = ENV['BASE'] || 'deliverable'
 ARCHIVE_EXTENSION   = ENV['EXT']  || 'zip'
 ARCHIVE_DATE_STRING = ENV['DATE'] || '%Y.%m.%d.%H%M'
 
-REMOTE_LOGIN  = ENV['REMOTE_LOGIN']  || 'parkerselbert'
-REMOTE_SERVER = ENV['REMOTE_SERVER'] || 'greytwo.com'
-REMOTE_PATH   = ENV['REMOTE_PATH']   || '~/work/WPALPHA'
-
 task :default => :test
 
 task(:test) {}
 
 # Exib Tasks  ------------------------------------------------------------------
 
-namespace :project do
+namespace :exib do
+  desc "Automatically embed files and compile the MXML file into a SWF"
+  task :compile => [ :auto_embed, :compile_mxml]
+  
   desc "Packages the necessary files into a deliverable archive"
   task :package do
     archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE_STRING)}.#{ARCHIVE_EXTENSION}"
@@ -30,19 +29,14 @@ namespace :project do
   end
 end
 
-# Source Tasks -----------------------------------------------------------------
-
-namespace :source do
-  desc "Sync the source to the external server"
-  task :backup do
-    path = "#{REMOTE_LOGIN}@#{REMOTE_SERVER}:#{REMOTE_PATH}"
-    sh %{rsync -cav --progress --del -e 'ssh' ./* #{path}}
-  end
+# Compile Tasks ----------------------------------------------------------------
+task :auto_embed do
 end
 
-private
-
-def random_password(size = 8)
-  chars = (('a'..'z').to_a + ('0'..'9').to_a) + %w(_-$%) - %w(i o 0 1 l O)
-  (1..size).map{|a| chars[rand(chars.size)] }.join
+task :compile_mxml do
+  mxmlc_bin    = '/opt/flex/bin/mxmlc'
+  source_paths = ['~/Work/Code/EXIB/source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
+  mxml_file    = sh %{find ./source -name '*.mxml'}
+  
+  sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{mxml_file}}
 end
