@@ -13,7 +13,7 @@
 
 package com.soren.exib.model {
   
-  import com.soren.exib.helper.IActionable
+  import com.soren.exib.core.IActionable
   
   public class HistoryModel extends Model {
     

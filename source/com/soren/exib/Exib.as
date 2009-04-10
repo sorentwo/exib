@@ -37,7 +37,6 @@ package com.soren.exib {
     private var _config:XML
     private var _urlLoader:URLLoader
     
-    private var _options:Object      = new Object()
     private var _generator:Generator = new Generator()
     private var _space:Space         = Space.getSpace()
     private var _container:Sprite
@@ -83,7 +82,7 @@ package com.soren.exib {
     private function pre():void {
       if (_config.view.screens != undefined) {
         _container = _generator.genContainer(_config.view.screens)
-        var scr_con:ScreenController = new ScreenController(_container, _options['history'])
+        var scr_con:ScreenController = new ScreenController(_container, 10)
         _space.add(scr_con, 'screen')
         _space.add(new Effect(scr_con), 'effect')
         
@@ -93,22 +92,9 @@ package com.soren.exib {
     
     private function post():void {
       _space.get('screen').load(_config.view.screens.screen[0].@id)
-      
-      stage.frameRate    = _options['frame_rate']   || 30
-      stage.stageHeight  = _options['stage_height'] || 350
-      stage.stageWidth   = _options['stage_width']  || 550
-      
-      if (_options['scale_stage'] == 'no')  stage.scaleMode    = StageScaleMode.NO_SCALE
-      if (_options['fullscreen']  == 'yes') stage.displayState = StageDisplayState.FULL_SCREEN
     }
     
     // ---
-    
-    private function populateOptions(options:XMLList):void {
-      for each (var xml_option:XML in options.*) {
-        _options[xml_option.name().toString()] = xml_option
-      }
-    }
     
     private function populateModels(models:XMLList):void {
       for each (var xml_mod:XML in models.*) {

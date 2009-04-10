@@ -13,7 +13,7 @@ package com.soren.exib.effect {
   import com.soren.exib.core.Generator
   import com.soren.exib.core.Space
   import com.soren.exib.helper.ActionSet
-  import com.soren.exib.helper.IActionable
+  import com.soren.exib.core.IActionable
   import com.soren.exib.view.ScreenController
   
   public class Queue implements IActionable {

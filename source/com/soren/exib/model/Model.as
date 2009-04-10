@@ -10,8 +10,8 @@ package com.soren.exib.model {
 
   import flash.events.Event
   import flash.events.EventDispatcher
-  import com.soren.exib.helper.IActionable
-  import com.soren.exib.helper.IEvaluatable
+  import com.soren.exib.core.IActionable
+  import com.soren.exib.core.IEvaluatable
   
   public class Model extends EventDispatcher implements IModel, IActionable, IEvaluatable {
     

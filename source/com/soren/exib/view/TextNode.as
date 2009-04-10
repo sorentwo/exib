@@ -13,7 +13,7 @@ package com.soren.exib.view {
   import flash.text.TextField
   import flash.text.TextFieldAutoSize
   import flash.text.TextFormat
-  import com.soren.exib.helper.IEvaluatable
+  import com.soren.exib.core.IEvaluatable
   import com.soren.exib.model.Model
   import com.soren.util.ExtendedArray
   import com.soren.util.StringUtil

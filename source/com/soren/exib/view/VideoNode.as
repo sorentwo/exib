@@ -14,7 +14,7 @@ package com.soren.exib.view {
   import flash.net.NetStream
   import com.soren.debug.Log
   import com.soren.exib.core.Aggregator
-  import com.soren.exib.helper.IActionable
+  import com.soren.exib.core.IActionable
 
   public class VideoNode extends Node implements IActionable {
 

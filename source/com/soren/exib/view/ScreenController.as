@@ -13,7 +13,7 @@ package com.soren.exib.view {
   import flash.display.Sprite
   import flash.events.Event
   import flash.events.EventDispatcher
-  import com.soren.exib.helper.IActionable
+  import com.soren.exib.core.IActionable
   import com.soren.exib.manager.Manager
   import com.soren.exib.model.Model  
   import com.soren.exib.model.HistoryModel

@@ -13,7 +13,7 @@ package com.soren.exib.effect {
   import fl.transitions.TweenEvent
   import fl.transitions.easing.*
   import flash.filters.BlurFilter
-  import com.soren.exib.helper.IActionable
+  import com.soren.exib.core.IActionable
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
   
