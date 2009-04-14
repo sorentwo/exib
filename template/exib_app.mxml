@@ -18,13 +18,37 @@
 
   <mx:Script>
     <![CDATA[
+      import mx.core.ByteArrayAsset
       import com.soren.exib.Exib
       
-      <!-- START EMBED -->
-      <!--  END EMBED  -->
+      /**
+      * Pool patterns meant to be used as follows:
+      *
+      * models   = '^_\w+'
+      * services = '^\*\w+'
+      * queues   = '^\+\w+'
+      * media    = '^\$\w+'
+      * formats  = '^#\w+'
+      **/
+      private var pools:Array = ['^_\w+', '^\*\w+', '^\+\w+', '^\$\w+', '^#\w+']
+      
+      /**
+      * The asset location. It isn't likely these will need to be changed.
+      **/
+      private var asset_path:String  = '../assets'
+      
+      /**
+      * The XML embed statement.
+      **/
+      [Embed("../assets/config/config.exml", mimeType="application/octet-stream")]
+      private static const ConfigXML:Class
+      
+      // START EMBED
+      // END EMBED
       
       public function init():void {
-        new Exib()
+        var xml:XML = new XML(ByteArrayAsset(new ConfigXML()).readUTFBytes(byte_array.length))
+        new Exib(xml, asset_path, pools)
       }
     ]]>
   </mx:Script>

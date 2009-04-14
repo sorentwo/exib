@@ -15,5 +15,12 @@ package com.soren.exib.core {
     public static const MINOR_VERSION:uint = 7
     
     public function ExibVersion() {}
+    
+    /**
+    * Returns the current version as a single string.
+    **/
+    public static function version():String {
+      return MAJOR_VERSION + '.' + MINOR_VERSION
+    }
   }
 }

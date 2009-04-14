@@ -12,7 +12,7 @@ DESTINATION = ENV['DEST'] || "./exib_project"
 BANNER      = "\n\n#{'#'*80}\n\n"
 
 BASE_DIRS   = %w(assets deploy deliver doc source)
-ASSET_DIRS  = %w(config fonts graphics sounds videos)
+ASSET_DIRS  = %w(config fonts graphics media sounds)
 RAKEFILE    = 'tasks/project.rake'
 CONFIG      = 'template/config.exml'
 MXML        = 'template/exib_app.mxml'
