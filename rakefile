@@ -15,7 +15,7 @@ BASE_DIRS   = %w(assets deploy deliver doc source)
 ASSET_DIRS  = %w(config fonts graphics media sounds)
 RAKEFILE    = 'tasks/project.rake'
 CONFIG      = 'template/config.exml'
-MXML        = 'template/exib_app.mxml'
+EXIB_APP    = 'template/exib_app.as'
 
 namespace :exib do
   desc "Generates a new EXIB project"
@@ -53,11 +53,21 @@ task(:make_asset_dirs) { make_dest_dirs ASSET_DIRS, 'assets' }
 # Copy Files -------------------------------------------------------------------
 
 desc "Copy the necessary files"
-task :copy_files => [:copy_config, :copy_mxml, :copy_rake]
+task :copy_files => [:copy_config, :copy_app, :copy_rake]
 
 task(:copy_config) { cp CONFIG,   File.join(DESTINATION, 'assets/config/config.exml') }
-task(:copy_mxml)   { cp MXML,     File.join(DESTINATION, "source/#{File.basename(DESTINATION)}.mxml") }
 task(:copy_rake)   { cp RAKEFILE, File.join(DESTINATION, 'rakefile') }
+
+task(:copy_app) do
+  app_basename = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
+  app_fullpath = File.join(DESTINATION, "source/#{app_basename}.as") 
+  
+  File.open(EXIB_APP, 'r') do |file|
+    File.open(app_fullpath, 'w') do |dest|
+      file.each_line { |line| dest << line.gsub('#CLASS_NAME#', app_basename) }
+    end
+  end
+end
 
 # Generate Documentation -------------------------------------------------------
 

@@ -10,12 +10,12 @@
 package com.soren.exib.core {
 
   import flash.display.Sprite
-  import mx.core.Application
-  import com.soren.exib.effect.*
-  import com.soren.exib.core.*
+  import flash.utils.ByteArray
+  import com.soren.debug.Log
+  import com.soren.exib.effect.Effect
   import com.soren.exib.view.*
   
-  public class ExibApplication extends Application {
+  public class ExibApplication extends Sprite {
     
     private var _graphics_path:String = 'graphics'
     private var _sounds_path:String   = 'sounds'
@@ -26,34 +26,48 @@ package com.soren.exib.core {
     private var _container:Sprite
     
     /**
-    * Construct a new Exib instance. Use start() to actually begin the app.
+    * Construct a new Exib instance.
     **/
     public function ExibApplication() {}
     
     /**
     * Provided the necessary assets start the Exib application.
     * 
-    * @param  exml        The exml configuration file.
+    * @param  ConfigEXML  An embedded XML class
     * @param  asset_path  The base asset path. Graphics, Sounds, and Media
     *                     subfolders must be present.
     * @param  pools       An array of regular expressions that will used to put
     *                     and find objects from the global space.
     * @see    Space.as
     **/
-    public function start(exml:XML, asset_path:String, pools:Array):void {
-      for each (var path:String in [_graphics_path, _sounds_path, _media_path]) {
-        path = asset_path + '/' + path
-      }
+    public function start(ConfigEXML:Class, asset_path:String, pools:Array):void {
+      _graphics_path = asset_path + '/' + _graphics_path
+      _sounds_path   = asset_path + '/' + _sounds_path
+      _media_path    = asset_path + '/' + _media_path
       
       for each (var pool_pattern:RegExp in pools) {
         Space.getSpace().createPool(pool_pattern)
       }
       
-      process(exml)
+      Log.getLog().level = Log.DEBUG
+      Log.getLog().throwOnError = true
+      Log.getLog().clear()
+      
+      process(getXMLFromEmbeddedClass(ConfigEXML))
     }
 
     // ---
-        
+    
+    /**
+    * @private
+    * 
+    * Reads the embedded XML data and loads it into a usable XML object.
+    **/
+    private function getXMLFromEmbeddedClass(ConfigEXML:Class):XML {
+      var byte_array:ByteArray = ByteArray(new ConfigEXML())
+      return new XML(byte_array.readUTFBytes(byte_array.length))
+    }
+    
     private function process(config:XML):void {
       pre(config)
       

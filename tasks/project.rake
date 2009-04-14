@@ -8,21 +8,29 @@ ARCHIVE_EXTENSION  = ENV['EXT']  || 'zip'
 ARCHIVE_DATE       = ENV['DATE'] || '%Y.%m.%d.%H%M'
 
 project_path = File.expand_path(File.basename(__FILE__))
+project_name = File.basename(File.dirname(File.expand_path(__FILE__))).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
 
 # Exib Tasks  ------------------------------------------------------------------
 
 namespace :exib do
   
-  desc "Compile the MXML file into a SWF"
+  task :default => [:compile, :open]
+  
+  desc "Compile the EXIB Application to SWF"
   task :compile do
     mxmlc_bin    = '/opt/flex/bin/mxmlc'
     source_paths = ['/Users/parker/Work/Code/EXIB/source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
-    mxml_file    = Dir.glob("source/*.mxml").first
+    exib_app     = "source/#{project_name}.as"
 
-    sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{mxml_file}}
+    sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{exib_app}}
   end
   
-  desc "Automatically embed files listed in .exml into the .mxml"
+  desc "Open the compiled EXIB Application"
+  task :open do
+    sh %{open source/#{project_name}.swf -a '/Applications/Flash\ Player.app'}
+  end
+  
+  desc "Automatically embed files listed in .exml into the source .as"
   task :embed do
   end
   
