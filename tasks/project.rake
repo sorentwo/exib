@@ -16,7 +16,7 @@ namespace :exib do
   desc "Compile the MXML file into a SWF"
   task :compile do
     mxmlc_bin    = '/opt/flex/bin/mxmlc'
-    source_paths = ['/Users/parker/Work/Code/EXIB/source'), '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
+    source_paths = ['/Users/parker/Work/Code/EXIB/source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
     mxml_file    = Dir.glob("source/*.mxml").first
 
     sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} #{mxml_file}}

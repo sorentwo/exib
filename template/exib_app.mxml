@@ -4,52 +4,52 @@
   Description
 -->
 
-<Exib xmlns="com.soren.exib.*"
-      xmlns:mx="http://www.adobe.com/2006/mxml"
-      creationComplete="init()"
-      controlBar="null"
-      frameRate="24"
-      layout="absolute"
-      pageTitle"Exib"
-      resetHistory="true"
-      scriptRecursionLimit="100"
-      scriptTimeLimit="10"
-      usePreloader="true">
+<ExibApplication
+  xmlns="com.soren.exib.core.*"
+  xmlns:mx="http://www.adobe.com/2006/mxml"
+  creationComplete="init()"
+  frameRate="24"
+  layout="absolute"
+  pageTitle="Exib Test"
+  resetHistory="true"
+  scriptRecursionLimit="100"
+  scriptTimeLimit="10"
+  usePreloader="true">
 
   <mx:Script>
     <![CDATA[
       import mx.core.ByteArrayAsset
-      import com.soren.exib.Exib
+      import com.soren.exib.core.ExibApplication
+    
+      /**
+      * The XML embed statement.
+      **/
+      [Embed(source="../assets/config/config.exml", mimeType="application/octet-stream")]
+      private const ConfigXML:Class
       
+      // AUTO EMBED
+    
       /**
       * Pool patterns meant to be used as follows:
       *
-      * models   = '^_\w+'
-      * services = '^\*\w+'
-      * queues   = '^\+\w+'
-      * media    = '^\$\w+'
-      * formats  = '^#\w+'
+      * models   = _model
+      * services = *service
+      * queues   = +queue
+      * media    = $media
+      * formats  = #format
       **/
-      private var pools:Array = ['^_\w+', '^\*\w+', '^\+\w+', '^\$\w+', '^#\w+']
-      
+      private var pools:Array = [/^_\w+/, /^\*\w+/, /^\+\w+/, /^\$\w+/, /^#\w+/]
+    
       /**
       * The asset location. It isn't likely these will need to be changed.
       **/
       private var asset_path:String  = '../assets'
-      
-      /**
-      * The XML embed statement.
-      **/
-      [Embed("../assets/config/config.exml", mimeType="application/octet-stream")]
-      private static const ConfigXML:Class
-      
-      // START EMBED
-      // END EMBED
-      
+    
       public function init():void {
-        var xml:XML = new XML(ByteArrayAsset(new ConfigXML()).readUTFBytes(byte_array.length))
-        new Exib(xml, asset_path, pools)
+        var byte_array:ByteArray = ByteArrayAsset(new ConfigXML())
+        var exml:XML = new XML(byte_array.readUTFBytes(byte_array.length))
+        start(exml, asset_path, pools)
       }
     ]]>
   </mx:Script>
-</Exib>
+</ExibApplication>

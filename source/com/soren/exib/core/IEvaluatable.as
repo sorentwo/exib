@@ -7,7 +7,7 @@
 * Copyright (c) 2009 Parker Selbert
 **/
 
-package com.soren.exib.helper {
+package com.soren.exib.core {
 
   public interface IEvaluatable {
     function get value():*

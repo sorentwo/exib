@@ -15,7 +15,7 @@ package com.soren.exib.core {
   import com.soren.exib.core.*
   import com.soren.exib.view.*
   
-  public final class ExibApplication extends Application {
+  public class ExibApplication extends Application {
     
     private var _graphics_path:String = 'graphics'
     private var _sounds_path:String   = 'sounds'
@@ -26,8 +26,12 @@ package com.soren.exib.core {
     private var _container:Sprite
     
     /**
-    * Construct a new Exib instance. This will allocate the Exib object and
-    * libraries and process the configuration xml.
+    * Construct a new Exib instance. Use start() to actually begin the app.
+    **/
+    public function ExibApplication() {}
+    
+    /**
+    * Provided the necessary assets start the Exib application.
     * 
     * @param  exml        The exml configuration file.
     * @param  asset_path  The base asset path. Graphics, Sounds, and Media
@@ -36,7 +40,7 @@ package com.soren.exib.core {
     *                     and find objects from the global space.
     * @see    Space.as
     **/
-    public function ExibApplication(exml:XML, asset_path:String, pools:Array) {
+    public function start(exml:XML, asset_path:String, pools:Array):void {
       for each (var path:String in [_graphics_path, _sounds_path, _media_path]) {
         path = asset_path + '/' + path
       }
@@ -53,7 +57,6 @@ package com.soren.exib.core {
     private function process(config:XML):void {
       pre(config)
       
-      populateOptions(config.options)
       populateModels(config.models)
       populateFormats(config.formats)
       populateMedia(config.media)
@@ -122,7 +125,7 @@ package com.soren.exib.core {
             _space.add(_generator.genSound(xml_media, _sounds_path), xml_media.@id)
             break
           case 'video':
-            var video:VideoNode = _generator.genVideo(xml_media, _video_path)
+            var video:VideoNode = _generator.genVideo(xml_media, _media_path)
             _space.add(video, xml_media.@id)
         }
       }
@@ -149,7 +152,7 @@ package com.soren.exib.core {
     private function populateView(view:XMLList):void {
       populateScreens(view.screens.screen)
       
-      var context:Sprite = _generator.genContext(view.context, GRAPHICS_PATH)
+      var context:Sprite = _generator.genContext(view.context, _graphics_path)
       addChildAt(context, 0)
       
       // Mask?
@@ -165,9 +168,9 @@ package com.soren.exib.core {
       var scr_con:ScreenController = _space.get('screen')
       for each (var xml_screen:XML in screens) {
         var screen:ScreenNode = new ScreenNode()
-        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(GRAPHICS_PATH + xml_screen.@bg))
+        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(_graphics_path + xml_screen.@bg))
         
-        _generator.genNodes(xml_screen.*, screen, GRAPHICS_PATH)
+        _generator.genNodes(xml_screen.*, screen, _graphics_path)
         scr_con.add(screen, xml_screen.@id)
       }
     }

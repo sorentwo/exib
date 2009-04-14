@@ -12,6 +12,7 @@ package com.soren.exib.helper {
 
   import flash.events.EventDispatcher
   import flash.utils.getQualifiedClassName
+  import com.soren.exib.core.IEvaluatable
   import com.soren.exib.model.Model
   
   public class Conditional {
