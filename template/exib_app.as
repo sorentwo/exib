@@ -4,12 +4,12 @@
 
 package {
   
-  import com.soren.exib.core.ExibApplication
+  import com.soren.exib.core.Application
   
   // SWF Metadata
   [SWF(width='800', height='600', backgroundColor='#333333', frameRate='30')]
   
-  public class #CLASS_NAME# extends ExibApplication {
+  public class #CLASS_NAME# extends Application {
     
     // EXML Embed
     [Embed(source="../assets/config/config.exml", mimeType="application/octet-stream")]
