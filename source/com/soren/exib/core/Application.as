@@ -15,7 +15,7 @@ package com.soren.exib.core {
   import com.soren.exib.effect.Effect
   import com.soren.exib.view.*
   
-  public class ExibApplication extends Sprite {
+  public class Application extends Sprite {
     
     private var _graphics_path:String = 'graphics'
     private var _sounds_path:String   = 'sounds'
@@ -28,7 +28,7 @@ package com.soren.exib.core {
     /**
     * Construct a new Exib instance.
     **/
-    public function ExibApplication() {}
+    public function Application() {}
     
     /**
     * Provided the necessary assets start the Exib application.

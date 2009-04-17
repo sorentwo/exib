@@ -1,41 +1,16 @@
 require 'rake'
 require 'rdiscount'
 
-task :default => :test
-
-task(:test) {}
-
 # Exib Tasks  ------------------------------------------------------------------
 
-DESTINATION = ENV['DEST'] || "./exib_project"
-
-BANNER      = "\n\n#{'#'*80}\n\n"
+DESTINATION = ENV['DEST'] || File.expand_path("~/Desktop/exib_project")
 
 BASE_DIRS   = %w(assets deploy deliver doc source)
 ASSET_DIRS  = %w(config fonts graphics media sounds)
-RAKEFILE    = 'tasks/project.rake'
-CONFIG      = 'template/config.exml'
-EXIB_APP    = 'template/exib_app.as'
 
 namespace :exib do
   desc "Generates a new EXIB project"
   task :build => [ :make_dir_structure, :copy_files, :generate_docs, :init_repo ]
-end
-
-# ActionScript Tasks -----------------------------------------------------------
-
-TEST_BASENAME = ENV['TEST'] || 'ExibTestRunner'
-USE_FLASH     = ENV['FLASH'] || false
-
-namespace :as do
-  desc "Generates ASDoc documentation for the main EXIB project"
-  task :asdoc => [ :generate_asdocs ]
-  
-  desc "Runs ASUnit testing for the EXIB project"
-  task :test => [ :compile_asunit, :run_compiled_test ]
-  
-  desc "Open the Logger Satelite for debugging"
-  task :satelite => [ :open_logger_satelite ]
 end
 
 # Make Directory Structure -----------------------------------------------------
@@ -44,7 +19,6 @@ def make_dest_dirs(dirs, path = '.')
   mkdir_p dirs.map { |dir| File.join(DESTINATION, path.to_s, dir) } 
 end
 
-desc "Make the directory structure for the new EXIB project"
 task :make_dir_structure => [ :make_base_dirs, :make_asset_dirs]
 
 task(:make_base_dirs)  { make_dest_dirs BASE_DIRS            }
@@ -52,26 +26,31 @@ task(:make_asset_dirs) { make_dest_dirs ASSET_DIRS, 'assets' }
 
 # Copy Files -------------------------------------------------------------------
 
-desc "Copy the necessary files"
-task :copy_files => [:copy_config, :copy_app, :copy_rake]
-
-task(:copy_config) { cp CONFIG,   File.join(DESTINATION, 'assets/config/config.exml') }
-task(:copy_rake)   { cp RAKEFILE, File.join(DESTINATION, 'rakefile') }
-
-task(:copy_app) do
-  app_basename = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
-  app_fullpath = File.join(DESTINATION, "source/#{app_basename}.as") 
-  
-  File.open(EXIB_APP, 'r') do |file|
-    File.open(app_fullpath, 'w') do |dest|
-      file.each_line { |line| dest << line.gsub('#CLASS_NAME#', app_basename) }
+def write_and_replace_token(source, output, token, replace)
+  File.open(source, 'r') do |file|
+    File.open(output, 'w') do |dest|
+      file.each_line { |line| dest << line.gsub(token, replace) }
     end
   end
 end
 
+task :copy_files => [:copy_config, :copy_rake, :copy_app]
+
+task(:copy_config)  { cp 'template/config_template.exml', File.join(DESTINATION, 'assets/config/config.exml') }
+task(:copy_rake)    { cp 'template/project_rakefile',     File.join(DESTINATION, 'rakefile') }
+
+task(:copy_app) do
+  application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
+  application_dest  = File.join(DESTINATION, "source/#{application_name}.as")
+  factory_dest      = File.join(DESTINATION, 'source/Factory.as')
+  application_token = '#APPLICATION_NAME#'
+  
+  write_and_replace_token('template/application_template.as', application_dest, application_token, application_name)
+  write_and_replace_token('template/factory_template.as', factory_dest, application_token, application_name)
+end
+
 # Generate Documentation -------------------------------------------------------
 
-desc "Generate the config API documentation"
 task :generate_docs do
   require 'rdiscount'
   source = 'doc/README.txt'
@@ -86,7 +65,6 @@ end
 
 # Initialize Repository --------------------------------------------------------
 
-desc "Automate the common task of initializing a Mercurial repo for the project"
 task :init_repo do
   ignore = %w(*._* *.DS_Store *.swf *.exe *.zip)
   File.open("#{DESTINATION}/.gitignore", "w+") do |file|
@@ -104,9 +82,24 @@ task :init_repo do
   chdir original_dir
 end
 
+# ActionScript Tasks -----------------------------------------------------------
+
+BANNER = "\n\n#{'#'*80}\n\n"
+TEST_BASENAME = ENV['TEST'] || 'ExibTestRunner'
+
+namespace :as do
+  desc "Generates ASDoc documentation for the main EXIB project"
+  task :asdoc => [ :generate_asdocs ]
+  
+  desc "Runs ASUnit testing for the EXIB project"
+  task :test => [ :compile_asunit, :run_compiled_test ]
+  
+  desc "Open the Logger Satelite for debugging"
+  task :satelite => [ :open_logger_satelite ]
+end
+
 # Generate ASDoc Structure -----------------------------------------------------
 
-desc "Generate ASDocs"
 task :generate_asdocs do
   asdoc_bin  = '/opt/flex/bin/asdoc'
   source_dir = File.expand_path('./source')
@@ -119,14 +112,12 @@ end
 
 # Logger Satelite --------------------------------------------------------------
 
-desc "Opens the logger satelite"
 task :open_logger_satelite do
   sh %{open satelite/LoggerSatelite.swf}
 end
 
 # Run ASUnit Tests -------------------------------------------------------------
 
-desc "Compile ASUnit tests"
 task :compile_asunit do
   puts BANNER
   
@@ -138,7 +129,6 @@ task :compile_asunit do
   puts BANNER
 end
 
-desc "Runs the test compiled by compile_asunit"
 task :run_compiled_test do
   sh %{open test/#{TEST_BASENAME}.swf -a '/Applications/Flash\ Player.app'}
 end
