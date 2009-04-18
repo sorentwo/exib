@@ -1,5 +1,4 @@
 require 'rake'
-require 'time'
 
 DELIVERABLE_DIR    = 'deliver'
 DELIVERABLES       = %w(deploy doc/HOTKEYS.txt)
@@ -14,7 +13,8 @@ project_name = File.basename(File.dirname(File.expand_path(__FILE__))).gsub(/\/(
 
 namespace :exib do
   
-  task :go => [:compile, :open]
+  desc "Compile and open the EXIB application"
+  task :go => [:embed, :compile, :open]
   
   desc "Compile the EXIB Application to SWF"
   task :compile do
@@ -31,13 +31,59 @@ namespace :exib do
     sh %{open source/#{project_name}.swf -a '/Applications/Flash\ Player.app'}
   end
   
-  desc "Automatically embed files listed in .exml into the source .as"
-  task :embed do
-  end
-  
   desc "Packages the necessary files into a deliverable archive"
   task :package do
+    require 'time'
+    
     archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE_STRING)}.#{ARCHIVE_EXTENSION}"
     sh %{7za a -mx=9 -mmt=on #{File.join(DELIVERABLE_DIR, archive_name)} #{DELIVERABLES.join}}
+  end
+    
+  desc "Automatically embed all available assets"
+  task :embed do
+    font_asset    = { :path => 'assets/fonts',    :glob => '*.ttf',               :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', mimeType='application/x-font')]) }
+    graphic_asset = { :path => 'assets/graphics', :glob => '*.{png,jpg,gif,svg}', :template => %q([Embed(source='#FILE_NAME#')]) }
+    sound_asset   = { :path => 'assets/sounds',   :glob => '*.mp3',               :template => %q([Embed(source='#FILE_NAME#', mimeType='audio/mpeg')]) }
+    #media_asset   = { :path => 'assets/media',    :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#', symbol='')])}
+    
+    class_template = 'public var #FILE_NAME#:Class'
+    embed_buffer   = ''
+    
+    [font_asset, graphic_asset, sound_asset].each do |asset|
+      files = Dir.glob("#{asset[:path]}/#{asset[:glob]}")
+      files.map! { |f| [File.join('..', asset[:path], File.basename(f)), File.basename(f)] }
+      
+      files.each do |file|
+        case asset[:path]
+        when /fonts/ then embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first).gsub('#FONT_NAME#', File.basename(file.last, '.ttf').capitalize)
+        else              embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first)
+        end
+        
+        embed_buffer << "\n"
+        embed_buffer << class_template.gsub('#FILE_NAME#',   File.basename(file.last, '.*').downcase)
+        embed_buffer << "\n\n"
+      end
+    end
+    
+    file = File.join(project_path, 'source', "#{project_name}.as")
+    tmp  = file.gsub('.as', '.tmp')
+    
+    begin_embed  = /(\s+)\/\/ BEGIN AUTO EMBED/ # Captures the indentation
+    end_embed    = /\/\/ END AUTO EMBED/
+    remove_embed = false
+    
+    File.open(file, 'r') do |source|
+      File.open(tmp, 'w') do |dest|
+        source.each_line do |line|
+          remove_embed, indent = true, $1 if line =~ begin_embed
+          remove_embed = false if line =~ end_embed
+          
+          dest << line unless remove_embed and line !~ begin_embed
+          dest << embed_buffer.split(/\n/).map! { |l| indent + l }.join("\n") + "\n" if line =~ begin_embed
+        end
+      end
+    end
+    
+    mv tmp, file
   end
 end
