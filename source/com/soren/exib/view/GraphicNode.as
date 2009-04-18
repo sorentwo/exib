@@ -12,7 +12,6 @@ package com.soren.exib.view {
   import flash.display.Loader
   import flash.net.URLRequest
   import com.soren.debug.Log
-  import com.soren.exib.core.Aggregator
 
   public class GraphicNode extends Node {
     private const VALID_URL:RegExp = /.*\.(png|jpg|gif)$/i
@@ -30,7 +29,6 @@ package com.soren.exib.view {
       }
       
       _graphic.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler)
-      Aggregator.getAggregator().registerDispatcher(Aggregator.GRAPHIC, _graphic.contentLoaderInfo)
       
       _url = url
       addChild(_graphic)

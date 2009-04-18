@@ -21,9 +21,8 @@ package {
       var service_tests:Array   = [CronTest, DaemonTest, HotkeyTest, SoundTest]
       var util_tests:Array      = [TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
       var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
-      var core_tests:Array      = [AggregatorTest]
 
-      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests, core_tests]) {
+      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests]) {
         iterateTestArray(test_array)
       }
       

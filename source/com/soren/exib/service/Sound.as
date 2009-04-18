@@ -15,7 +15,6 @@ package com.soren.exib.service {
   import flash.net.URLLoader
   import flash.net.URLRequest
   import com.soren.debug.Log
-  import com.soren.exib.core.Aggregator
   import com.soren.exib.core.IActionable
   
   public class Sound implements IActionable {
@@ -38,7 +37,6 @@ package com.soren.exib.service {
       }
       
       _sound.addEventListener(Event.COMPLETE, loadComplete)
-      Aggregator.getAggregator().registerDispatcher(Aggregator.AUDIO, _sound)
     }
     
     /**
