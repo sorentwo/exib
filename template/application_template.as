@@ -12,7 +12,8 @@ package {
     [Embed(source="../assets/config/config.exml", mimeType="application/octet-stream")]
     private const ConfigEXML:Class
     
-    // AUTO EMBEDDING
+    // BEGIN AUTO EMBED
+    // END AUTO EMBED
     
     // The asset location. It isn't likely these will need to be changed.
     private const ASSET_PATH:String  = '../assets'
