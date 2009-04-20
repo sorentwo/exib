@@ -5,6 +5,7 @@
 package {
   
   import com.soren.exib.core.Application
+  import com.soren.exib.view.GraphicNode
   
   public class #APPLICATION_NAME# extends Application {
     
@@ -15,9 +16,6 @@ package {
     // BEGIN AUTO EMBED
     // END AUTO EMBED
     
-    // The asset location. It isn't likely these will need to be changed.
-    private const ASSET_PATH:String  = '../assets'
-    
     /**
     * RegExp patterns used to place assets into pools (groups).
     * 
@@ -27,7 +25,9 @@ package {
     private const POOLS:Array = [/^_\w+/, /^\*\w+/, /^\+\w+/, /^\$\w+/, /^%\w+/, /^@\w+/]
     
     public function #APPLICATION_NAME#() {
-      start(ConfigEXML, ASSET_PATH, POOLS)
+      GraphicNode.setEmbedContainer(this)
+      
+      start(ConfigEXML, POOLS)
     }
   }
 }

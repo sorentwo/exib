@@ -1,51 +1,44 @@
 /**
 * GraphicNode
 *
-* An extension of Node to simplify loading external assets.
+* A basic graphic node to load embedded assets.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
 
 package com.soren.exib.view {
   
-  import flash.events.IOErrorEvent
-  import flash.display.Loader
-  import flash.net.URLRequest
+  import flash.display.Bitmap
   import com.soren.debug.Log
-
+  
   public class GraphicNode extends Node {
-    private const VALID_URL:RegExp = /.*\.(png|jpg|gif)$/i
     
-    private var _graphic:Loader = new Loader()
-    private var _url:String
+    private static const VALID_URL:RegExp = /\w+\.(png|jpg|gif)$/i
     
+    private static var _embed_container:*
+    
+    /**
+    * Constructor
+    * 
+    * @param  url   The asset url. It will be stripped down to the file name with
+    *               no extension. 
+    **/
     public function GraphicNode(url:String) {
+      verifyEmbedContainer()
       validateURL(url)
       
+      var class_name:String = processUrlIntoClassName(url)
+      
       try {
-        _graphic.load(new URLRequest(url))
+        addChild(new _embed_container[class_name] as Bitmap)
       } catch (e:Error) {
-        Log.getLog().error('Unable to load requested graphic: ' + url)
+        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
-      
-      _graphic.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler)
-      
-      _url = url
-      addChild(_graphic)
     }
     
-    /**
-    * Retrieive the width of the graphic object. Entirely synonomous with width.
-    **/
-    public function get full_width():uint {
-      return _graphic.width
-    }
-    
-    /**
-    * Retrieve the url used to load the graphic asset
-    **/
-    public function get url():String {
-      return _url
+    public static function setEmbedContainer(embed_container:*):void {
+      _embed_container = embed_container
+      Log.getLog().debug(embed_container)
     }
     
     // ---
@@ -53,8 +46,16 @@ package com.soren.exib.view {
     /**
     * @private
     **/
-    private function ioErrorHandler(event:IOErrorEvent):void {
-      Log.getLog().error('Asset could not be loaded at: ' + _url)
+    private function processUrlIntoClassName(url:String):String {
+      var result:Object = /(?P<file_name>\w+)\.\w{3}/.exec(url)
+      return result.file_name
+    }
+    
+    /**
+    * @private
+    **/
+    private function verifyEmbedContainer():void {
+      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
     }
     
     /**

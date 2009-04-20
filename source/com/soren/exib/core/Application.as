@@ -17,10 +17,6 @@ package com.soren.exib.core {
   
   public class Application extends Sprite {
     
-    private var _graphics_path:String = 'graphics'
-    private var _sounds_path:String   = 'sounds'
-    private var _media_path:String    = 'media'
-    
     private var _space:Space = Space.getSpace()
     private var _generator:Generator = new Generator()
     private var _container:Sprite
@@ -34,17 +30,11 @@ package com.soren.exib.core {
     * Provided the necessary assets start the Exib application.
     * 
     * @param  ConfigEXML  An embedded XML class
-    * @param  asset_path  The base asset path. Graphics, Sounds, and Media
-    *                     subfolders must be present.
     * @param  pools       An array of regular expressions that will used to put
     *                     and find objects from the global space.
     * @see    Space.as
     **/
-    public function start(ConfigEXML:Class, asset_path:String, pools:Array):void {
-      _graphics_path = asset_path + '/' + _graphics_path
-      _sounds_path   = asset_path + '/' + _sounds_path
-      _media_path    = asset_path + '/' + _media_path
-      
+    public function start(ConfigEXML:Class, pools:Array):void {
       for each (var pool_pattern:RegExp in pools) {
         Space.getSpace().createPool(pool_pattern)
       }
@@ -52,6 +42,7 @@ package com.soren.exib.core {
       Log.getLog().level = Log.DEBUG
       Log.getLog().throwOnError = true
       Log.getLog().clear()
+      
       
       process(getXMLFromEmbeddedClass(ConfigEXML))
     }
@@ -136,10 +127,10 @@ package com.soren.exib.core {
       for each (var xml_media:XML in media.*) {
         switch (xml_media.name().toString()) {
           case 'sound':
-            _space.add(_generator.genSound(xml_media, _sounds_path), xml_media.@id)
+            _space.add(_generator.genSound(xml_media,'../assets/sounds'), xml_media.@id)
             break
           case 'video':
-            var video:VideoNode = _generator.genVideo(xml_media, _media_path)
+            var video:VideoNode = _generator.genVideo(xml_media, '../assets/media')
             _space.add(video, xml_media.@id)
         }
       }
@@ -166,7 +157,7 @@ package com.soren.exib.core {
     private function populateView(view:XMLList):void {
       populateScreens(view.screens.screen)
       
-      var context:Sprite = _generator.genContext(view.context, _graphics_path)
+      var context:Sprite = _generator.genContext(view.context, '')
       addChildAt(context, 0)
       
       // Mask?
@@ -182,9 +173,9 @@ package com.soren.exib.core {
       var scr_con:ScreenController = _space.get('screen')
       for each (var xml_screen:XML in screens) {
         var screen:ScreenNode = new ScreenNode()
-        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(_graphics_path + xml_screen.@bg))
+        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode('' + xml_screen.@bg))
         
-        _generator.genNodes(xml_screen.*, screen, _graphics_path)
+        _generator.genNodes(xml_screen.*, screen, '')
         scr_con.add(screen, xml_screen.@id)
       }
     }
