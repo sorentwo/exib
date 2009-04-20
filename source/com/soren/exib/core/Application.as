@@ -149,6 +149,9 @@ package com.soren.exib.core {
             break
           case 'daemon':
             _space.add(_generator.genDaemon(xml_ser), xml_ser.@id)
+            break
+          case 'task':
+            _space.add(_generator.genTask(xml_ser), xml_ser.@id)
         }
       }
     }

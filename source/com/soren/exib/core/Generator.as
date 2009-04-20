@@ -116,6 +116,10 @@ package com.soren.exib.core {
       return new Hotkey(xml.@key, genActionSet(xml.action), stage, toggle)
     }
     
+    public function genTask(xml:XML):Task {
+      return new Task(genActionSet(xml.action))
+    }
+    
     // Media -->
     public function genFormat(xml:XML):TextFormat {
       return new TextFormat(xml.@font, xml.@size, xml.@color)

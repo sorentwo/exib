@@ -18,7 +18,7 @@ package {
       var helper_tests:Array    = [ConditionalTest, ConditionalSetTest, ActionTest, ActionSetTest, FormulaTest]
       var manager_tests:Array   = [ManagerTest]
       var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
-      var service_tests:Array   = [CronTest, DaemonTest, HotkeyTest, SoundTest]
+      var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest, SoundTest]
       var util_tests:Array      = [TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
       var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
 
