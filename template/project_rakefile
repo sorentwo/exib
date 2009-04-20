@@ -91,6 +91,6 @@ end
 # AS Tasks ---------------------------------------------------------------------
 namespace :as do
   task :satelite do
-    sh %{open debug/satelite.swf}
+    sh %{open debug/satellite.swf -a '/Applications/Flash\ Player.app'}
   end
 end

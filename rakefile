@@ -34,11 +34,11 @@ def write_and_replace_token(source, output, token, replace)
   end
 end
 
-task :copy_files => [:copy_config, :copy_rake, :copy_satelite, :copy_app]
+task :copy_files => [:copy_config, :copy_rake, :copy_satellite, :copy_app]
 
-task(:copy_config)   { cp 'template/config_template.exml', File.join(DESTINATION, 'assets/config/config.exml') }
-task(:copy_rake)     { cp 'template/project_rakefile',     File.join(DESTINATION, 'rakefile')                  }
-task(:copy_satelite) { cp 'satelite/LoggerSatelite.swf',   File.join(DESTINATION, 'debug/satelite.swf')        }
+task(:copy_config)   { cp 'template/config_template.exml',  File.join(DESTINATION, 'assets/config/config.exml') }
+task(:copy_rake)     { cp 'template/project_rakefile',      File.join(DESTINATION, 'rakefile')                  }
+task(:copy_satellite) { cp 'satellite/LoggerSatellite.swf', File.join(DESTINATION, 'debug/satellite.swf')       }
 
 task(:copy_app) do
   application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
@@ -95,8 +95,8 @@ namespace :as do
   desc "Runs ASUnit testing for the EXIB project"
   task :test => [ :compile_asunit, :run_compiled_test ]
   
-  desc "Open the Logger Satelite for debugging"
-  task :satelite => [ :open_logger_satelite ]
+  desc "Open the LoggerSatellite for debugging"
+  task :satellite => [ :open_logger_satellite ]
 end
 
 # Generate ASDoc Structure -----------------------------------------------------
@@ -111,10 +111,10 @@ task :generate_asdocs do
   rm_r 'asdoc-output'
 end
 
-# Logger Satelite --------------------------------------------------------------
+# Logger satellite --------------------------------------------------------------
 
-task :open_logger_satelite do
-  sh %{open satelite/LoggerSatelite.swf}
+task :open_logger_satellite do
+  sh %{open satellite/LoggerSatellite.swf}
 end
 
 # Run ASUnit Tests -------------------------------------------------------------
