@@ -1,66 +1,77 @@
 /**
 * VideoNode
 *
-* Node for loading and controlling .flv video clips.
+* Node for loading and controlling SWF video clips.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
 
 package com.soren.exib.view {
 
-  import flash.events.NetStatusEvent
-  import flash.media.Video
-  import flash.net.NetConnection
-  import flash.net.NetStream
+  import flash.display.MovieClip
+  import flash.events.Event
   import com.soren.debug.Log
   import com.soren.exib.core.IActionable
 
   public class VideoNode extends Node implements IActionable {
 
-    private const VALID_URL:RegExp = /\.flv$/
-    private const DEFAULT_BUFFER_TIME:uint = 60
+    private static const VALID_URL:RegExp = /\w+\.swf$/
     
-    private var _video_url:String
-    private var _video_height:uint
-    private var _video_width:uint
+    private static var _embed_container:*
+    
     private var _loop:Boolean
-    
-    private var _connection:NetConnection
-    private var _stream:NetStream
-    private var _video:Video
+    private var _persistent:Boolean
+    private var _video:MovieClip
 
     /**
     * Constructor
+    * 
+    * @param  url
+    * @param  loop  Determine whether the video will loop
     **/
-    public function VideoNode(url:String, video_width:uint, video_height:uint, loop:Boolean = true) {
+    public function VideoNode(url:String, loop:Boolean = true, persistent:Boolean = false) {
+      verifyEmbedContainer()
       validateURL(url)
       
-      _video_url    = url
-      _video_width  = video_width
-      _video_height = video_height
-      _loop         = loop
+      var class_name:String = processUrlIntoClassName(url)
       
-      _connection = new NetConnection()
-      _connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler)
-      _connection.connect(null)
+      try {
+        _video = new _embed_container[class_name] as MovieClip
+      } catch (e:Error) {
+        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
+      }
+      
+      _loop = loop
+      _persistent = persistent
+      
+      if (_persistent) _video.gotoAndStop(0); addChild(_video)
+    }
+    
+    /**
+    * Supply the class where embedded assets can be found.
+    **/    
+    public static function setEmbedContainer(embed_container:*):void {
+      _embed_container = embed_container
     }
     
     /**
     * Play the video. Doing so will add it to the display list of this node.
     **/
     public function play():void {
-      _stream.play(_video_url)
       addChild(_video)
+      _video.gotoAndPlay(0)
+      Log.getLog().debug(_video.width)
+      if (_loop) _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     /**
     * Stop the video. Doing so will remove it from the display list of this node.
     **/
     public function stop():void {
-      _stream.pause()
-      _stream.seek(0)
+      _video.gotoAndStop(0)
       
-      while (this.numChildren > 0) { this.removeChildAt(0) }
+      if (!_persistent) this.removeChild(_video)
+      if (_loop)        _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     // ---
@@ -68,40 +79,24 @@ package com.soren.exib.view {
     /**
     * @private
     **/
-    private function netStatusHandler(event:NetStatusEvent):void {
-      switch (event.info.code) {
-        case 'NetConnection.Connect.Success':
-          connectStream()
-          break
-        case 'NetStream.Play.Stop':
-          if (_loop) _stream.play(_video_url)
-          break
-        case 'NetStream.Play.StreamNotFound':
-          Log.getLog().error('Unable to locate video url: ' + _video_url)
-          break
-      }
+    private function loopPlaybackListener(event:Event):void {
+      if (_video.currentFrame == _video.totalFrames) _video.gotoAndPlay(0)
     }
-    
-    // ---
     
     /**
     * @private
     **/
-    private function connectStream():void {
-      _stream = new NetStream(_connection)
-      _stream.bufferTime = DEFAULT_BUFFER_TIME
-      _stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler)
+    private function processUrlIntoClassName(url:String):String {
+      var result:Object = /(?P<file_name>\w+)\.\w{3}/.exec(url)
+      return result.file_name
+    }
     
-      // Handle onMetaData errors silently, we have no use for them
-      var net_client:Object = new Object()
-      net_client.onMetaData = function(meta:Object):void { }
-      _stream.client = net_client
-    
-      _video = new Video()
-      _video.width  = _video_width
-      _video.height = _video_height
-      _video.attachNetStream(_stream)
-    } 
+    /**
+    * @private
+    **/
+    private function verifyEmbedContainer():void {
+      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
+    }
   
     /**
     * @private

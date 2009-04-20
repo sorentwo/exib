@@ -7,6 +7,7 @@ package {
   import com.soren.exib.core.Application
   import com.soren.exib.service.Sound
   import com.soren.exib.view.GraphicNode
+  import com.soren.exib.view.VideoNode
   
   public class #APPLICATION_NAME# extends Application {
     
@@ -28,6 +29,7 @@ package {
     public function #APPLICATION_NAME#() {
       Sound.setEmbedContainer(this)
       GraphicNode.setEmbedContainer(this)
+      VideoNode.setEmbedContainer(this)
       
       start(ConfigEXML, POOLS)
     }

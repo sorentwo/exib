@@ -1,8 +1,8 @@
 /**
 * EXIB
 * 
-* This is the core class, responsible for loading all external assets and date,
-* and linking MVC components together.
+* This is the core class, responsible for loading all external assets, data, and
+* linking MVC components together.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
@@ -127,11 +127,10 @@ package com.soren.exib.core {
       for each (var xml_media:XML in media.*) {
         switch (xml_media.name().toString()) {
           case 'sound':
-            _space.add(_generator.genSound(xml_media, ''), xml_media.@id)
+            _space.add(_generator.genSound(xml_media), xml_media.@id)
             break
           case 'video':
-            var video:VideoNode = _generator.genVideo(xml_media, '')
-            _space.add(video, xml_media.@id)
+            _space.add(_generator.genVideo(xml_media), xml_media.@id)
         }
       }
     }
@@ -157,7 +156,7 @@ package com.soren.exib.core {
     private function populateView(view:XMLList):void {
       populateScreens(view.screens.screen)
       
-      var context:Sprite = _generator.genContext(view.context, '')
+      var context:Sprite = _generator.genContext(view.context)
       addChildAt(context, 0)
       
       // Mask?
@@ -173,9 +172,9 @@ package com.soren.exib.core {
       var scr_con:ScreenController = _space.get('screen')
       for each (var xml_screen:XML in screens) {
         var screen:ScreenNode = new ScreenNode()
-        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode('' + xml_screen.@bg))
+        if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(xml_screen.@bg))
         
-        _generator.genNodes(xml_screen.*, screen, '')
+        _generator.genNodes(xml_screen.*, screen)
         scr_con.add(screen, xml_screen.@id)
       }
     }

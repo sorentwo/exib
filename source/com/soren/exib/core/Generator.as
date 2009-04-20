@@ -121,13 +121,12 @@ package com.soren.exib.core {
       return new TextFormat(xml.@font, xml.@size, xml.@color)
     }
     
-    public function genSound(xml:XML, path:String = ''):Sound {
-      return new Sound(path + xml.@url)
+    public function genSound(xml:XML):Sound {
+      return new Sound(xml.@url)
     }
     
-    public function genVideo(xml:XML, path:String = ''):VideoNode {
-      var parsed:Object = /^(?P<width>\d+)x(?P<height>\d+)$/.exec(xml.@size)
-      return new VideoNode(path + xml.@url, parsed.width, parsed.height)
+    public function genVideo(xml:XML):VideoNode {
+      return new VideoNode(xml.@url, false, true)
     }
     
     // Helpers -->
@@ -170,12 +169,12 @@ package com.soren.exib.core {
     }
     
     // View -->
-    public function genContext(xml_list:XMLList, path:String = ''):CompositeNode {
+    public function genContext(xml_list:XMLList):CompositeNode {
       var context:CompositeNode = new CompositeNode()
       
-      if (xml_list.@bg != undefined) context.addChild(new GraphicNode(path + xml_list.@bg))
+      if (xml_list.@bg != undefined) context.addChild(new GraphicNode(xml_list.@bg))
       
-      genNodes(xml_list.*, context, path)
+      genNodes(xml_list.*, context)
       
       return context
     }
@@ -187,33 +186,33 @@ package com.soren.exib.core {
       return container
     }
     
-    public function genNodes(xml_list:XMLList, container:Node, path:String = ''):void {
+    public function genNodes(xml_list:XMLList, container:Node):void {
       for each (var xml:XML in xml_list) {
         
         switch (xml.name().toString()) {
           case 'button':
-            container.addChild(genButtonNode(xml, path))
+            container.addChild(genButtonNode(xml))
             break
           case 'composite':
-            container.addChild(genCompositeNode(xml, path))
+            container.addChild(genCompositeNode(xml))
             break
           case 'dial':
-            container.addChild(genDialNode(xml, path))
+            container.addChild(genDialNode(xml))
             break
           case 'graphic':
-            container.addChild(genGraphicNode(xml, path))
+            container.addChild(genGraphicNode(xml))
             break
           case 'mask':
             container.addChild(genVectorNode(xml))
             break
           case 'meter':
-            container.addChild(genMeterNode(xml, path))
+            container.addChild(genMeterNode(xml))
             break
           case 'multi':
-            container.addChild(genMultiNode(xml, path))
+            container.addChild(genMultiNode(xml))
             break
           case 'progress':
-            container.addChild(genProgressNode(xml, path))
+            container.addChild(genProgressNode(xml))
             break
           case 'text':
             container.addChild(genTextNode(xml))
@@ -243,11 +242,11 @@ package com.soren.exib.core {
           if (known.test(child.name())) has_valid_child = true; break
         }
         
-        if (has_valid_child) genNodes(xml.*, last_node, path)
+        if (has_valid_child) genNodes(xml.*, last_node)
       }
     }
     
-    public function genButtonNode(xml:XML, path:String):ButtonNode {
+    public function genButtonNode(xml:XML):ButtonNode {
       var press_set:ActionSet   = null
       var release_set:ActionSet = null
         
@@ -256,19 +255,19 @@ package com.soren.exib.core {
       
       if (xml.@down == undefined) xml.@down = xml.@up
       
-      return new ButtonNode(path + xml.@up, path + xml.@down, press_set, release_set)
+      return new ButtonNode(xml.@up, xml.@down, press_set, release_set)
     }
     
-    public function genCompositeNode(xml:XML, path:String):CompositeNode {
+    public function genCompositeNode(xml:XML):CompositeNode {
       var composite_node:CompositeNode = new CompositeNode()
 
-      if (xml.@bg != undefined) composite_node.addChild(new GraphicNode(path + xml.@bg))
+      if (xml.@bg != undefined) composite_node.addChild(new GraphicNode(xml.@bg))
 
       return composite_node
     }
     
-    public function genDialNode(xml:XML, path:String):DialNode {
-      var dial_node:DialNode = new DialNode(path + xml.@url)
+    public function genDialNode(xml:XML):DialNode {
+      var dial_node:DialNode = new DialNode(xml.@url)
             
       for each (var xml_pos:XML in xml.position) {
         for each (var xml_inj:XML in xml.inject) { xml_pos.appendChild(<action>{xml_inj.toString()}</action>) }
@@ -278,34 +277,34 @@ package com.soren.exib.core {
       return dial_node
     }
     
-    public function genGraphicNode(xml:XML, path:String):GraphicNode {
-      return new GraphicNode(path + xml.@url)
+    public function genGraphicNode(xml:XML):GraphicNode {
+      return new GraphicNode(xml.@url)
     }
     
-    public function genMeterNode(xml:XML, path:String):MeterNode {
+    public function genMeterNode(xml:XML):MeterNode {
       var model:ValueModel = _space.get(xml.@model) as ValueModel
       
       return new MeterNode(model,
-                           path + xml.@left_empty,  path + xml.@left_full,
-                           path + xml.@mid_empty,   path + xml.@mid_full,
-                           path + xml.@right_empty, path + xml.@right_full,
+                           xml.@left_empty,  xml.@left_full,
+                           xml.@mid_empty,   xml.@mid_full,
+                           xml.@right_empty, xml.@right_full,
                            xml.@segments, xml.@spacing)
     }
     
-    public function genMultiNode(xml:XML, path:String):MultiNode {
+    public function genMultiNode(xml:XML):MultiNode {
       var multi_node:MultiNode = new MultiNode()
       for each (var xml_child:XML in xml.*) {
         var child_node:Node
         
         switch (xml_child.name().toString()) {
           case 'mbutton':
-            child_node = genButtonNode(xml_child, path)
+            child_node = genButtonNode(xml_child)
             break
           case 'mgraphic':
-            child_node = genGraphicNode(xml_child, path)
+            child_node = genGraphicNode(xml_child)
             break
           case 'mmeter':
-            child_node = genMeterNode(xml_child, path)
+            child_node = genMeterNode(xml_child)
             break
           case 'mtext':
             child_node = genTextNode(xml_child)
@@ -322,11 +321,11 @@ package com.soren.exib.core {
       return multi_node
     }
     
-    public function genProgressNode(xml:XML, path:String):ProgressNode {
+    public function genProgressNode(xml:XML):ProgressNode {
       var model:ValueModel = retrieveActionable(xml.@model) as ValueModel
       var length:uint = uint(xml.@length)
       
-      return new ProgressNode(model, path + xml.@url, length)
+      return new ProgressNode(model, xml.@url, length)
     }
     
     public function genTextNode(xml:XML):TextNode {

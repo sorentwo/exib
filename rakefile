@@ -6,7 +6,7 @@ require 'rdiscount'
 DESTINATION = ENV['DEST'] || File.expand_path("~/Desktop/exib_project")
 
 BASE_DIRS   = %w(assets debug deploy deliver doc source)
-ASSET_DIRS  = %w(config fonts graphics media sounds)
+ASSET_DIRS  = %w(config fonts graphics sounds videos)
 
 namespace :exib do
   desc "Generates a new EXIB project"

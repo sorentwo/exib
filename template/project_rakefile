@@ -44,12 +44,12 @@ namespace :exib do
     font_asset    = { :path => 'assets/fonts',    :glob => '*.ttf',               :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', mimeType='application/x-font')]) }
     graphic_asset = { :path => 'assets/graphics', :glob => '*.{png,jpg,gif,svg}', :template => %q([Embed(source='#FILE_NAME#')]) }
     sound_asset   = { :path => 'assets/sounds',   :glob => '*.mp3',               :template => %q([Embed(source='#FILE_NAME#', mimeType='audio/mpeg')]) }
-    #media_asset   = { :path => 'assets/media',    :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#', symbol='')])}
+    video_asset   = { :path => 'assets/videos',   :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#')]) }
     
     class_template = 'public var #FILE_NAME#:Class'
     embed_buffer   = ''
     
-    [font_asset, graphic_asset, sound_asset].each do |asset|
+    [font_asset, graphic_asset, sound_asset, video_asset].each do |asset|
       files = Dir.glob("#{asset[:path]}/#{asset[:glob]}")
       files.map! { |f| [File.join('..', asset[:path], File.basename(f)), File.basename(f)] }
       
