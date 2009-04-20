@@ -5,7 +5,7 @@ require 'rdiscount'
 
 DESTINATION = ENV['DEST'] || File.expand_path("~/Desktop/exib_project")
 
-BASE_DIRS   = %w(assets deploy deliver doc source)
+BASE_DIRS   = %w(assets debug deploy deliver doc source)
 ASSET_DIRS  = %w(config fonts graphics media sounds)
 
 namespace :exib do
@@ -34,10 +34,11 @@ def write_and_replace_token(source, output, token, replace)
   end
 end
 
-task :copy_files => [:copy_config, :copy_rake, :copy_app]
+task :copy_files => [:copy_config, :copy_rake, :copy_satelite, :copy_app]
 
-task(:copy_config)  { cp 'template/config_template.exml', File.join(DESTINATION, 'assets/config/config.exml') }
-task(:copy_rake)    { cp 'template/project_rakefile',     File.join(DESTINATION, 'rakefile') }
+task(:copy_config)   { cp 'template/config_template.exml', File.join(DESTINATION, 'assets/config/config.exml') }
+task(:copy_rake)     { cp 'template/project_rakefile',     File.join(DESTINATION, 'rakefile')                  }
+task(:copy_satelite) { cp 'satelite/LoggerSatelite.swf',   File.join(DESTINATION, 'debug/satelite.swf')        }
 
 task(:copy_app) do
   application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }

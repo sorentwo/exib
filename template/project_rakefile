@@ -87,3 +87,10 @@ namespace :exib do
     mv tmp, file
   end
 end
+
+# AS Tasks ---------------------------------------------------------------------
+namespace :as do
+  task :satelite do
+    sh %{open debug/satelite.swf}
+  end
+end
