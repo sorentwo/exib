@@ -1,42 +1,51 @@
 /**
 * Sound
 *
-* A container for loading and controlling sounds. It automates the loading
-* process and provides shortcuts for controlling playback.
+* A container for loading and controlling embedded sounds. It automates the
+* loading process and provides shortcuts for controlling playback.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
 
 package com.soren.exib.service {
   
-  import flash.events.Event
   import flash.media.Sound
   import flash.media.SoundChannel
-  import flash.net.URLLoader
-  import flash.net.URLRequest
   import com.soren.debug.Log
   import com.soren.exib.core.IActionable
   
   public class Sound implements IActionable {
 
+    private static const VALID_URL:RegExp = /\w+\.mp3/i
+    private static var _embed_container:*
+    
     private var _channel:SoundChannel
     private var _sound:flash.media.Sound
     
     /**
     * Constructor
     * 
-    * @param  url   Location of the sound file to load
+    * @param  url   Name of the embedded sound file. It will be stripped to its
+    *               base name.
     **/
     public function Sound(url:String) {
-      var request:URLRequest = new URLRequest(url)
-
-      try {
-        _sound = new flash.media.Sound(request)
-      } catch (error:Error) {
-        Log.getLog().error('Unable to load requested sound: ' + url)
-      }
+      verifyEmbedContainer()
+      validateURL(url)
       
-      _sound.addEventListener(Event.COMPLETE, loadComplete)
+      var class_name:String = processUrlIntoClassName(url)
+      
+      try {
+        _sound = new _embed_container[class_name] as flash.media.Sound
+      } catch (e:Error) {
+        Log.getLog().error('Unable to load requested sound: ' + url + '\n' + e)
+      }
+    }
+    
+    /**
+    * Supply the class where embedded assets can be found.
+    **/
+    public static function setEmbedContainer(embed_container:*):void {
+      _embed_container = embed_container
     }
     
     /**
@@ -58,10 +67,25 @@ package com.soren.exib.service {
     // ---
     
     /**
-    * Replaces the incomplete _sound object with the fully loaded sound
+    * @private
     **/
-    private function loadComplete(event:Event):void {
-      _sound = event.target as flash.media.Sound
+    private function processUrlIntoClassName(url:String):String {
+      var result:Object = /(?P<class_name>\w+)\.\w{3}/.exec(url)
+      return result.class_name
+    }
+    
+    /**
+    * @private
+    **/
+    private function verifyEmbedContainer():void {
+      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
+    }
+    
+    /**
+    * @private
+    **/
+    private function validateURL(url:String):void {
+      if (!VALID_URL.test(url)) { Log.getLog().error('Invalid url: ' + url) }
     }
   }
 }

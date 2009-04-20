@@ -127,10 +127,10 @@ package com.soren.exib.core {
       for each (var xml_media:XML in media.*) {
         switch (xml_media.name().toString()) {
           case 'sound':
-            _space.add(_generator.genSound(xml_media,'../assets/sounds'), xml_media.@id)
+            _space.add(_generator.genSound(xml_media, ''), xml_media.@id)
             break
           case 'video':
-            var video:VideoNode = _generator.genVideo(xml_media, '../assets/media')
+            var video:VideoNode = _generator.genVideo(xml_media, '')
             _space.add(video, xml_media.@id)
         }
       }

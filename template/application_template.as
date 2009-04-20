@@ -5,6 +5,7 @@
 package {
   
   import com.soren.exib.core.Application
+  import com.soren.exib.service.Sound
   import com.soren.exib.view.GraphicNode
   
   public class #APPLICATION_NAME# extends Application {
@@ -25,6 +26,7 @@ package {
     private const POOLS:Array = [/^_\w+/, /^\*\w+/, /^\+\w+/, /^\$\w+/, /^%\w+/, /^@\w+/]
     
     public function #APPLICATION_NAME#() {
+      Sound.setEmbedContainer(this)
       GraphicNode.setEmbedContainer(this)
       
       start(ConfigEXML, POOLS)

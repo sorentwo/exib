@@ -35,10 +35,12 @@ package com.soren.exib.view {
         Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
     }
-    
+
+    /**
+    * Supply the class where embedded assets can be found.
+    **/    
     public static function setEmbedContainer(embed_container:*):void {
       _embed_container = embed_container
-      Log.getLog().debug(embed_container)
     }
     
     // ---
