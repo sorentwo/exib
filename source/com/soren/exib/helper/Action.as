@@ -11,12 +11,15 @@
 
 package com.soren.exib.helper {
   
+  import com.soren.debug.Log
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
+  import com.soren.exib.core.Space
   
   public class Action {
 	
     private var _actionable:IActionable
+    private var _actionable_id:String
     private var _method:String
     private var _arguments:Array
     
@@ -35,10 +38,13 @@ package com.soren.exib.helper {
     * @param  method  The method to be called
     * @param  *args   Any number of arguments that will be passed
     **/
-    public function Action(actionable:IActionable, method:String, ...args) {
+    public function Action(actionable:*, method:String, ...args) {
       if ((args.length != 0) && (args[0] is Array)) args = args[0]
       
-      _actionable = actionable
+      if (actionable is String)           { _actionable_id = actionable }
+      else if (actionable is IActionable) { _actionable = actionable }
+      else                                { Log.getLog().error('Invalid object supplied as actionable' + actionable) }
+      
       _method     = method
       _arguments  = args
     }
@@ -57,6 +63,11 @@ package com.soren.exib.helper {
       if (_conditional_set && !_conditional_set.evaluate()) return
 
       var values:Array = _arguments.map(toValue)
+      
+      if (_actionable_id != null && _actionable == null) {
+        _actionable    = Space.getSpace().get(_actionable_id)
+        _actionable_id = null
+      }
      
       try {
         _actionable[_method].apply(_actionable, values)

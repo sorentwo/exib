@@ -59,6 +59,11 @@ package com.soren.exib.core {
       return new XML(byte_array.readUTFBytes(byte_array.length))
     }
     
+    /**
+    * @private
+    * 
+    * Process the configuration file by section.
+    **/
     private function process(config:XML):void {
       pre(config)
       

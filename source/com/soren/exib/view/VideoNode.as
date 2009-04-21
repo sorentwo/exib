@@ -59,9 +59,12 @@ package com.soren.exib.view {
     **/
     public function play():void {
       addChild(_video)
-      _video.gotoAndPlay(0)
-      Log.getLog().debug(_video.width)
-      if (_loop) _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      _video.play()
+
+      if (_loop) {
+        //_video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+        //_video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      }
     }
     
     /**

@@ -425,8 +425,9 @@ package com.soren.exib.core {
       var conv:Array = []
       for each (var element:* in args) { if (!(/^[\s,]?$/.test(element))) conv.push(convertType(element)) }
       
-      parsed.actionable = retrieveActionable(parsed.actionable)
-      parsed.arguments  = conv
+      if (_space.has(parsed.actionable)) parsed.actionable = retrieveActionable(parsed.actionable)
+      
+      parsed.arguments = conv
 
       return parsed
     }
