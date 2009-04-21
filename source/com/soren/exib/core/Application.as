@@ -43,6 +43,8 @@ package com.soren.exib.core {
       Log.getLog().throwOnError = true
       Log.getLog().clear()
       
+      Log.getLog().debug('Extended XML Interface Builder :: Version ' + Version.version())
+      Log.getLog().debug('=============================================')
       
       process(getXMLFromEmbeddedClass(ConfigEXML))
     }
