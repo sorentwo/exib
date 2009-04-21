@@ -41,7 +41,7 @@ namespace :exib do
     
   desc "Automatically embed all available assets"
   task :embed do
-    font_asset    = { :path => 'assets/fonts',    :glob => '*.ttf',               :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', mimeType='application/x-font')]) }
+    font_asset    = { :path => 'assets/fonts',    :glob => '*.{ttf,otf}',         :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', advancedAntiAliasing='true', mimeType='application/x-font')]) }
     graphic_asset = { :path => 'assets/graphics', :glob => '*.{png,jpg,gif,svg}', :template => %q([Embed(source='#FILE_NAME#')]) }
     sound_asset   = { :path => 'assets/sounds',   :glob => '*.mp3',               :template => %q([Embed(source='#FILE_NAME#', mimeType='audio/mpeg')]) }
     video_asset   = { :path => 'assets/videos',   :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#')]) }
@@ -55,12 +55,12 @@ namespace :exib do
       
       files.each do |file|
         case asset[:path]
-        when /fonts/ then embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first).gsub('#FONT_NAME#', File.basename(file.last, '.ttf').capitalize)
+        when /fonts/ then embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first).gsub('#FONT_NAME#', File.basename(file.last, '.*'))
         else              embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first)
         end
         
         embed_buffer << "\n"
-        embed_buffer << class_template.gsub('#FILE_NAME#',   File.basename(file.last, '.*').downcase)
+        embed_buffer << class_template.gsub('#FILE_NAME#', File.basename(file.last, '.*'))
         embed_buffer << "\n\n"
       end
     end
