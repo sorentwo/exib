@@ -129,10 +129,6 @@ package com.soren.exib.core {
       return new Sound(xml.@url)
     }
     
-    public function genVideo(xml:XML):VideoNode {
-      return new VideoNode(xml.@url, false, true)
-    }
-    
     // Helpers -->
     public function genActionSet(xml_list:XMLList):ActionSet {
       var action_set:ActionSet = new ActionSet()
@@ -225,7 +221,7 @@ package com.soren.exib.core {
             container.addChild(genVectorNode(xml))
             break
           case 'video':
-            container.addChild(retrieveVideoReference(xml))
+            container.addChild(genVideoNode(xml))
             break
         }
         
@@ -367,6 +363,18 @@ package com.soren.exib.core {
       return new VectorNode(xml.@shape, options)
     }
     
+    public function genVideoNode(xml:XML):VideoNode {
+      var loop:Boolean = (Boolean(xml.@loop))       ? (xml.@loop.toString() == 'true') ? true : false : false
+      var pers:Boolean = (Boolean(xml.@persistent)) ? (xml.@persistent.toString() == 'true') ? true : false : false
+      
+      // Video is the only node that requires explicite control, because of this
+      // it must be added to the global space.
+      var video:VideoNode = new VideoNode(xml.@url, loop, pers)
+      _space.add(video, xml.@id)
+      
+      return video
+    }
+    
     // ---
 
     /**
@@ -495,16 +503,6 @@ package com.soren.exib.core {
     **/
     private function retrieveActionable(actionable_id:String):IActionable {
       return _space.get(actionable_id)
-    }
-    
-    /**
-    * @private
-    **/
-    private function retrieveVideoReference(xml:XML):Node {
-      var video_node:VideoNode = _space.get(xml.@id)
-          video_node.position(xml.@pos)
-
-      return video_node
     }
   }
 }

@@ -128,9 +128,6 @@ package com.soren.exib.core {
         switch (xml_media.name().toString()) {
           case 'sound':
             _space.add(_generator.genSound(xml_media), xml_media.@id)
-            break
-          case 'video':
-            _space.add(_generator.genVideo(xml_media), xml_media.@id)
         }
       }
     }

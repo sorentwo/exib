@@ -44,7 +44,7 @@ package com.soren.exib.view {
       _loop = loop
       _persistent = persistent
       
-      if (_persistent) _video.gotoAndStop(0); addChild(_video)
+      if (_persistent) { _video.gotoAndStop(0); addChild(_video) }
     }
     
     /**
