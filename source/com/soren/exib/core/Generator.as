@@ -423,11 +423,16 @@ package com.soren.exib.core {
 
       var args:Array = parsed.arguments.toString().split(/[\s\t]?(,|\[.*\]|\{.*\})[\s\t]?/)
       var conv:Array = []
-      for each (var element:* in args) { if (!(/^[\s,]?$/.test(element))) conv.push(convertType(element)) }
-      
-      if (_space.has(parsed.actionable)) parsed.actionable = retrieveActionable(parsed.actionable)
+      for each (var element:* in args) {
+        var processed:*
+        if (!(/^[\s,]?$/.test(element)))                  processed = convertType(element)
+        if (processed is String && _space.has(processed)) processed = _space.get(processed)
+        conv.push(processed)
+      }
       
       parsed.arguments = conv
+      
+      if (_space.has(parsed.actionable)) parsed.actionable = retrieveActionable(parsed.actionable)
 
       return parsed
     }
