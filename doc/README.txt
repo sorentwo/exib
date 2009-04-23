@@ -298,3 +298,51 @@ Bounce: bounce_in, bounce_out, bounce_in_out
 Linear: linear_in, linear_out, linear_in_out
 Quint:  quint_in, quint_out, quint_in_out
 Sine:   sine_in, sine_out, sine_in_out
+
+---
+
+## Text
+
+The text node provides a variety of complex string manipulation tools, most of
+which are harvested from common language paradigms like tr and sprintf.
+
+**Character Case: lust(%s), value**
+  
+  * l — Lowercase
+  * u — Uppercase
+  * s — Sentence case
+  * t — Title case
+
+**Conversion: (%{ceEdfIklOu}c), value**
+
+  * c — Convert from Fahrenheit to Celsisu
+  * f — Convert from Celsius to Fahrenheit
+  * u — Convert from Ounces to Cups   
+  * l — Convert from Ounces to Liters
+  * d — Convert to Dec (divide by 10)
+  * e — Convert to Cent (divide by 100)
+  * k — Convert to Kil (divide by 1000)
+  * O — Convert seconds to hours only, no remainder
+  * I — Convert seconds to minutes only, no remainder
+  * E — Convert seconds to only the seconds remaining after hours and minutes are extracted
+
+**Date: (%{AaBbDgHhMmpPSYy}t), date**
+
+  * D — Date, 0-31
+  * g — Day of the week as a number, 0 = Sunday
+  * a — Short day name, Sun-Sat
+  * A — Long day name, Sunday-Saturday
+  * y — Two digit year, 09
+  * Y — Full year, 2009
+  * m — Month as a number, 0 = January
+  * b — Short month name, Jan
+  * B — Long month name, January
+  * h — Standard time hour, 1-12
+  * H — Military time hour, 0-23
+  * p — The meridian, am or pm
+  * M — Minutes, 0-59
+  * S — Seconds, 0-59
+  
+**Transposition: (%{/word/replace/}r), value**
+
+  Replaces whatever is specified as the input string with that which is specified in the output string. Replacement is global, meaning it will replace every occurrence.
