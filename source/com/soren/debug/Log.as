@@ -9,6 +9,8 @@
 
 package com.soren.debug {
   
+  import flash.events.StatusEvent
+  import flash.events.SecurityErrorEvent
   import flash.net.LocalConnection
 
   public class Log {
@@ -20,7 +22,7 @@ package com.soren.debug {
     public static const LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
 
     private static var _instance:Log = new Log()
-    private static var _connection:LocalConnection = new LocalConnection()
+    private static var _connection:LocalConnection
     
     private static var _level:uint = DEBUG
     private static var _satelite:String = 'satelite'
@@ -34,6 +36,12 @@ package com.soren.debug {
     * Returns *the* Logger instance.
     **/
     public static function getLog():Log {
+      if (_connection == null) {
+        _connection = new LocalConnection()
+        _connection.addEventListener(StatusEvent.STATUS, new Function())
+        _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, new Function())
+      }
+      
       return _instance
     }
     
