@@ -6,6 +6,10 @@ package {
 
   import flash.display.DisplayObject
   import flash.display.MovieClip
+  import flash.display.Stage
+  import flash.display.StageAlign
+  import flash.display.StageDisplayState
+  import flash.display.StageScaleMode
   import flash.events.Event
   import flash.utils.getDefinitionByName
   
@@ -15,6 +19,10 @@ package {
   public class Factory extends MovieClip {
 
     public function Factory() {
+      stage.align        = StageAlign.TOP_LEFT
+      stage.displayState = StageDisplayState.NORMAL
+      stage.scaleMode    = StageScaleMode.NO_SCALE
+      
       stop()
       addEventListener(Event.ENTER_FRAME, onEnterFrame)
     }
@@ -35,12 +43,8 @@ package {
     }
     
     private function init():void {
-      var mainClass:Class = Class(getDefinitionByName("#APPLICATION_NAME#"))
-      
-      if (mainClass) {
-        var application:Object = new mainClass()
-        addChild(application as DisplayObject)
-      }
+      var mainClass:Class = Class(getDefinitionByName("TempestWHP"))
+      if (mainClass) { addChild(new mainClass() as DisplayObject) }
     }
   }
 }
