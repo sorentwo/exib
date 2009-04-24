@@ -170,15 +170,15 @@ package com.soren.exib.model {
           throw new Error("Invalid meridian: " + meridian)
       }
 
-      _date.setHours(_date.hours + offset)
+      setValue(HOURS, _date.hours + offset)
     }
     
     /**
     * Cycles the meridian between 'am' and 'pm'
     **/
     public function cycleMeridian():void {
-      var offset:int = (_date.hours >= 12) ? -12 : 12
-      _date.setHours(_date.hours + offset)
+      var meridian:String = (_date.hours >= 12) ? 'am' : 'pm'
+      setMeridian(meridian)
     }
       
     /**
