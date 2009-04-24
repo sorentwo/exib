@@ -66,7 +66,7 @@ package com.soren.exib.model {
     }
     
     /**
-    * 
+    * Returns the currently active state. Synonymous with value.
     **/
     public function get current():String {
       return this.value
@@ -76,7 +76,7 @@ package com.soren.exib.model {
     * 
     **/
     public function get previous():String {
-      return (_pointer_history.length > 0) ? _states[_pointer_history[1]] : this.value
+      return back(1)
     }
      
     /**
@@ -93,14 +93,23 @@ package com.soren.exib.model {
     }
     
     /**
-    * 
+    * Return the state found <code>n</code> steps backward. If the value provided
+    * exceeds the length of history the farthest recorded state is returned.
+    **/
+    public function back(jump:uint):String {
+      jump = (jump > _pointer_history.length) ? _pointer_history.length : jump
+      return (_pointer_history.length > 0) ? _states[_pointer_history[jump]] : this.value
+    }
+    
+    /**
+    * Clears out all stored history.
     **/
     public function purge():void {
       _pointer_history = []
     }
         
     /**
-    * 
+    * Remove a currently held state.
     **/
     public function remove(state:String):void {
       var index:int = _states.indexOf(state)

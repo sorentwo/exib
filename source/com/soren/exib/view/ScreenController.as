@@ -69,7 +69,15 @@ package com.soren.exib.view {
       _screen_model.add(screen_id)
       _screen_manager.add(screen, screen_id)
     }
-         
+    
+    /**
+    * Jump back a specified number of screens. Providing a value of 1 is the
+    * same as using +previous()+. The number may not exceed the stored history.
+    **/
+    public function back(jump:uint):void {
+      go(_screen_model.back(jump))
+    }
+    
     /**
     * Shortcut for unloading the current screen and loading the next
     **/
@@ -81,7 +89,6 @@ package com.soren.exib.view {
     /**
     **/
     public function load(screen_id:String):void {
-      //if (_screen_model.current == screen_id.toLowerCase()) return
       _screen_model.set(screen_id)
       _screen_container.addChild(this.current)
       
