@@ -21,6 +21,10 @@ package com.soren.exib.core {
     private var _generator:Generator = new Generator()
     private var _container:Sprite
     
+    protected var _default_screen_name:String = '_screen'
+    protected var _default_effect_name:String = '_effect'
+    protected var _default_log_name:String    = '_log'
+    
     /**
     * Construct a new Exib instance.
     **/
@@ -32,7 +36,6 @@ package com.soren.exib.core {
     * @param  ConfigEXML  An embedded XML class
     * @param  pools       An array of regular expressions that will used to put
     *                     and find objects from the global space.
-    * @see    Space.as
     **/
     public function start(ConfigEXML:Class, pools:Array):void {
       for each (var pool_pattern:RegExp in pools) {
@@ -84,15 +87,17 @@ package com.soren.exib.core {
       if (config.view.screens != undefined) {
         _container = _generator.genContainer(config.view.screens)
         var scr_con:ScreenController = new ScreenController(_container, 10)
-        _space.add(scr_con, 'screen')
-        _space.add(new Effect(scr_con), 'effect')
-        
         addChild(_container)
+        
+        // Push the defaults to the space
+        _space.add(new Effect(scr_con), _default_effect_name)
+        _space.add(Log.getLog(),        _default_log_name)
+        _space.add(scr_con,             _default_screen_name)
       }
     }
     
     private function post(config:XML):void {
-      _space.get('screen').load(config.view.screens.screen[0].@id)
+      _space.get(_default_screen_name).load(config.view.screens.screen[0].@id)
     }
     
     // ---
@@ -165,18 +170,18 @@ package com.soren.exib.core {
       
       var context:Sprite = _generator.genContext(view.context)
       addChildAt(context, 0)
-      
-      // Mask?
+
+      Mask?
       if (view.screens.mask[0]) {
-        var xml_mask:XML = view.screens.mask[0]
-        var mask_node:VectorNode = _generator.genVectorNode(xml_mask)
-        mask_node.position(xml_mask.@pos)
-        _container.mask = mask_node
+       var xml_mask:XML = view.screens.mask[0]
+       var mask_node:VectorNode = _generator.genVectorNode(xml_mask)
+       mask_node.position(xml_mask.@pos)
+       _container.mask = mask_node
       }
     }
     
     private function populateScreens(screens:XMLList):void {
-      var scr_con:ScreenController = _space.get('screen')
+      var scr_con:ScreenController = _space.get(_default_screen_name)
       for each (var xml_screen:XML in screens) {
         var screen:ScreenNode = new ScreenNode()
         if (xml_screen.@bg != undefined) screen.addChild(new GraphicNode(xml_screen.@bg))

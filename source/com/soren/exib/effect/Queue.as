@@ -64,7 +64,7 @@ package com.soren.exib.effect {
     public function start(action_string:String = ''):void {
       if (_waiting.length > 0) return // We don't want to interrupt a queue already going
       
-      if (_space && !_screen_controller) _screen_controller = _space.get('screen')
+      if (_space && !_screen_controller) _screen_controller = _space.get('_screen')
       
       clearCallback()
 
