@@ -24,18 +24,19 @@ namespace :exib do
     cd File.join(project_path, 'source')
     sh %{#{mxmlc_bin} -frame main #{project_name} -use-network=false -compiler.source-path=#{source_paths.join(',')} -output #{project_name}.swf 'Factory.as'}
     cd project_path
+    mv "source/#{project_name}.swf", "deploy/#{project_name}.swf"
   end
   
   desc "Open the compiled EXIB Application"
   task :open do
-    sh %{open source/#{project_name}.swf -a '/Applications/Flash\ Player.app'}
+    sh %{open deploy/#{project_name}.swf -a '/Applications/Flash\ Player.app'}
   end
   
   desc "Packages the necessary files into a deliverable archive"
   task :package do
     require 'time'
     
-    archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE_STRING)}.#{ARCHIVE_EXTENSION}"
+    archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE)}.#{ARCHIVE_EXTENSION}"
     sh %{7za a -mx=9 -mmt=on #{File.join(DELIVERABLE_DIR, archive_name)} #{DELIVERABLES.join}}
   end
     
@@ -49,7 +50,8 @@ namespace :exib do
     class_template = 'public var #FILE_NAME#:Class'
     embed_buffer   = ''
     
-    [font_asset, graphic_asset, sound_asset, video_asset].each do |asset|
+    # FONT EMBEDDING DISABLED
+    [graphic_asset, sound_asset, video_asset].each do |asset|
       files = Dir.glob("#{asset[:path]}/#{asset[:glob]}")
       files.map! { |f| [File.join('..', asset[:path], File.basename(f)), File.basename(f)] }
       
