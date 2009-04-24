@@ -17,13 +17,14 @@ package com.soren.exib.view {
 
     private const VALID_SHAPES:RegExp = /^(circle|rectangle|squround)$/i
     
-    public const DEFAULT_COLOR:uint  = 0x000000
-    public const DEFAULT_CORNER:uint = 10
-    public const DEFAULT_FILL:uint   = 0xFFFFFF
-    public const DEFAULT_HEIGHT:uint = 100
-    public const DEFAULT_RADIUS:uint = 50
-    public const DEFAULT_STROKE:uint = 0
-    public const DEFAULT_WIDTH:uint  = 100
+    public const DEFAULT_ALPHA:Number = 1
+    public const DEFAULT_COLOR:uint   = 0x000000
+    public const DEFAULT_CORNER:uint  = 10
+    public const DEFAULT_FILL:uint    = 0xFFFFFF
+    public const DEFAULT_HEIGHT:uint  = 100
+    public const DEFAULT_RADIUS:uint  = 50
+    public const DEFAULT_STROKE:uint  = 0
+    public const DEFAULT_WIDTH:uint   = 100
     
     private var _options:Object = new Object()
     
@@ -47,6 +48,8 @@ package com.soren.exib.view {
         case 'squround':
           doDrawSquround()
       }
+      
+      this.alpha = _options['alpha']
     }
     
     // ---
@@ -112,6 +115,9 @@ package com.soren.exib.view {
       _options['corner'] = (options.hasOwnProperty('corner'))
                          ? uint(options['corner'])
                          : DEFAULT_CORNER
+      _options['alpha']  = (options.hasOwnProperty('alpha'))
+                         ? Number(options['alpha'])
+                         : DEFAULT_ALPHA
     }
   }
 }

@@ -300,14 +300,26 @@ package com.soren.exib.core {
           case 'mbutton':
             child_node = genButtonNode(xml_child)
             break
+          case 'mcomposite':
+            child_node = genCompositeNode(xml_child)
+            break
           case 'mgraphic':
             child_node = genGraphicNode(xml_child)
             break
           case 'mmeter':
             child_node = genMeterNode(xml_child)
             break
+          case 'mprogress':
+            child_node = genProgressNode(xml_child)
+            break
           case 'mtext':
             child_node = genTextNode(xml_child)
+            break
+          case 'mvector':
+            child_node = genVectorNode(xml_child)
+            break
+          case 'mvideo':
+            child_node = genVideoNode(xml_child)
             break
         }
         
@@ -353,7 +365,7 @@ package com.soren.exib.core {
     
     public function genVectorNode(xml:XML):VectorNode {
       var options:Object = {}
-      var known:RegExp   = /^(color|corner|fill|height|radius|stroke|width|)$/
+      var known:RegExp   = /^(alpha|color|corner|fill|height|radius|stroke|width|)$/
 
       var attr_list:XMLList = xml.@*
       for (var i:int = 0; i < attr_list.length(); i++) {
