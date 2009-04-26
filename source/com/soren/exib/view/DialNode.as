@@ -45,12 +45,6 @@ package com.soren.exib.view {
     }
 
     /**
-    **/
-    public function get positions():Array {
-      return _positions
-    }
-
-    /**
     * Add a new position by supplying a value. Each position added divides the
     * dial's travel by one more. For example, for one position added the dial
     * would point north and not travle at all, for two positions the dial would
@@ -146,7 +140,7 @@ package com.soren.exib.view {
       var matched_snap:uint = NaN
 
       for (var i:int = 0; i < _snaps.length; i++) {
-        var snap:uint         = _snaps[i]
+        var snap:uint = _snaps[i]
 
         if ((angle >= snap) && (angle < (snap + _delta))) {
           matched_snap = snap
