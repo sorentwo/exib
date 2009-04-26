@@ -1,7 +1,9 @@
 /**
 * MultiNode
 *
-* Displays a different node based on a set of conditions.
+* Displays a different node based on a set of conditions. Only the first node
+* with a condition that is true will be shown. This ensures that only one node
+* will be active at a time regardless of how many conditions are true.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
@@ -16,11 +18,19 @@ package com.soren.exib.view {
     protected var _possibilities:Array = []
     
     /**
-    * Constructor
+    * Constructs a new MultiNode instance. The node will be invisible and unused
+    * until child nodes are added through +add+.
+    * 
+    * @see add
     **/
     public function MultiNode() {}
     
     /**
+    * Add a node for the MultiNode instance to track.
+    * 
+    * @param  conditional_set A conditonal set that will determine whether this
+    *                         node will be active or not.
+    * @param  node            The node that will be tracked.
     **/
     public function add(conditional_set:ConditionalSet, node:Node):void {
       conditional_set.registerListener(changeListener)
@@ -29,6 +39,8 @@ package com.soren.exib.view {
     }
     
     /**
+    * Update will refresh the node's children, showing the first node that has a
+    * true condition.
     **/
     override public function update():void {
       unloadAll()
