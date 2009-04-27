@@ -11,6 +11,7 @@ package com.soren.exib.core {
   import flash.display.DisplayObject
   import flash.text.TextField
   import flash.text.TextFormat
+  import com.soren.exib.debug.Log
   import com.soren.exib.effect.*
   import com.soren.exib.helper.*
   import com.soren.exib.manager.*
@@ -352,7 +353,7 @@ package com.soren.exib.core {
       // Insert action handling
 
       for each (var option:XML in xml.option) {
-        //radio.add(xml.@pos, xml.@value)
+        radio.add(option.@pos, option.@value)
       }
       
       return radio
