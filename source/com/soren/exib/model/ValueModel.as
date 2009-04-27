@@ -9,7 +9,7 @@
 
 package com.soren.exib.model {
 
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
   
   public class ValueModel extends Model {
 

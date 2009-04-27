@@ -344,13 +344,15 @@ package com.soren.exib.core {
     }
     
     public function genRadioNode(xml:XML):RadioNode {
-      var model:IModel = retrieveActionable(xml.@model) as IModel
-      var selected_url:String, unselected_url:String = xml.@selected, xml.@unselected
+      var model:Model = retrieveActionable(xml.@model) as Model
+      var selected_url:String   = xml.@selected
+      var unselected_url:String = xml.@unselected
       
       var radio:RadioNode = new RadioNode(model, selected_url, unselected_url)
       // Insert action handling
+
       for each (var option:XML in xml.option) {
-        radio.add(xml.@pos, xml.@value)
+        //radio.add(xml.@pos, xml.@value)
       }
       
       return radio

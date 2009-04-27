@@ -37,7 +37,7 @@ namespace :exib do
     require 'time'
     
     archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE)}.#{ARCHIVE_EXTENSION}"
-    sh %{7za a -mx=9 -mmt=on #{File.join(DELIVERABLE_DIR, archive_name)} #{DELIVERABLES.join}}
+    sh %{7za a -mx=9 -mmt=on #{File.join(DELIVERABLE_DIR, archive_name)} #{DELIVERABLES.join(' ')}}
   end
     
   desc "Automatically embed all available assets"

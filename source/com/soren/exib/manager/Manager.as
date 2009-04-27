@@ -9,7 +9,7 @@
 
 package com.soren.exib.manager {
 
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
 
   public class Manager implements IManager {
     

@@ -11,7 +11,7 @@ package com.soren.exib.service {
   
   import flash.media.Sound
   import flash.media.SoundChannel
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
   import com.soren.exib.core.IActionable
   
   public class Sound implements IActionable {

@@ -11,7 +11,7 @@ package com.soren.exib.core {
 
   import flash.display.Sprite
   import flash.utils.ByteArray
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
   import com.soren.exib.effect.Effect
   import com.soren.exib.view.*
   
@@ -171,7 +171,7 @@ package com.soren.exib.core {
       var context:Sprite = _generator.genContext(view.context)
       addChildAt(context, 0)
 
-      Mask?
+      // Mask?
       if (view.screens.mask[0]) {
        var xml_mask:XML = view.screens.mask[0]
        var mask_node:VectorNode = _generator.genVectorNode(xml_mask)

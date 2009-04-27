@@ -11,7 +11,7 @@
 
 package com.soren.exib.core {
 
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
   import com.soren.exib.manager.IManager
   import com.soren.exib.manager.Manager
   

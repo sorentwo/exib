@@ -9,7 +9,7 @@
 
 package com.soren.util {
   
-  import com.soren.debug.Log
+  import com.soren.exib.debug.Log
   
   public dynamic class ExtendedArray extends Array {
 

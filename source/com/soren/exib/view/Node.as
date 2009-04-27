@@ -67,7 +67,7 @@ package com.soren.exib.view {
     public function position(coordinates:String):void {
       var pattern:RegExp = /(?P<x>-?\d+)\s?,\s?(?P<y>-?\d+)/
       
-      if (!pattern.test(coordinates)) throw new Error("Invalid coordinates")
+      if (!pattern.test(coordinates)) throw new Error("Invalid coordinates: " + coordinates)
       
       var result:Object = pattern.exec(coordinates)
       this.x = int(result.x)
@@ -82,10 +82,17 @@ package com.soren.exib.view {
     // ---
     
     /**
-    * @protected
+    * Event handler for model changes. Simply triggers the update method.
     **/
     protected function changeListener(event:Event):void {
       update()
+    }
+    
+    /**
+    * Unload every child node.
+    **/
+    protected function unloadAll():void {
+      while (this.numChildren > 0) { removeChildAt(0) }
     }
     
     // ---

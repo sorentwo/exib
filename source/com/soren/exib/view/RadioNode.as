@@ -10,13 +10,14 @@
 package com.soren.exib.view {
   
   import flash.events.Event
-  import com.soren.exib.model.IModel
+  import com.soren.exib.debug.Log
   import com.soren.exib.model.Model
+  import com.soren.exib.helper.Action
   import com.soren.exib.helper.ActionSet
   
   public class RadioNode extends Node {
     
-    private var _model:IModel
+    private var _model:Model
     private var _options:Array
     private var _selected_url:String
     private var _unselected_url:String
@@ -33,12 +34,12 @@ package com.soren.exib.view {
     * @param  unsel_url URL of the graphic that will be used to show that an item
     *                   is unselected.
     **/
-    public function RadioNode(model:IModel, sel_url:String, unsel_url:String) {
+    public function RadioNode(model:Model, sel_url:String, unsel_url:String) {
       _model          = model
       _selected_url   = sel_url
       _unselected_url = unsel_url
       
-      _model.addEventListener(Model.CHANGED, modelChangedListener)
+      _model.addEventListener(Model.CHANGED, changeListener)
     }
     
     /**
@@ -55,11 +56,11 @@ package com.soren.exib.view {
       verifyUniqueValue(value)
       
       actions = actions || new ActionSet()
-      actions.add(_model, '==', value)
+      actions.push(new Action(_model, '==', value))
       
       var graphic:GraphicNode = new GraphicNode(_selected_url)
-      var button:ButtonNode   = new ButtonNode(_unselected_url, _unselected_url, new ActionSet(), action)
-      
+      var button:ButtonNode   = new ButtonNode(_unselected_url, _unselected_url, new ActionSet(), actions)
+
       graphic.position(pos)
       button.position(pos)
       
@@ -72,22 +73,17 @@ package com.soren.exib.view {
     * Displays all selected or unselected (selectable) graphics.
     **/
     override public function update():void {
+      unloadAll()
       for each (var option:Object in _options) {
-        if (option.value == _model.value) { this.addChild(option.graphic) }
-        else                              { this.addChild(option.button)  }
+        if (option.value == _model.value) {
+          addChild(option.graphic)
+        } else {
+          addChild(option.button)
+        }
       }
     }
     
     // ---
-    
-    /**
-    * @private
-    * 
-    * Event handler for model changes. Simply triggers the update method.
-    **/
-    private function modelChangedListener(event:Event):void {
-      update()
-    }
     
     /**
     * @private

@@ -60,11 +60,5 @@ package com.soren.exib.view {
       this.addChild(node)
       node.update()
     }
-    
-    /**
-    **/
-    protected function unloadAll():void {
-      while (this.numChildren > 0) { removeChildAt(0) }
-    }
   }
 }
