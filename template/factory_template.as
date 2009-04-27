@@ -43,7 +43,7 @@ package {
     }
     
     private function init():void {
-      var mainClass:Class = Class(getDefinitionByName("TempestWHP"))
+      var mainClass:Class = Class(getDefinitionByName("#APPLICATION_NAME#"))
       if (mainClass) { addChild(new mainClass() as DisplayObject) }
     }
   }
