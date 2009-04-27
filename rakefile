@@ -38,7 +38,7 @@ task :copy_files => [:copy_config, :copy_rake, :copy_satellite, :copy_app]
 
 task(:copy_config)   { cp 'template/config_template.exml',  File.join(DESTINATION, 'assets/config/config.exml') }
 task(:copy_rake)     { cp 'template/project_rakefile',      File.join(DESTINATION, 'rakefile')                  }
-task(:copy_satellite) { cp 'satellite/LoggerSatellite.swf', File.join(DESTINATION, 'debug/satellite.swf')       }
+task(:copy_satellite) { cp 'template/satellite.swf',        File.join(DESTINATION, 'debug/satellite.swf')       }
 
 task(:copy_app) do
   application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
