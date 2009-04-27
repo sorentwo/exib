@@ -214,6 +214,9 @@ package com.soren.exib.core {
           case 'progress':
             container.addChild(genProgressNode(xml))
             break
+          case 'radio':
+              container.addChild(genRadioNode(xml))
+            break
           case 'text':
             container.addChild(genTextNode(xml))
             break
@@ -235,7 +238,7 @@ package com.soren.exib.core {
         if (xml.name().toString() == 'mask') { container.mask = last_node }
 
         // Check the children of this node
-        var known:RegExp = /^(button|composite|dial|graphic|mask|multi|meter|progress|text|vector|video)$/
+        var known:RegExp = /^(button|composite|dial|graphic|mask|multi|meter|progress|radio|text|vector|video)$/
         var has_valid_child:Boolean = false
         
         for each (var child:XML in xml.*) {
@@ -338,6 +341,19 @@ package com.soren.exib.core {
       var length:uint = uint(xml.@length)
       
       return new ProgressNode(model, xml.@url, length)
+    }
+    
+    public function genRadioNode(xml:XML):RadioNode {
+      var model:IModel = retrieveActionable(xml.@model) as IModel
+      var selected_url:String, unselected_url:String = xml.@selected, xml.@unselected
+      
+      var radio:RadioNode = new RadioNode(model, selected_url, unselected_url)
+      // Insert action handling
+      for each (var option:XML in xml.option) {
+        radio.add(xml.@pos, xml.@value)
+      }
+      
+      return radio
     }
     
     public function genTextNode(xml:XML):TextNode {
