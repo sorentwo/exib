@@ -49,7 +49,7 @@ package com.soren.exib.view {
     * @param  pos      A position string in the form of x,y
     * @param  value    Unique value that will be matched against the current value
     *                  of the model. If the values match this option will be active.
-    * @param  actions  
+    * @param  actions  An optional set of actions that will be triggered on press.
     **/
     public function add(pos:String, value:*, actions:ActionSet = undefined):void {
       verifyUniqueValue(value)
