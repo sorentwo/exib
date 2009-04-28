@@ -13,24 +13,41 @@ package com.soren.exib.view {
   import flash.text.TextField
   import flash.text.TextFieldAutoSize
   import flash.text.TextFormat
+  import flash.text.TextFormatAlign
   import com.soren.exib.core.IEvaluatable
+  import com.soren.exib.debug.Log
   import com.soren.exib.model.Model
   import com.soren.util.ExtendedArray
   import com.soren.util.StringUtil
 
   public class TextNode extends Node {
     
-    private var _text_field:TextField
-    private var _content:String
-    private var _format:TextFormat
     private var _arguments:Array
     private var _align:String
     private var _charcase:String
+    private var _content:String
+    private var _format:TextFormat
+    private var _height:uint
+    private var _text_field:TextField
+    private var _width:uint
     
-    public function TextNode(content:String,
-                             format:TextFormat,
-                             arguments:Array = null,
-                             align:String = 'LEFT') {
+    /**
+    * Construct a new text node. If a set of arguments is provided the node is
+    * treated as dynamic, otherwise it will be static - meaning it always shows
+    * the same content.
+    * 
+    * @param  content   A string that can either be static or use a token system
+    *                   for conversion, replacement, time, etc. If arguments are
+    *                   provided the node will expect to find valid replacement
+    *                   tokens.
+    * @param  format    A Flash text format.
+    * @param  arguments An array of IEvaluatable objects that will be used for
+    *                   token substitution.
+    * @param  align     The text nodes alignment. LEFT, CENTER, and RIGHT are
+    *                   valid.
+    **/
+    public function TextNode(content:String, format:TextFormat,
+                             arguments:Array = null, align:String = 'LEFT') {
       
       _text_field = new TextField()
       
@@ -49,6 +66,9 @@ package com.soren.exib.view {
     }
     
     /**
+    * Set the text node's alignment.
+    * 
+    * @param  align
     **/
     public function set align(align:String):void {
       var pattern:RegExp = /^(left|center|right)$/i
@@ -57,6 +77,10 @@ package com.soren.exib.view {
     }
     
     /**
+    * Set an array of arguments that will be used for token replacement. If these
+    * are provided it is expected that the node has a matching number of tokens.
+    * 
+    * @param  arguments
     **/
     public function set arguments(arguments:Array):void {
       _arguments = arguments
@@ -69,29 +93,56 @@ package com.soren.exib.view {
     }
     
     /**
-    * @param  A charcase token that will be used to convert all text that the
-    *         node displays. Valid tokens are: l -> lower case, s -> Sentence case,
-    *         t -> Title Case, u -> UPPER CASE
+    * A charcase token that will be used to convert all text that the node displays.
+    * Valid tokens are: l -> lower case, s -> Sentence case, t -> Title Case, u ->
+    * UPPER CASE
+    * 
+    * @param charcase
     **/
     public function set charcase(charcase:String):void {
       _charcase = charcase
     }
     
     /**
+    * Set the content that will be displayed. To use token replacement a matching
+    * number of arguments must be provided as well.
+    * 
+    * @param  content
     **/
     public function set content(content:String):void {
       _content = content
     }
     
     /**
+    * Set a new format for the node to use. Note that the format change won't be
+    * evident until update is called.
+    * 
+    * @param  format
     **/
     public function set format(format:TextFormat):void {
       _format = format
     }
-  
+    
     /**
+    * Set the height of the internal text node.
+    **/
+    override public function set height(height:Number):void {
+      _height = height
+    }
+    
+    /**
+    * Set the width of the internal text node. Particularly useful when centering
+    * content.
+    **/
+    override public function set width(width:Number):void {
+      _width = width
+    }
+    
+    /**
+    * Force the node to update its display.
     **/
     override public function update():void {
+      applySizing()
       applyAlignment()
       applyContent()
       applyFormat()
@@ -100,24 +151,28 @@ package com.soren.exib.view {
     // ---
     
     /**
-    * @private
+    * Apply text field alignment.
     **/
     private function applyAlignment():void {
       switch(_align) {
         case 'LEFT':
-          _text_field.autoSize = TextFieldAutoSize.LEFT
+          if (_width) { _format.align = TextFormatAlign.LEFT          }
+          else        { _text_field.autoSize = TextFieldAutoSize.LEFT }
           break
         case 'CENTER':
-          _text_field.autoSize = TextFieldAutoSize.CENTER
+          if (_width) { _format.align = TextFormatAlign.CENTER          }
+          else        { _text_field.autoSize = TextFieldAutoSize.CENTER }
           break
         case 'RIGHT':
-          _text_field.autoSize = TextFieldAutoSize.RIGHT
+          if (_width) { _format.align = TextFormatAlign.RIGHT          }
+          else        { _text_field.autoSize = TextFieldAutoSize.RIGHT }
           break
       }
     }
 
     /**
-    * @private
+    * Updates the text. Will perform token replacement and case conversion as
+    * necessary.
     **/
     private function applyContent():void {
       var new_text:String = _content
@@ -129,29 +184,37 @@ package com.soren.exib.view {
     }
 
     /**
-    * @private
+    * Apply the stored format to this node's text field.
     **/
     private function applyFormat():void {
       _text_field.setTextFormat(_format)
     }
-  
+    
     /**
-    * @private
+    * Apply the width and height, if present.
+    **/
+    private function applySizing():void {
+      if (_height) _text_field.height = _height
+      if (_width)  _text_field.width  = _width
+    }
+    
+    /**
+    * Determine whether this node should have character case conversion applied.
     **/
     private function hasCharcase():Boolean {
       return (_charcase == null) ? false : true
     }
     
     /**
-    * @private
+    * Determine whether this node has any replacement tokens
     **/
     private function hasTokens():Boolean {
       var pattern:RegExp = /%[a-z0-9{}]+/g
       return pattern.test(_content)
     }
-  
+    
     /**
-    * @private
+    * Map function for extracting the values from an array of IEvaluatable objects.
     **/
     private function extractValues(object:*, index:int, array:Array):* {
       return (object is IEvaluatable) ? object.value : object

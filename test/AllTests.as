@@ -4,7 +4,7 @@ package {
 	import asunit.framework.TestSuite
 	import unit.*
 	import generator.*
-	import com.soren.debug.Log
+	import com.soren.exib.debug.Log
 	
   public class AllTests extends TestSuite {
     
