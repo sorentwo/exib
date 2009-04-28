@@ -1,7 +1,8 @@
 /**
 * VideoNode
 *
-* Node for loading and controlling SWF video clips.
+* Load and control a SWF video clip. Clip behavior is determined at construction
+* time.
 *
 * Copyright (c) 2009 Parker Selbert
 **/
@@ -24,10 +25,14 @@ package com.soren.exib.view {
     private var _video:MovieClip
 
     /**
-    * Constructor
+    * Create a new VideoNode instance.
     * 
-    * @param  url
-    * @param  loop  Determine whether the video will loop
+    * @param  url         The url of the SWF video clip to load.
+    * @param  loop        If true the video will play infinitely. If false the
+    *                     video will only play once.
+    * @param  persistent  If true the clip will be visible at all times. If false
+    *                     the clip will be visible when playing and invisible
+    *                     otherwise.
     **/
     public function VideoNode(url:String, loop:Boolean = true, persistent:Boolean = false) {
       verifyEmbedContainer()
@@ -48,46 +53,52 @@ package com.soren.exib.view {
     }
     
     /**
-    * Supply the class where embedded assets can be found.
+    * Supply the class where embedded assets can be found. A container must be
+    * provided before any VideoNode instances are created, otherwise the asset
+    * can not be located and an error will be thrown.
+    * 
+    * @param  embed_container Any class that has embedded video assets.
     **/    
     public static function setEmbedContainer(embed_container:*):void {
       _embed_container = embed_container
     }
     
     /**
-    * Play the video. Doing so will add it to the display list of this node.
+    * Play the video. If the clip is not persistent then this will also add the
+    * clip to the display list.
     **/
     public function play():void {
-      addChild(_video)
+      if (!this.contains(_video)) addChild(_video)
       _video.play()
 
-      if (_loop) {
-        //_video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
-        //_video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
-      }
+      //if (_loop) {
+      //  _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      //  _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      //}
     }
     
     /**
-    * Stop the video. Doing so will remove it from the display list of this node.
+    * Stop the video. If the clip is persistent it will remain visible, otherwise
+    * it will be removed from the display list.
     **/
     public function stop():void {
       _video.gotoAndStop(0)
       
-      if (!_persistent) this.removeChild(_video)
-      if (_loop)        _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      if (!_persistent && this.contains(_video)) this.removeChild(_video)
+      //if (_loop) _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     // ---
     
     /**
-    * @private
+    * Triggered on each frame and loop the video if it has reached the end.
     **/
     private function loopPlaybackListener(event:Event):void {
       if (_video.currentFrame == _video.totalFrames) _video.gotoAndPlay(0)
     }
     
     /**
-    * @private
+    * Utility to strip the extension from the url.
     **/
     private function processUrlIntoClassName(url:String):String {
       var result:Object = /(?P<file_name>\w+)\.\w{3}/.exec(url)
@@ -95,14 +106,14 @@ package com.soren.exib.view {
     }
     
     /**
-    * @private
+    * Verify the supplied container of embedded assets.
     **/
     private function verifyEmbedContainer():void {
       if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
     }
   
     /**
-    * @private
+    * Ensure the url provided is a valid video.
     **/
     private function validateURL(url:String):void {
       if (!VALID_URL.test(url)) Log.getLog().error('Invalid URL: ' + url)
