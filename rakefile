@@ -67,7 +67,7 @@ end
 # Initialize Repository --------------------------------------------------------
 
 task :init_repo do
-  ignore = %w(*._* *.DS_Store *.swf *.exe *.zip)
+  ignore = %w(*._* *.DS_Store *.exe *.zip deploy/*.swf)
   File.open("#{DESTINATION}/.gitignore", "w+") do |file|
     file << "syntax: glob\n"
     ignore.each { |glob| file << "#{glob}\n" }
