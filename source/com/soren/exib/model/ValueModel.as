@@ -28,7 +28,9 @@ package com.soren.exib.model {
     public function ValueModel(initial:int = 0, min:int = 0, max:int = 10) {
       _min = min
       _max = max
-      _value = _initial = initial
+      
+      this.initial = initial
+      this.value   = initial
     }
 
     /**
