@@ -243,9 +243,9 @@ package com.soren.exib.core {
         var has_valid_child:Boolean = false
         
         for each (var child:XML in xml.*) {
-          if (known.test(child.name())) has_valid_child = true; break
+          if (known.test(child.name())) { has_valid_child = true; break }
         }
-        
+
         if (has_valid_child) genNodes(xml.*, last_node)
       }
     }
@@ -376,9 +376,15 @@ package com.soren.exib.core {
       }
       
       var text_node:TextNode = new TextNode(content, format, arguments, align)
-      if (charcase) text_node.charcase = charcase
       
+      if (charcase) text_node.charcase = charcase
+      if (xml.@height != undefined) text_node.height = xml.@height
+      if (xml.@width != undefined)  text_node.width  = xml.@width
+      
+      // An update must be forced for the text node as content, format, arguments,
+      // or alignment missing will throw an error.
       text_node.update()
+      
       return text_node
     }
     
@@ -455,14 +461,15 @@ package com.soren.exib.core {
       var args:Array = parsed.arguments.toString().split(/[\s\t]?(,|\[.*\]|\{.*\})[\s\t]?/)
       var conv:Array = []
       for each (var element:* in args) {
-        var processed:*
-        if (!(/^[\s,]?$/.test(element)))                  processed = convertType(element)
+        if (/(^[\s,]?$|^$)/.test(element)) continue
+        
+        var processed:* = convertType(element)
         if (processed is String && _space.has(processed)) processed = _space.get(processed)
+        
         conv.push(processed)
       }
       
       parsed.arguments = conv
-      
       if (_space.has(parsed.actionable)) parsed.actionable = retrieveActionable(parsed.actionable)
 
       return parsed
@@ -474,7 +481,7 @@ package com.soren.exib.core {
     private function genSubset(statement:String):ConditionalSet {
       var set:ConditionalSet = new ConditionalSet()
 
-      var group_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)\((?P<group>[^\)]+)\)/g
+      var group_pattern:RegExp = /(^|\s+(?P<operator>and|or)\s+)\((?P<group>[^\)]+)\)/g
       var group:Object = group_pattern.exec(statement)
 
       while (group) {
@@ -485,7 +492,7 @@ package com.soren.exib.core {
       // Matching doesn't actually remove the strings, this will.
       statement = statement.replace(group_pattern, '')
       
-      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>[&|\|]{2})\s+)(?P<condition>\w+\s+[!<>=]{1,2}\s+\w+)/g
+      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>and|or)\s+)(?P<condition>\w+\s+[!<>=]{1,2}\s+\w+)/g
       var ungrouped:Object = ungrouped_pattern.exec(statement)
       
       while (ungrouped) {
@@ -500,8 +507,8 @@ package com.soren.exib.core {
     * @private
     **/
     private function resolveOperator(operator:*):uint {
-      operator = operator || '&&'
-      return (operator == '&&') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
+      operator = operator || 'and'
+      return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
     }
     
     /**
