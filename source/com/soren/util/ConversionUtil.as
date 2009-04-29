@@ -1,9 +1,6 @@
 /**
-* ConversionUtil
-* 
-* The convert class is a collection of simple methods to convert between
-* units and from machine style notation to human readable notation, days
-* of the week, months, military time to standard time, etc.
+* Static utility class for converting between units of weight, volume, prefixes,
+* temperature etc.
 *
 * Copyright (c) 2008 Parker Selbert
 **/
@@ -13,143 +10,138 @@ package com.soren.util {
   public class ConversionUtil {
 
     public static const DEFAULT_ACCURACY:uint = 1
+    
+    // Volume keys and table
+    public static const CUBIC_FEET:uint  = 0
+    public static const CUBIC_METER:uint = 1
+    public static const CUP:uint         = 2
+    public static const GALLON:uint      = 3
+    public static const LITER:uint       = 4
+    public static const OUNCE:uint       = 5
+    public static const PINT:uint        = 6
+    public static const QUART:uint       = 7
+    public static const TABLESPOON:uint  = 8
+    public static const TEASPOON:uint    = 9
+    
+    public static const VOLUME:Array = [
+      [1,       0.02832,  19.6883,    7.4805,   28.3168,  957.5065,   59.8442,    29.9221,    1915.013,   5745.039  ],
+      [35.3147, 1,        4226.7528,  264.1721, 1000,     33814.023,  2113.3764,  1056.6882,  67628.045,  202884.14 ],
+      [0.00836, 0.00024,  1,          0.0625,   0.2365,   8,          0.5,        0.25,       16,         48        ],
+      [0.1337,  0.0038,   16,         1,        3.7854,   128,        8,          4,          256,        768       ],
+      [0.0353,  0.001,    4.2268,     0.2642,   1,        33.8140,    2.1134,     1.0567,     67.6280,    202.8841  ],
+      [0.00104, 2.9574,   0.125,      0.0078,   0.0296,   1,          0.0625,     0.0313,     2,          6         ],
+      [0.0167,  0.0005,   2,          0.125,    0.4732,   16,         1,          0.5,        32,         96        ],
+      [0.0334,  0.0009,   4,          0.25,     0.9464,   32,         2,          1,          64,         192       ],
+      [0.0005,  1.4787,   0.0625,     0.0039,   0.0148,   0.5,        0.0314,     0.0156,     1,          3         ],
+      [0.0002,  4.9289,   0.0208,     0.0013,   0.0049,   0.1667,     0.0104,     0.0052,     0.3333,     1         ]
+    ]
+    
+    // Prefix keys and table
+    public static const MEGA:uint  = 0
+    public static const KILO:uint  = 1
+    public static const HECTO:uint = 2
+    public static const DEKA:uint  = 3
+    public static const ONE:uint   = 4
+    public static const DECI:uint  = 5
+    public static const CENTI:uint = 6
+    public static const MILLI:uint = 7
+    public static const MICRO:uint = 8
 
+    public static const PREFIX:Array = [
+      [1,           1000,     10000,      100000,    10000,   10000000, 100000000,  1e+9,    1e+12     ],
+      [0.001,       1,        10,         100,       1000,    10000,    100000,     1000000, 1000000000],
+      [0.0001,      0.1,      1,          10,        100,     1000,     10000,      100000,  100000000 ],
+      [0.00001,     0.01,     0.1,        1,         10,      100,      1000,       10000,   10000000  ],
+      [0.000001,    0.001,    0.01,       0.1,       1,       10,       100,        1000,    1000000   ],
+      [0.0000001,   0.0001,   0.001,      0.01,      0.1,     1,        10,         100,     100000    ],
+      [0.00000001,  0.00001,  0.0001,     0.001,     0.01,    0.1,      1,          10,      10000     ],
+      [1e-9,        0.000001, 0.00001,    0.0001,    0.001,   0.01,     0.1,        1,       1000      ],
+      [1e-12,       1e-9,     0.00000001, 0.0000001, 0.00001, 0.00001,  0.0001,     0.001,   1]
+    ]
+    
+    // Temperature keys
+    public static const KELVIN:uint     = 0
+    public static const CELCIUS:uint    = 1
+    public static const FAHRENHEIT:uint = 2
+    
+    /**
+    * This is a static container class only, it can not be constructed.
+    **/
     public function ConversionUtil() {
-      throw new Error("ConversionUtil class is a static container only")
-    }
-
-    /**
-    * Calculate the equivalent number of cups from a base unit of ounces
-    *
-    * @param  ounces      Number of ounces to convert
-    * @param  accuracy    Optional, number of trailing decimals. The default
-    *                     accuracy is 1 trailing digit
-    * 
-    * @return The number of cups as a string with trailing digits to the
-    *         amount specified in accuracy
-    **/
-    public static function toCups(ounces:Number,
-                           accuracy:uint = DEFAULT_ACCURACY):String {
-      var cups:String = (ounces / 8).toString()
-      return cups.substring(0, accuracy + 2)
-    }
-
-    /**
-    * Calculate the equivalent number of litres from a base unit of ounces
-    *
-    * @param  ounces      Number of ounces to convert
-    * @param  accuracy    Optional, number of trailing decimals. The default
-    *                     accuracy is 1 trailing digit
-    *  
-    * @return The number of litres, as a string, with trailing digits to the
-    *         amount specified in accuracy
-    **/
-    public static function toLitres(ounces:Number,
-                             accuracy:uint = DEFAULT_ACCURACY):String {
-      var litres:String = (ounces * 0.0295735297).toString()
-      return litres.substring(0, accuracy + 2)
-    }
-
-    /**
-    * Temperature conversion from celsius to fahrenheit
-    *
-    * @param  celsius   The base temperature in celsius to convert
-    * @param  round     A boolean value indicating whether the output
-    *                   should be rounded or not
-    * @param  accuracy  Optional, number of trailing decimals. The default
-    *                   accuracy is 1 trailing digit
-    * 
-    * @return The temperature in fahrenheit, rounded and truncated as
-    *         specified by round and accuracy
-    **/
-    public static function toFahrenheit(celsius:Number,
-                                 round:Boolean = true,
-                                 accuracy:uint = DEFAULT_ACCURACY):String {
-      var fahrenheit:Number = ((celsius * 9) / 5 ) + 32
-      fahrenheit = (round) ? Math.round(fahrenheit) : fahrenheit
-      return fahrenheit.toString().substring(0, accuracy + 2)
-    }
-
-    /**
-    * Temperature conversion from fahrenheit to celsius
-    *
-    * @param  fahrenheit  The base temperature in fahrenheit to convert
-    * @param  round       A boolean value indicating whether the output
-    *                     should be rounded or not
-    * @param  accuracy    Optional, number of trailing decimals. The default
-    *                     accuracy is 1 trailing digit
-    * 
-    * @return The temperature in celsius, rounded and truncated as
-    *         specified by round and accuracy
-    **/
-    public static function toCelsius(fahrenheit:Number,
-                              round:Boolean = true,
-                              accuracy:uint = DEFAULT_ACCURACY):String {
-      var celsius:Number = ((fahrenheit - 32) * 5) / 9
-      celsius = (round) ? Math.round(celsius) : celsius
-      return celsius.toString().substring(0, accuracy + 2)
-    }
-
-    /**
-    **/
-    public static function toD(input:Number):String {
-      return Pad.padFloat(input / 10, 1)
+      throw new Error('ConversionUtil class is a static container only')
     }
     
     /**
+    * Convert a unit of volume to another unit of volume.
+    * 
+    * @param  a     The unit to convert from. It must be an unsigned integer
+    *               from the volume constants.
+    * @param  b     The volume to convert to.  It must be an unsigned integer
+    *               from the volume constants.
+    * @param  v     The value to convert.
+    *               
+    * @throws Error If <code>a</code> or <code>b</code> is not a valid unit key.
+    * 
+    * @return   The converted volume.
+    * 
+    * @example  The following code illustrates several volume conversions.
+    *
+    * <listing version="3.0">
+    * var ounces:Number  = 16
+    * var gallons:Number = ConversionUtil.convertVolume(ConversionUtil.OUNCE, ConversionUtil.GALLON, ounces)
+    * trace(gallons) // Yields 0.125
+    * 
+    * var liters:Number = ConversionUtil.convertVolume(ConversionUtil.OUNCE, ConversionUtil.LITER, ounces)
+    * trace(liters)  // Yields 0.47317647
+    * </listing>
     **/
-    public static function toC(input:Number):String {
-      return Pad.padFloat(input / 100, 1)
+    public static function convertVolume(a:uint, b:uint, v:Number):Number {
+      for each (var unit:uint in [a, b]) {
+        if (unit < 0 || unit > VOLUME.length) {
+          throw new Error('Unit key: ' + unit + ' is out of range.')
+        }
+      }
+      
+      return v * VOLUME[a][b]
     }
     
     /**
-    **/
-    public static function toK(input:Number):String {
-      return Pad.padFloat(input / 1000, 1)
-    }
-     
-    /**
-    * Returns the name of weekday based on the day number
-    *
-    * @param  day     An unsigned integer representing the day of the week
-    *                 as a value 0..6, the default output of the Date class
-    * @param  short   A boolean value specifying whether the returned day
-    *                 name should be truncated to the first three letters.
-    *                 The default value of short is false
+    * Convert a metric prefix to another metric prefix.
     * 
-    * @return A weekday name based on the day number supplied, i.e. 6 would
-    *         'Sunday', or 'Sun' if short is true
+    * @param  a     The prefix to convert from. It must be an unsigned integer
+    *               from the prefix constants.
+    * @param  b     The prefix to convert to.  It must be an unsigned integer
+    *               from the prefix constants.
+    * @param  v     The value to convert.
+    * 
+    * @throws Error If <code>a</code> or <code>b</code> is not a valid prefix key.
+    * 
+    * @return   The converted value.
+    * 
+    * @example  The following code illustrates a prefix conversion.
+    * 
+    * <listing version="3.0">
+    * // Yields 1000000000000
+    * trace(ConversionUtil.convertPrefix(ConversionUtil.KILO, ConversionUtil.MICRO, 1000))
+    * // Yields 0.72
+    * trace(ConversionUtil.convertPrefix(ConversionUtil.ONE, ConversionUtil.HECTO, 72))
+    * </listing>
     **/
-    public static function dayName(day_number:uint, short:Boolean = false):String {
-      var long_days:Array = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
-                             'Thursday', 'Friday', 'Saturday']
-      var short_days:Array = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
+    public static function convertPrefix(a:uint, b:uint, v:Number):Number {
+      for each (var prefix:Object in [a, b]) {
+        if (prefix < 0 || prefix > PREFIX.length) {
+          throw new Error('Prefix key: ' + prefix + ' is out of range.')
+        }
+      }
       
-      var days:Array = (short) ? short_days : long_days
-      
-      return days[day_number]
+      return v * PREFIX[a][b]
     }
-
+    
     /**
-    * Returns the name of the month based on the month number
-    *
-    * @param  month   An unsigned integer from 0..11 representing the month number
-    * @param  short   A boolean value specifying whether the returned month
-    *                 name should be truncated to the first three letters.
-    *                 The default value of short is false
-    *  
-    * @return A month name based on the month number supplied, i.e. 0 would
-    *         return 'January', or 'Jan' if short is true
+    * @private
     **/
-    public static function monthName(month_number:uint, short:Boolean = false):String {
-      var months:Array = ['January', 'February', 'March', 'April',
-                          'May', 'June', 'July', 'August', 'September',
-                          'October', 'November', 'December']
-      var month:String = months[month_number]
-      month = (short) ? month.substr(0, 3) : month
+    public static function convertTemperature(a:uint, b:uint, v:Number):Number {
       
-      return month
     }
-
   }
 }
