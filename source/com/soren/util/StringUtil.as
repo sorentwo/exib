@@ -7,8 +7,6 @@
 **/
 
 package com.soren.util {
-
-  import com.soren.util.*
   
   public class StringUtil {
 
@@ -20,7 +18,6 @@ package com.soren.util {
 
     // sprintf base tokens
     private static const FORMAT_TOKENS:String      = 'acdfrst'
-    private static const ABBREVIATION_TOKEN:String = 'a'
     private static const CONVERSION_TOKEN:String   = 'c'
     private static const DATE_TOKEN:String         = 't'
     private static const FLOAT_TOKEN:String        = 'f'
@@ -72,28 +69,6 @@ package com.soren.util {
     **/
     public function StringUtil() {
       throw new Error('StringUtil class is a static container only')
-    }
-
-    /**
-    * Replaces a string with its abbreviation, if a match is found.
-    * 
-    * @param    input   The string to abbreviate
-    * @return   The matching abbreviation
-    **/
-    public static function abbr(input:String):String {
-      // Hard-coded set of known matches, this must be modified in the future
-      var abbreviations:Array = [['ounces', 'oz']]
-      
-      var normalized:String = input.toLowerCase()
-      var substitution:String
-      
-      for each (var abbreviation:Array in abbreviations) {
-        substitution = input
-        
-        if (normalized == abbreviation[0]) substitution = abbreviation[1]
-      }
-      
-      return substitution
     }
     
     /**
@@ -187,9 +162,6 @@ package com.soren.util {
             break
           case INTEGER_TOKEN:
             match.replacement = int(replacement)
-            break
-          case ABBREVIATION_TOKEN:
-            match.replacement = abbr(replacement)
             break
           case REPLACEMENT_TOKEN:
             match.replacement = tr(tr_token, replacement)

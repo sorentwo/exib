@@ -108,11 +108,11 @@ package com.soren.util {
     /**
     * Convert a metric prefix to another metric prefix.
     * 
-    * @param  a     The prefix to convert from. It must be an unsigned integer
-    *               from the prefix constants.
-    * @param  b     The prefix to convert to.  It must be an unsigned integer
-    *               from the prefix constants.
-    * @param  v     The value to convert.
+    * @param  a The prefix to convert from. Value should be one of the prefix
+    *           constants.
+    * @param  b The prefix to convert from. Value should be one of the prefix
+    *           constants.
+    * @param  v The value to convert.
     * 
     * @throws Error If <code>a</code> or <code>b</code> is not a valid prefix key.
     * 
@@ -123,6 +123,7 @@ package com.soren.util {
     * <listing version="3.0">
     * // Yields 1000000000000
     * trace(ConversionUtil.convertPrefix(ConversionUtil.KILO, ConversionUtil.MICRO, 1000))
+    *
     * // Yields 0.72
     * trace(ConversionUtil.convertPrefix(ConversionUtil.ONE, ConversionUtil.HECTO, 72))
     * </listing>
@@ -138,10 +139,57 @@ package com.soren.util {
     }
     
     /**
-    * @private
+    * Convert between temperature scales. Can convert between Fahrenheit, Celcius,
+    * and Kelvin.
+    * 
+    * @param  a The scale to convert from. Value should be one of the temperature
+    *           constants.
+    * @param  b The scale to convert from. Value should be one of the temperature
+    *           constants.
+    * @param  v The value to convert.
+    * 
+    * @throws Error If <code>a</code> or <code>b</code> is not a valid temperature key.
+    * 
+    * @example  The following code illustrates several temperature conversions.
+    * 
+    * <listing version='3.0'>
+    * // Yields 37
+    * var body_temperature_kelvin:uint = 310
+    * trace(ConversionUtil.convertTemperature(ConversionUtil.KELVIN, ConversionUtil.CELCIUS, body_temperature_kelvin))
+    * 
+    * // Yields 32
+    * var water_freezes_celcius:uint = 0
+    * trace(ConversionUtil.convertTemperature(ConversionUtil.CELCIUS, ConversionUtil.FAHRENHEIT, water_freezes_celcius))
+    * </listing>
     **/
     public static function convertTemperature(a:uint, b:uint, v:Number):Number {
+      for each (var scale:uint in [a, b]) {
+        if (scale < 0 || scale > 2) {
+          throw new Error('Scale key: ' + scale + ' is out of range.')
+        }
+      }
       
+      var converted:Number
+      
+      if (a == KELVIN) {
+             if (b == KELVIN)     { converted = v                        }
+        else if (b == CELCIUS)    { converted = v - 273                  }
+        else if (b == FAHRENHEIT) { converted = ((v - 273) * 9 / 5) + 32 }
+      }
+      
+      if (a == CELCIUS) {
+             if (b == KELVIN)     { converted = v + 273          }
+        else if (b == CELCIUS)    { converted = v                }
+        else if (b == FAHRENHEIT) { converted = (v * 9 / 5) + 32 }
+      }
+      
+      if (a == FAHRENHEIT) {
+             if (b == KELVIN)     { converted = ((v - 273) * 9 / 5) + 32 }
+        else if (b == CELCIUS)    { converted = (v - 32) * 5 / 9         }
+        else if (b == FAHRENHEIT) { converted = v                        }
+      }
+      
+      return converted
     }
   }
 }
