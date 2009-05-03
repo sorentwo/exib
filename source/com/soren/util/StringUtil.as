@@ -9,6 +9,7 @@
 package com.soren.util {
 
   import com.soren.util.*
+  import com.soren.math.AdvancedMath
   
   public class StringUtil {
 
@@ -47,7 +48,7 @@ package com.soren.util {
     private static const DATE_SECONDS_TOKEN:String     = 'S'
 
     // convs formatting tokens
-    private static const CONVERSION_TOKENS:String        = 'ceEdfIklOu'
+    private static const CONVERSION_TOKENS:String        = 'ceEdDfFIklNORu'
     private static const CONVERT_CELSIUS_TOKEN:String    = 'c'
     private static const CONVERT_FAHRENHEIT_TOKEN:String = 'f'
     private static const CONVERT_CUPS_TOKEN:String       = 'u'
@@ -58,6 +59,12 @@ package com.soren.util {
     private static const CONVERT_MOD_HOURS:String        = 'O'
     private static const CONVERT_MOD_MINUTES:String      = 'I'
     private static const CONVERT_MOD_SECONDS:String      = 'E'
+    
+    // temporary conv formatting for fractions
+    private static const CONVERT_DENOMINATOR:String = 'D'
+    private static const CONVERT_NUMERATOR:String   = 'N'
+    private static const CONVERT_ROUND:String       = 'R'
+    private static const CONVERT_FLOOR:String       = 'F'
     
     // Sprintf regex and sections. Pushed outside of the sprintf method for speed.
     private static const CONVERSION_RE:String = "(\\{(?P<conversion_token>[" + CONVERSION_TOKENS + "]{1})\\})?"
@@ -281,6 +288,18 @@ package com.soren.util {
                 break
               case CONVERT_MOD_SECONDS:
                 match.replacement = TimeUtil.modSeconds(replacement)
+                break
+              case CONVERT_DENOMINATOR:
+                match.replacement = AdvancedMath.denominator(replacement)
+                break
+              case CONVERT_NUMERATOR:
+                match.replacement = AdvancedMath.numerator(replacement)
+                break
+              case CONVERT_ROUND:
+                match.replacement = Math.round(replacement)
+                break
+              case CONVERT_FLOOR:
+                match.replacement = Math.floor(replacement)
                 break
               default:
                 throw new Error(NO_VALID_CONVERSION_TOKENS)
