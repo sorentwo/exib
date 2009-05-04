@@ -48,7 +48,7 @@ package com.soren.util {
     private static const DATE_SECONDS_TOKEN:String     = 'S'
 
     // convs formatting tokens
-    private static const CONVERSION_TOKENS:String        = 'ceEdDfFIklNORu'
+    private static const CONVERSION_TOKENS:String        = 'CceEdfFIklNORu'
     private static const CONVERT_CELSIUS_TOKEN:String    = 'c'
     private static const CONVERT_FAHRENHEIT_TOKEN:String = 'f'
     private static const CONVERT_CUPS_TOKEN:String       = 'u'
@@ -61,7 +61,7 @@ package com.soren.util {
     private static const CONVERT_MOD_SECONDS:String      = 'E'
     
     // temporary conv formatting for fractions
-    private static const CONVERT_DENOMINATOR:String = 'D'
+    private static const CONVERT_DENOMINATOR:String = 'C'
     private static const CONVERT_NUMERATOR:String   = 'N'
     private static const CONVERT_ROUND:String       = 'R'
     private static const CONVERT_FLOOR:String       = 'F'
@@ -290,16 +290,16 @@ package com.soren.util {
                 match.replacement = TimeUtil.modSeconds(replacement)
                 break
               case CONVERT_DENOMINATOR:
-                match.replacement = AdvancedMath.denominator(replacement)
+                match.replacement = AdvancedMath.denominator(Number(ConversionUtil.toCups(replacement)))
                 break
               case CONVERT_NUMERATOR:
-                match.replacement = AdvancedMath.numerator(replacement)
+                match.replacement = AdvancedMath.numerator(Number(ConversionUtil.toCups(replacement)))
                 break
               case CONVERT_ROUND:
                 match.replacement = Math.round(replacement)
                 break
               case CONVERT_FLOOR:
-                match.replacement = Math.floor(replacement)
+                match.replacement = Math.floor(Number(ConversionUtil.toCups(replacement)))
                 break
               default:
                 throw new Error(NO_VALID_CONVERSION_TOKENS)
