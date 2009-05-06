@@ -18,18 +18,18 @@ package {
       var helper_tests:Array    = [ConditionalTest, ConditionalSetTest, ActionTest, ActionSetTest, FormulaTest]
       var manager_tests:Array   = [ManagerTest]
       var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
-      var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest, SoundTest]
-      var util_tests:Array      = [TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
-      var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
+      var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest] //, SoundTest
+      var util_tests:Array      = [AdvancedMathTest, TimeUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
+      //var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
 
-      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests]) {
+      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests]) { //view_tests
         iterateTestArray(test_array)
       }
       
       // Generator Tests last
-      var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
+      //var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
       
-      iterateTestArray(generator_tests)
+      //iterateTestArray(generator_tests)
     }
     
 	  // ---

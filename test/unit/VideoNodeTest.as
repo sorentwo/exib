@@ -25,8 +25,7 @@ package unit {
     // ---
     
     public function testConstructor():void {
-      // test_video.flv width = 205, height = 170
-      var video_node:VideoNode = new VideoNode(_source, 205, 170, true)
+      var video_node:VideoNode = new VideoNode(_source, true)
       
       assertEquals(0, video_node.numChildren)
       

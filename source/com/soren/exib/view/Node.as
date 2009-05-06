@@ -19,8 +19,10 @@ package com.soren.exib.view {
     
     // Implemented directly because this can not be a dynamic class. Get / Set
     // methods seem overkill, but may be used in the future.
-    public var blur_x:uint = 0
-    public var blur_y:uint = 0
+    public var blur_x:uint      = 0
+    public var blur_y:uint      = 0
+    public var pulse_count:uint = 0
+    public var pulse_total:uint = 0
     
     public function Node() {}
     

@@ -109,5 +109,10 @@ package unit {
    	  assertEquals("Cats and dogs living together",
    	               StringUtil.sprintf("%s and %s living %s", ['Cats', 'dogs', 'together']))
   	}
+  	
+  	public function testFractionTools():void {
+  	  var val:Number = 1.25
+  	  assertEquals('1 1/4', StringUtil.sprintf('%{F}c %{N}c/%{D}c', val, val, val))
+  	}
 	}
 }

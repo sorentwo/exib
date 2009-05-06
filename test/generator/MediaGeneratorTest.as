@@ -4,7 +4,6 @@ package generator {
   import flash.text.TextFormat
   import com.soren.exib.core.*
   import com.soren.exib.service.Sound
-  import com.soren.exib.view.VideoNode
 
   public class MediaGeneratorTest extends TestCase {
 
@@ -42,12 +41,6 @@ package generator {
       _xml = <sound id="tweet" url="assets/sounds/tone.mp3" />
       
       var sound:Sound = _generator.genSound(_xml)
-    }
-    
-    public function testVideoGenerator():void {
-      _xml = <video id="slick" url="assets/video/test_video.flv" size="640x480" />
-      
-      var video:VideoNode = _generator.genVideo(_xml)
     }
   }
 }

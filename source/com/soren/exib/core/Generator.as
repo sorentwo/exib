@@ -350,10 +350,10 @@ package com.soren.exib.core {
       var unselected_url:String = xml.@unselected
       
       var radio:RadioNode = new RadioNode(model, selected_url, unselected_url)
-      // Insert action handling
 
       for each (var option:XML in xml.option) {
-        radio.add(option.@pos, option.@value)
+        for each (var xml_inj:XML in xml.inject) { option.appendChild(<action>{xml_inj.toString()}</action>) }
+        radio.add(option.@pos, option.@value, genActionSet(option.action))
       }
       
       return radio

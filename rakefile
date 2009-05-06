@@ -114,7 +114,7 @@ end
 # Logger satellite --------------------------------------------------------------
 
 task :open_logger_satellite do
-  sh %{open satellite/LoggerSatellite.swf}
+  sh %{open template/satellite.swf}
 end
 
 # Run ASUnit Tests -------------------------------------------------------------

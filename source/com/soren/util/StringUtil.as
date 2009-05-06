@@ -7,6 +7,8 @@
 **/
 
 package com.soren.util {
+
+  import com.soren.math.AdvancedMath
   
   public class StringUtil {
 
@@ -15,7 +17,13 @@ package com.soren.util {
     public static const NO_VALID_DATE_TOKENS:String       = "No valid date tokens were found"
     public static const NO_VALID_CONVERSION_TOKENS:String = "No valid conversion tokens were found"
     public static const INVALID_DATE_OBJECT:String        = "Supplied is not a valid Date object"
-
+    
+    // Case Constants
+    private static const LOWER:uint    = 0
+    private static const UPPER:uint    = 1
+    private static const SENTENCE:uint = 2
+    private static const TITLE:uint    = 3
+    
     // sprintf base tokens
     private static const FORMAT_TOKENS:String      = 'acdfrst'
     private static const CONVERSION_TOKEN:String   = 'c'
@@ -44,7 +52,7 @@ package com.soren.util {
     private static const DATE_SECONDS_TOKEN:String     = 'S'
 
     // convs formatting tokens
-    private static const CONVERSION_TOKENS:String        = 'ceEdfIklOu'
+    private static const CONVERSION_TOKENS:String        = 'CceEdfFIklNORu'
     private static const CONVERT_CELSIUS_TOKEN:String    = 'c'
     private static const CONVERT_FAHRENHEIT_TOKEN:String = 'f'
     private static const CONVERT_CUPS_TOKEN:String       = 'u'
@@ -56,7 +64,13 @@ package com.soren.util {
     private static const CONVERT_MOD_MINUTES:String      = 'I'
     private static const CONVERT_MOD_SECONDS:String      = 'E'
     
-    // Sprintf regex and sections. Pushed outside of the sprintf method for speed.
+    // temporary conv formatting for fractions
+    private static const CONVERT_DENOMINATOR:String = 'C'
+    private static const CONVERT_NUMERATOR:String   = 'N'
+    private static const CONVERT_ROUND:String       = 'R'
+    private static const CONVERT_FLOOR:String       = 'F'
+    
+    // Sprintf regex and sections.
     private static const CONVERSION_RE:String = "(\\{(?P<conversion_token>[" + CONVERSION_TOKENS + "]{1})\\})?"
     private static const DATE_RE:String       = "(\\{(?P<date_token>[" + DATE_TOKENS +"]{1})\\})?"
     private static const TRANSPOSE_RE:String  = "(\\{(?P<tr_token>\\/.*\\/.*\\/)\\})?"
@@ -73,43 +87,89 @@ package com.soren.util {
     
     /**
     * Performs case conversion on the string provided. Supports conversion to
-    * lower case (charcase = L), UPPER CASE (charcase = U), Sentence case 
-    * (charcase = S), and Title Case (charcase = T)
+    * lower, upper, sentence, and title cases.
+    * 
+    * @param  string    String to be converted.
+    * @param  charcase  Token representing the character case to convert to.
+    *                   <ul>
+    *                   <li>0 or LOWER -> Lower case. Sample: <q>this is lower 
+    *                   case.</q></li>
+    *                   <li>1 or UPPER -> Upper case. Sample: <q>THIS IS UPPER 
+    *                   CASE.</q></li>
+    *                   <li>2 or SENTENCE -> Sentence case. Sample: <q>This is
+    *                   sentence case.</q></li>
+    *                   <li>3 or TITLE -> Title case. Sample: <q>This Is Title
+    *                   Case.</q></li>
+    *                   </ul>
+    *
+    * @example  The following code shows typical usage of the casefix function.
+    * <listing version='3.0'>
+    * var input:String = 'The QuICK brOWn FOX JuMPed ovER the LazY DOg.'
+    * var lower:String = StringUtil.casefix(input, StringUtil.LOWER)
+    * var title:String = StringUtil.casefix(input, StringUtil.TITLE)
+    * 
+    * // lower = 'the quick brown fox jumped over the lazy dog.'
+    * // title = 'The Quick Brown Fox Jumped Over The Lazy Dog.'
+    * </listing>
     **/
-    public static function convertCase(string:String, charcase:String = ''):String {
+    public static function casefix(string:String, charcase:uint):String {
       var downcased:String = string.toLowerCase()
-      switch (charcase.toUpperCase()) {
-        case 'L':
+      
+      switch (charcase) {
+        case LOWER:
           return downcased
-        case 'S':
-          return downcased.substr(0, 1).toUpperCase() + downcased.substr(1, downcased.length)
-        case 'T':
-          var hacky_hack:String = (/(\/)/.test(downcased)) ? '/' : ''
-          var original_words:Array = downcased.split(/(\s|_|\/)+/)
-          var capitalized_words:Array = []
-          for each (var word:String in original_words) {
-            if (/^\/$/.test(word)) continue
-            capitalized_words.push(word.substr(0, 1).toUpperCase() + word.substr(1, downcased.length))
-          }
-          
-          return capitalized_words.join(hacky_hack)
-        case 'U':
+        case UPPER:
           return string.toUpperCase()
+        case SENTENCE:
+          return downcased.substr(0, 1).toUpperCase() + downcased.substr(1, downcased.length)
+        case TITLE:
+          var word_pattern:RegExp = /(?:\b|\s|\t)(\w)(\w+)?/
+          var title_cased:String  = ''
+          var results:Object      = word_pattern.exec(downcased)
+
+          while (results) {
+            title_cased += results[1].toUpperCase() + results[2]
+            results = word_pattern.exec(downcased)
+          }
+
+          return title_cased
         default:
-          return string
+          throw new Error('Invalid charcase code: ' + charcase)
       }
     }
     
     /**
     * Transpose (Substitute) method. Replaces the first value with the second
-    * value. Uses the syntax /val-a/val-b/, so /a/b/ on 'cbt' would yield 'cat'
+    * value. Use the syntax /val-a/val-b/, so /a/b/ on 'cbt' would yield 'cat'.
+    * See examples below.
+    * 
+    * @param  format  A replacement string in the form of /pattern/replacement/.
+    * @param  input   The string that will be searched and have replacements
+    *                 performed on it.
+    * @return The replaced string.
+    * @example  The following code shows a typical tr implementation.
+    * 
+    * <listing version='3.0'>
+    * var string:String   = 'The quick brown cat'
+    * var replaced:String = StringUtil.tr('/brown/orange/', string)
+    * 
+    * // Yields 'The quick orange cat'
+    * trace(replaced)
+    * 
+    * // Replacement is global, so it will replace a value multiple times when found
+    * string   = 'black leather shoes, black leather jacket'
+    * replaced = StringUtil.tr('/black/brown/', string)
+    * 
+    * // Yields 'brown leather shoes, brown leather jacket'
+    * trace(replaced)
+    * </listing>
     **/
     public static function tr(format:String, input:String):String {
       var pattern:RegExp = new RegExp("\/(?P<match>[a-zA-Z0-9_\/ ]+)\/(?P<substitute>[a-zA-Z0-9_\/ ]+)\/")
       
-      if (!pattern.test(format)) throw new Error("Invalid format: " + format)
+      if (!pattern.test(format)) throw new Error('Invalid format: ' + format)
       
-      var result:Object  = pattern.exec(format)
+      var result:Object = pattern.exec(format)
       return input.replace(result.match, result.substitute)
     }
     
@@ -253,6 +313,18 @@ package com.soren.util {
                 break
               case CONVERT_MOD_SECONDS:
                 match.replacement = TimeUtil.modSeconds(replacement)
+                break
+              case CONVERT_DENOMINATOR:
+                match.replacement = AdvancedMath.denominator(Number(ConversionUtil.toCups(replacement)))
+                break
+              case CONVERT_NUMERATOR:
+                match.replacement = AdvancedMath.numerator(Number(ConversionUtil.toCups(replacement)))
+                break
+              case CONVERT_ROUND:
+                match.replacement = Math.round(replacement)
+                break
+              case CONVERT_FLOOR:
+                match.replacement = Math.floor(Number(ConversionUtil.toCups(replacement)))
                 break
               default:
                 throw new Error(NO_VALID_CONVERSION_TOKENS)
