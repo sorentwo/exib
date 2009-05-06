@@ -35,10 +35,10 @@ package unit {
     public function testConvertCase():void {
       var original_string:String = 'The Time Is Now 12'
       assertEquals(original_string, StringUtil.convertCase(original_string))
-      assertEquals('the time is now 12', StringUtil.convertCase(original_string, 'l'))
-      assertEquals('The time is now 12', StringUtil.convertCase(original_string, 's'))
-      assertEquals('The Time Is Now 12', StringUtil.convertCase(original_string, 't'))
-      assertEquals('THE TIME IS NOW 12', StringUtil.convertCase(original_string, 'u'))
+      assertEquals('the time is now 12', StringUtil.convertCase(original_string, StringUtil.LOWER))
+      assertEquals('The time is now 12', StringUtil.convertCase(original_string, StringUtil.SENTENCE))
+      assertEquals('The Time Is Now 12', StringUtil.convertCase(original_string, StringUtil.TITLE))
+      assertEquals('THE TIME IS NOW 12', StringUtil.convertCase(original_string, StringUtil.UPPER))
     }
   	
   	public function testPositionals():void {
