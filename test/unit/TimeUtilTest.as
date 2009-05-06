@@ -44,5 +44,17 @@ package unit {
    	  assertEquals(0, TimeUtil.modSeconds(3600))
    	  assertEquals(25, TimeUtil.modSeconds(5305))
    	}
+   	
+   	public function testDayName():void {
+	 	  assertEquals('Tuesday', TimeUtil.dayName(2))
+	 	  assertEquals('Tuesday', TimeUtil.dayName(2, false))
+	 	  assertEquals('Tues',    TimeUtil.dayName(2, true))
+	 	}
+	 	
+	 	public function testMonthName():void {
+	 	  assertEquals('September', TimeUtil.monthName(8))
+	 	  assertEquals('September', TimeUtil.monthName(8, false))
+	 	  assertEquals('Sep',       TimeUtil.monthName(8, true))
+	 	}
   }
 }
