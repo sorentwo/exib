@@ -60,7 +60,7 @@ package com.soren.exib.model {
     
     /**
     * Retrieve the instance's value as a date object. Because the return value
-    * is untyped, any method needing a typed date object (sprintf) will have to
+    * is untyped, any method needing a typed date object (format) will have to
     * cast it.
     * 
     * @return The clock model's date

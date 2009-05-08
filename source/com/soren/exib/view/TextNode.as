@@ -181,7 +181,7 @@ package com.soren.exib.view {
     private function applyContent():void {
       var new_text:String = _content
       
-      if (hasTokens())   new_text = StringUtil.sprintf(new_text, _arguments.map(extractValues))
+      if (hasTokens())   new_text = StringUtil.format(new_text, _arguments.map(extractValues))
       if (hasCharcase()) new_text = StringUtil.casefix(new_text, _charcase)
       
       _text_field.text = new_text

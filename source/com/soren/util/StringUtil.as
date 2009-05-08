@@ -130,11 +130,11 @@ package com.soren.util {
     }
     
     /**
-    * The <code>format</code> function mimics the functionality of the C
-    * standard sprintf. It produces output according to a format as described 
-    * below.
+    * The <code>format</code> function mimics the functionality of the C 
+    * standard format. It produces output according to a <q>format</q> as 
+    * described below.
     * 
-    * <p>This implementation of sprintf is quite specialized </p>
+    * <p>This implementation of format is quite specialized </p>
     * 
     * <p>The format string is composed of zero or more directives: ordinary
     * characters, except for <code>%</code> or <code>%{}</code> sequences, which
@@ -210,7 +210,7 @@ package com.soren.util {
     *
     * @return   The formatted string containing all replaced values
     * 
-    * @example  The following code shows a variety of sprintf usage.
+    * @example  The following code shows a variety of format usage.
     *
     * <listing version='3.0'>
     * 

@@ -304,7 +304,7 @@ Sine:   sine_in, sine_out, sine_in_out
 ## Text
 
 The text node provides a variety of complex string manipulation tools, most of
-which are harvested from common language paradigms like tr and sprintf.
+which are harvested from common language paradigms like tr and format.
 
 **Character Case: lust(%s), value**
   

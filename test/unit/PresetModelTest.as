@@ -90,7 +90,7 @@ package unit {
       
       _instance.save()
       
-      assertEquals('Preset: 8 ounces', StringUtil.sprintf('Preset: %d %s', _instance.value))
+      assertEquals('Preset: 8 ounces', StringUtil.format('Preset: %d %s', _instance.value))
     }
   }  
 }
