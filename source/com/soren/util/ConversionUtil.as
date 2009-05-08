@@ -96,6 +96,16 @@ package com.soren.util {
       [1.65e-5, 1.16e-5, 2.77e-4, 0.0167, 1     ]
     ]
     
+    // Mod Time (Time without remainder)
+    public static const MOD_HOUR:uint   = 0
+    public static const MOD_MINUTE:uint = 1
+    public static const MOD_SECOND:uint = 2
+    public static const RAW_SECOND:uint = 3
+    
+    public static const MOD_TIME_TYPES:Array = [
+      'modhour, modmin, modsec, rawsec'
+    ]
+    
     /**
     * This is a static container class only, it can not be constructed.
     **/
@@ -238,6 +248,53 @@ package com.soren.util {
     }
     
     /**
+    * Convert time from pure seconds into hours, minutes, or seconds without any 
+    * remainder. This is particularly useful for timers, which are most easily 
+    * set up as pure seconds. The three uses are:
+    * 
+    * <p>Convert raw seconds to whole hours. For example, 3600 seconds would 
+    * return 1 hour. 5400 seconds would also return 1 hour.</p>
+    * 
+    * <p>Convert raw seconds to whole minutes. For example, 5400 seconds would 
+    * return 30 minutes. 5450 seconds would also return 30 minutes.</p>
+    * 
+    * <p>Convert raw seconds to seconds remaining after hours and minutes have 
+    * been removed. For example, 5305 seconds would return 25 seconds.</p>
+    * 
+    * @param  a The time unit to convert from. Only 'RAW_SECONDS' is valid.
+    * @param  b The time unit to conver to. Any mod time constant is valid.
+    * 
+    * @return The converted value.
+    * 
+    * @example  The following code shows how a timer set up as seconds could be
+    *           converted to display hours, minutes, and seconds.
+    * <listing version='3.0'>
+    * var timer_val:uint = 5450
+    * var hours:uint   = ConversionUtil.convertModTime(ConversionUtil.RAW_SECOND, ConversionUtil.MOD_HOUR, timer_val)
+    * var minutes:uint = ConversionUtil.convertModTime(ConversionUtil.RAW_SECOND, ConversionUtil.MOD_MINUTE, timer_val)
+    * var seconds:uint = ConversionUtil.convertModTime(ConversionUtil.RAW_SECOND, ConversionUtil.MOD_SECOND, timer_val)
+    * 
+    * // Outputs '1:30:50'
+    * trace(hours + ':' + minutes + ':' + seconds)
+    * </listing>
+    **/
+    public static function convertModTime(a:uint, b:uint, v:Number):Number {
+      if (a != RAW_SECOND) {
+        throw new Error('First key must be raw seconds, ' + RAW_SECOND)
+      }
+      
+      if (b < 0 || b > MOD_SECOND) {
+        throw new Error('Unit key: ' + b + ' is out of range.')
+      }
+      
+      var h:uint = uint(v / 3600)
+      var m:uint = uint((v - (h * 3600)) / 60)
+      var s:uint = uint(v - (h * 3600) - (m * 60))
+      
+      return [h, m, s][b]
+    }
+    
+    /**
     * Provides a way to retrieve type keys and the conversion method associated
     * with those types.
     * 
@@ -275,8 +332,8 @@ package com.soren.util {
     public static function getTypesAndFunction(a_type:String, b_type:String):Array {
       a_type, b_type = a_type.toLowerCase(), b_type.toLowerCase()
       
-      var all_types:Array   = [VOLUME_TYPES, PREFIX_TYPES, TEMP_TYPES, TIME_TYPES]
-      var conversions:Array = [convertVolume, convertPrefix, convertTemperature, convertTime]
+      var all_types:Array   = [VOLUME_TYPES, PREFIX_TYPES, TEMP_TYPES, TIME_TYPES, MOD_TIME_TYPES]
+      var conversions:Array = [convertVolume, convertPrefix, convertTemperature, convertTime, convertModTime]
       var a_key:uint, b_key:uint, func:Function
       
       for (var i:int = 0; i < all_types; i++) {
