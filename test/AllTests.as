@@ -19,10 +19,11 @@ package {
       var manager_tests:Array   = [ManagerTest]
       var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
       var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest] //, SoundTest
-      var util_tests:Array      = [AdvancedMathTest, DateUtilTest, ExtendedArrayTest, ConversionUtilTest, KeyUtilTest, PadTest, StringUtilTest]
+      var util_tests:Array      = [AdvancedMathTest, DateUtilTest, ExtendedArrayTest, KeyUtilTest, PadTest, ConversionUtilTest, StringUtilTest]
+      var view_tests:Array      = []
       //var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
 
-      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests]) { //view_tests
+      for each (var test_array:Array in [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests]) {
         iterateTestArray(test_array)
       }
       

@@ -84,13 +84,13 @@ package unit {
       assertEquals(OUNCES, _instance.value[0])
     }
     
-    public function testSprintfInterraction():void {
+    public function testFormatInterraction():void {
       _instance.watch(_watched_value)
       _instance.watch(_watched_state)
       
       _instance.save()
       
-      assertEquals('Preset: 8 ounces', StringUtil.format('Preset: %d %s', _instance.value))
+      assertEquals('Preset: 8 ounces', StringUtil.format('Preset: %d %s', _instance.value[0], _instance.value[1]))
     }
   }  
 }

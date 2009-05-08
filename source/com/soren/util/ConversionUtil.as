@@ -6,7 +6,7 @@
 **/
 
 package com.soren.util {
-
+  import com.soren.exib.debug.Log
   public class ConversionUtil {
 
     public static const DEFAULT_ACCURACY:uint = 1
@@ -103,7 +103,7 @@ package com.soren.util {
     public static const RAW_SECOND:uint = 3
     
     public static const MOD_TIME_TYPES:Array = [
-      'modhour, modmin, modsec, rawsec'
+      'modhour', 'modmin', 'modsec', 'rawsec'
     ]
     
     /**
@@ -177,7 +177,7 @@ package com.soren.util {
         }
       }
       
-      return v * PREFIX[a][b]
+      return v * PREFIX[b][a] // Array is rotated, this compensates properly.
     }
     
     /**
@@ -357,32 +357,33 @@ package com.soren.util {
     * </listing>
     **/
     public static function getTypesAndFunction(a_type:String, b_type:String):Array {
-      a_type, b_type = a_type.toLowerCase(), b_type.toLowerCase()
+      a_type = a_type.toLowerCase()
+      b_type = b_type.toLowerCase()
       
       var all_types:Array   = [VOLUME_TYPES, PREFIX_TYPES, TEMP_TYPES, TIME_TYPES, MOD_TIME_TYPES]
       var conversions:Array = [convertVolume, convertPrefix, convertTemperature, convertTime, convertModTime]
-      var a_key:uint, b_key:uint, func:Function
+      var a_index:int, b_index:int, func:Function, found:Boolean
       
-      for (var i:int = 0; i < all_types; i++) {
-        var a_index:int = all_types[i].indexOf(a_type)
-        var b_index:int = all_types[i].indexOf(b_type)
-        
+      for (var i:int = 0; i < all_types.length; i++) {
+        a_index = all_types[i].indexOf(a_type)
+        b_index = all_types[i].indexOf(b_type)
+
         if ((a_index != -1) && (b_index != -1)) {
-          a_key = all_types[i][a_index]
-          b_key = all_types[i][b_index]
           func  = conversions[i]
+          found = true
           break
         } else {
-          a_index = b_index = NaN
+          a_index = b_index = -1
+          found = false
         }
       }
       
-      if (!a_key || !b_key || !func) {
+      if (!found) {
         throw new Error('Supplied types: ' + a_type + ', ' + b_type + ' were not ' +
                         'matching or could not be found.')
       }
       
-      return [a_key, b_key, func]
+      return [a_index, b_index, func]
     }
   }
 }

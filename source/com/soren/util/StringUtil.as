@@ -9,6 +9,7 @@
 package com.soren.util {
 
   import com.soren.math.AdvancedMath
+  import com.soren.exib.debug.Log
   
   public class StringUtil {
     
@@ -73,20 +74,11 @@ package com.soren.util {
         case LOWER:
           return downcased
         case UPPER:
-          return string.toUpperCase()
+          return downcased.toUpperCase()
         case SENTENCE:
           return downcased.substr(0, 1).toUpperCase() + downcased.substr(1, downcased.length)
         case TITLE:
-          var word_pattern:RegExp = /(?:\b|\s|\t)(\w)(\w+)?/
-          var title_cased:String  = ''
-          var results:Object      = word_pattern.exec(downcased)
-
-          while (results) {
-            title_cased += results[1].toUpperCase() + results[2]
-            results = word_pattern.exec(downcased)
-          }
-
-          return title_cased
+          return downcased.replace(/(\b|\s|\t)([a-z])/g, function():String { return arguments[1] + arguments[2].toUpperCase() })
         default:
           throw new Error('Invalid charcase code: ' + charcase)
       }
@@ -121,7 +113,7 @@ package com.soren.util {
     * </listing>
     **/
     public static function tr(format:String, input:String):String {
-      var pattern:RegExp = new RegExp("\/(?P<match>[a-zA-Z0-9_\/ ]+)\/(?P<substitute>[a-zA-Z0-9_\/ ]+)\/")
+      var pattern:RegExp = /(?P<match>.*?)\/(?P<substitute>.*)/
       
       if (!pattern.test(format)) throw new Error('Invalid format: ' + format)
       
@@ -194,8 +186,8 @@ package com.soren.util {
     *   <li><code>%{+date}</code><br />
     *     A block with a leading '+' sign signals a date format string in which to 
     *     display date and time. The available format strings are: date, day,
-    *     dayshort, daylong, year, fullyear, month, monthshort, monthlong, hour, 
-    *     hour24, ampm, minutes, seconds.
+    *     dayshort, daylong, year, fullyear, month, monthshort, monthlong, hours, 
+    *     hours24, ampm, minutes, seconds.
     *   </li>
     *   <li><code>%{pattern/replace}</code><br />
     *     A block separated by a forward slash, '/', will be interpreted as a 
@@ -221,12 +213,12 @@ package com.soren.util {
       var precision_re:String  = "(\\.(?P<precision>[0-9]))?"
       var convert_re:String    = "((\\{(?P<conversion>[\\w\\/+\\[\\]:]+)\\})|(?P<token>[a-zA-Z]{1}))"
       
-      var pattern:RegExp = new RegExp('%', padding_re + precision_re + convert_re, 'g')
+      var pattern:RegExp = new RegExp('%' + padding_re + precision_re + convert_re, 'g')
       
-      var conversion_re:RegExp = (?P<first>\w+):(?P<second>\w+)(::(?P<post>\w+))?
-      var date_re:RegExp       = \+(?P<date>\w+)
-      var replace_re:RegExp    = (?P<substitution>\w+\/\w+)
-      
+      var conversion_re:RegExp = /(?P<first>\w+):(?P<second>\w+)(::(?P<post>\w+))?/
+      var date_re:RegExp       = /\+(?P<date>\w+)/
+      var replace_re:RegExp    = /(?P<substitution>.*\/.*)/
+
       var output:String  = input
       var arg_index:uint = 0
       var result:Object
@@ -234,6 +226,8 @@ package com.soren.util {
       
       do {
         result = pattern.exec(input)
+        
+        if (!result) break
         
         var conversion:String = result.conversion
         var token:String      = (result.conversion) ? CONVERSION : result.token
@@ -262,14 +256,16 @@ package com.soren.util {
                  if (conversion_re.test(conversion)) { conv_token = CONVERT; conv_result = conversion_re.exec(conversion) }
             else if (date_re.test(conversion))       { conv_token = DATE; conv_result = date_re.exec(conversion)          }
             else if (replace_re.test(conversion))    { conv_token = REPLACE; conv_result = replace_re.exec(conversion)    }
-            
+
             switch (conv_token) {
               case CONVERT:
-                var params:Array = ConversionUtil.getTypesAndFunction(conv_result.first, conv_result.second)
-                var a:uint, b:uint, func:Function = params[0], params[1], params[2]
-                replacement = ConversionUtil[func].call(null, a, b, replacement)
+                var params:Array = ConversionUtil.getTypesAndFunction(conv_result.first, conv_result.second)                
+                replacement = params[2].call(null, params[0], params[1], replacement)
                 
-                if (conv_result.post) replacement = postFormat(conv_result.post, replacement)
+                if (conv_result.post) {
+                  replacement = postFormat(conv_result.post, replacement)
+                }
+                
                 break
               case DATE:
                 replacement = dateFormat(conv_result.date, replacement)
@@ -286,8 +282,8 @@ package com.soren.util {
             throw new Error('Invalid format token: ' + token)
         }
         
-        if (!isNaN(padding))   { replacement = Pad.zeroPad(replacement, padding)    }
-        if (!isNaN(precision)) { replacement = Pad.padFloat(replacement, precision) }
+        if (Boolean(padding))   { replacement = Pad.zeroPad(replacement, padding)    }
+        if (Boolean(precision)) { replacement = Pad.padFloat(replacement, precision) }
         
         output = output.replace(result[0], replacement)
       } while (result)
@@ -300,8 +296,8 @@ package com.soren.util {
     * 
     * For internal use only. Public because of static method limitations.
     **/
-    public function dateFormat(key:String, date:Date):String {
-      var output:String
+    public static function dateFormat(key:String, date:Date):String {
+      var output:*
       
       switch (key) {
         case 'date':
@@ -331,10 +327,10 @@ package com.soren.util {
         case 'monthlong':
           output = DateUtil.monthName(date.month, false)
           break
-        case 'hour24':
+        case 'hours24':
           output = date.hours
           break
-        case 'hour':
+        case 'hours':
           var mil:uint      = date.hours
           var standard:uint = (mil <= 12) ? mil : (mil - 12)
           if (standard == 0) standard = 12
@@ -353,7 +349,7 @@ package com.soren.util {
           throw new Error('Invalid date string: ' + key)
       }
       
-      return output
+      return output.toString()
     }
     
     /**
@@ -361,7 +357,7 @@ package com.soren.util {
     * 
     * For internal use only. Public because of static method limitations.
     **/
-    public function postFormat(key:String, value:Number):Number {
+    public static function postFormat(key:String, value:Number):Number {
       var output:Number
       
       switch (key) {
