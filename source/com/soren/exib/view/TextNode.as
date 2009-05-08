@@ -103,7 +103,7 @@ package com.soren.exib.view {
       var charmap:Object = { l: StringUtil.LOWER, u: StringUtil.UPPER, s: StringUtil.SENTENCE, t: StringUtil.TITLE }
       var resolved:uint  = charmap[charcase]
       
-      if (resolved) { _charcase = charcase }
+      if (resolved) { _charcase = resolved }
       else          { throw new Error('Invalid character case: ' + charcase) }
     }
     
@@ -206,7 +206,7 @@ package com.soren.exib.view {
     * Determine whether this node should have character case conversion applied.
     **/
     private function hasCharcase():Boolean {
-      return (_charcase == null) ? false : true
+      return (_charcase != undefined) ? false : true
     }
     
     /**

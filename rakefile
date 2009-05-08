@@ -103,15 +103,13 @@ end
 
 task :generate_asdocs do
   asdoc_bin  = '/opt/flex/bin/asdoc'
-  source_dir = File.expand_path('./source')
-  asdocs_dir = 'doc/asdoc'
+  source_paths = ['source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
   
-  sh   %{#{asdoc_bin} -source-path #{source_dir} -doc-sources #{source_dir}}
-  mv   'asdoc-output/*', asdocs_dir
-  rm_r 'asdoc-output'
+  sh   %{#{asdoc_bin} -compiler.source-path=#{source_paths.join(',')} -doc-sources=./source}
+  mv   'asdoc-output', 'doc/asdoc'
 end
 
-# Logger satellite --------------------------------------------------------------
+# Logger Satellite -------------------------------------------------------------
 
 task :open_logger_satellite do
   sh %{open template/satellite.swf}
