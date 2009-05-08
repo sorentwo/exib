@@ -28,23 +28,6 @@ package com.soren.util {
     private static const CONVERT:String    = 'o'
     private static const DATE:String       = 't'
     private static const REPLACE:String    = 'r'
-
-    // sprintf date formatting tokens
-    private static const DATE_TOKENS:String            = 'AaBbDgHhMmpPSYy'
-    private static const DATE_DATE_TOKEN:String        = 'D'
-    private static const DATE_DAY_TOKEN:String         = 'g'
-    private static const DATE_DAY_SHORT_TOKEN:String   = 'a'
-    private static const DATE_DAY_LONG_TOKEN:String    = 'A'
-    private static const DATE_YEAR_TOKEN:String        = 'y'
-    private static const DATE_FULLYEAR_TOKEN:String    = 'Y'
-    private static const DATE_MONTH_TOKEN:String       = 'm'
-    private static const DATE_MONTH_SHORT_TOKEN:String = 'b'
-    private static const DATE_MONTH_LONG_TOKEN:String  = 'B'
-    private static const DATE_HOUR_TOKEN:String        = 'h'
-    private static const DATE_HOUR24_TOKEN:String      = 'H'
-    private static const DATE_AMPM_TOKEN:String        = 'p'
-    private static const DATE_MINUTES_TOKEN:String     = 'M'
-    private static const DATE_SECONDS_TOKEN:String     = 'S'
     
     /**
     * Singleton, non-used constructor.
