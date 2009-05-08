@@ -190,7 +190,10 @@ package com.soren.util {
     *           constants.
     * @param  v The value to convert.
     * 
-    * @throws Error If <code>a</code> or <code>b</code> is not a valid temperature key.
+    * @return The converted temperature.
+    * 
+    * @throws Error If <code>a</code> or <code>b</code> is not a valid
+    *         temperature key.
     * 
     * @example  The following code illustrates several temperature conversions.
     * 
@@ -236,6 +239,26 @@ package com.soren.util {
     
     /**
     * Convert from one unit of time to another, i.e. from seconds to hours.
+    * 
+    * @param  a The unit to convert from. Value should be one of the time constants.
+    * @param  b The unit to convert from. Value should be one of the time constants.
+    * @param  v The time to convert.
+    * 
+    * @return The converted time.
+    * 
+    * @throws Error If <code>a</code> or <code>b</code> is not a valid time key.
+    * 
+    * @example The following code shows several typical time conversions.
+    * 
+    * <listing version='3.0'>
+    * // Yields 7
+    * var days:uint = 49
+    * trace(ConversionUtil.convertTime(ConversionUtil.DAY, ConversionUtil.WEEK, days))
+    * 
+    * // Yields 7200
+    * var hours:uint = 2
+    * trace(ConversionUtil.convertTime(ConversionUtil.HOUR, ConversionUtil.SECOND, hours))
+    * </listing>
     **/
     public static function convertTime(a:uint, b:uint, v:Number):Number {
       for each (var unit:uint in [a, b]) {
@@ -262,9 +285,13 @@ package com.soren.util {
     * been removed. For example, 5305 seconds would return 25 seconds.</p>
     * 
     * @param  a The time unit to convert from. Only 'RAW_SECONDS' is valid.
-    * @param  b The time unit to conver to. Any mod time constant is valid.
+    * @param  b The time unit to convert to. Any mod time constant is valid.
+    * @param  v The time to convert from, in seconds.
     * 
-    * @return The converted value.
+    * @return The converted time as a whole number.
+    * 
+    * @throws Error If <code>a</code> is not raw seconds or <code>b</code> is
+    *               not a valid conversion key.
     * 
     * @example  The following code shows how a timer set up as seconds could be
     *           converted to display hours, minutes, and seconds.
