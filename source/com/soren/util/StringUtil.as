@@ -14,10 +14,10 @@ package com.soren.util {
   public class StringUtil {
     
     // Case Constants
-    public static const LOWER:uint    = 0
-    public static const UPPER:uint    = 1
-    public static const SENTENCE:uint = 2
-    public static const TITLE:uint    = 3
+    public static const LOWER:String    = 'l'
+    public static const UPPER:String    = 'u'
+    public static const SENTENCE:String = 's'
+    public static const TITLE:String    = 't'
     
     // Format Tokens
     public static const STRING:String     = 's'

@@ -24,7 +24,7 @@ package com.soren.exib.view {
     
     private var _arguments:Array
     private var _align:String
-    private var _charcase:uint
+    private var _charcase:String
     private var _content:String
     private var _format:TextFormat
     private var _height:uint
@@ -100,8 +100,8 @@ package com.soren.exib.view {
     * @see com.soren.util.StringUtil.casefix()
     **/
     public function set charcase(charcase:String):void {
-      var charmap:Object = { l: StringUtil.LOWER, u: StringUtil.UPPER, s: StringUtil.SENTENCE, t: StringUtil.TITLE }
-      var resolved:uint  = charmap[charcase]
+      var charmap:Object  = { l: StringUtil.LOWER, u: StringUtil.UPPER, s: StringUtil.SENTENCE, t: StringUtil.TITLE }
+      var resolved:String = charmap[charcase]
       
       if (resolved) { _charcase = resolved }
       else          { throw new Error('Invalid character case: ' + charcase) }
@@ -206,7 +206,7 @@ package com.soren.exib.view {
     * Determine whether this node should have character case conversion applied.
     **/
     private function hasCharcase():Boolean {
-      return (_charcase != undefined) ? false : true
+      return (_charcase == undefined) ? false : true
     }
     
     /**
