@@ -12,7 +12,7 @@ package com.soren.util {
     public static const DEFAULT_ACCURACY:uint = 1
     
     // Volume keys and table
-    public static const CUBIC_FEET:uint  = 0
+    public static const CUBIC_FOOT:uint  = 0
     public static const CUBIC_METER:uint = 1
     public static const CUP:uint         = 2
     public static const GALLON:uint      = 3
@@ -22,6 +22,11 @@ package com.soren.util {
     public static const QUART:uint       = 7
     public static const TABLESPOON:uint  = 8
     public static const TEASPOON:uint    = 9
+    
+    public static const VOLUME_TYPES:Array = [
+      'cubic_feet', 'cubic_meter', 'cup', 'gallon', 'liter', 'ounce', 'pint',
+      'quart', 'tablespoon', 'teaspoon'
+    ]
     
     public static const VOLUME:Array = [
       [1,       0.02832,  19.6883,    7.4805,   28.3168,  957.5065,   59.8442,    29.9221,    1915.013,   5745.039  ],
@@ -46,7 +51,11 @@ package com.soren.util {
     public static const CENTI:uint = 6
     public static const MILLI:uint = 7
     public static const MICRO:uint = 8
-
+    
+    public static const PREFIX_TYPES:Array = [
+      'mega', 'kilo', 'hecto', 'deka', 'one', 'deci', 'centi', 'milli', 'micro'
+    ]
+    
     public static const PREFIX:Array = [
       [1,           1000,     10000,      100000,    10000,   10000000, 100000000,  1e+9,    1e+12     ],
       [0.001,       1,        10,         100,       1000,    10000,    100000,     1000000, 1000000000],
@@ -63,6 +72,29 @@ package com.soren.util {
     public static const KELVIN:uint     = 0
     public static const CELCIUS:uint    = 1
     public static const FAHRENHEIT:uint = 2
+    
+    public static const TEMP_TYPES:Array = [
+      'kelvin', 'celcius', 'fahrenheit'
+    ]
+    
+    // Time keys and table
+    public static const WEEK:uint   = 0
+    public static const DAY:uint    = 1
+    public static const HOUR:uint   = 2
+    public static const MINUTE:uint = 3
+    public static const SECOND:uint = 4
+    
+    public static const TIME_TYPES:Array = [
+      'week', 'day', 'hour', 'minute', 'second'
+    ]
+    
+    public static const TIME:Array = [
+      [1,       7,       168,     10080,  604800],
+      [0.1429,  1,       24,      1440,   86400 ],
+      [0.0059,  0.04167, 1,       60,     3600  ],
+      [9.92e-5, 0.0007,  0.0167,  1,      60    ],
+      [1.65e-5, 1.16e-5, 2.77e-4, 0.0167, 1     ]
+    ]
     
     /**
     * This is a static container class only, it can not be constructed.
@@ -190,6 +222,83 @@ package com.soren.util {
       }
       
       return converted
+    }
+    
+    /**
+    * Convert from one unit of time to another, i.e. from seconds to hours.
+    **/
+    public static function convertTime(a:uint, b:uint, v:Number):Number {
+      for each (var unit:uint in [a, b]) {
+        if (unit < 0 || unit > TIME.length) {
+          throw new Error('Unit key: ' + unit + ' is out of range.')
+        }
+      }
+      
+      return v * TIME[a][b]
+    }
+    
+    /**
+    * Provides a way to retrieve type keys and the conversion method associated
+    * with those types.
+    * 
+    * @param  a_type  String representing the desired unit key, ounces, kilo, or
+    *                 hours, for example.
+    * @param  b_type  String representing the desired unit key, ounces, kilo, or
+    *                 hours, for example.
+    * 
+    * @return If no matching keys are found an error is thrown, otherwise an
+    *         array is returned with the following indecies:
+    *         <ul>
+    *           <li>0 -> First unit key</li>
+    *           <li>1 -> Second unit key</li>
+    *           <li>2 -> Conversion function</li>
+    *         </ul>
+    * 
+    * @throws Error If no matching keys are found.
+    * 
+    * @example  In the following example keys and function for a volume conversion
+    *           are shown.
+    * 
+    * <listing version='3.0'>
+    * var first:String  = 'ounces'
+    * var second:String = 'cups'
+    * var volume:uint   = 8
+    * 
+    * var params:Array = ConversionUtil.getTypesAndFunction(first, second)
+    * var a:uint, b:uint, func:Function = params[0], params[1], params[2]
+    * var converted:Number = ConversionUtil[func].call(null, a, b, volume)
+    * 
+    * // This code yields '1' cup
+    * trace(converted)
+    * </listing>
+    **/
+    public static function getTypesAndFunction(a_type:String, b_type:String):Array {
+      a_type, b_type = a_type.toLowerCase(), b_type.toLowerCase()
+      
+      var all_types:Array   = [VOLUME_TYPES, PREFIX_TYPES, TEMP_TYPES, TIME_TYPES]
+      var conversions:Array = [convertVolume, convertPrefix, convertTemperature, convertTime]
+      var a_key:uint, b_key:uint, func:Function
+      
+      for (var i:int = 0; i < all_types; i++) {
+        var a_index:int = all_types[i].indexOf(a_type)
+        var b_index:int = all_types[i].indexOf(b_type)
+        
+        if ((a_index != -1) && (b_index != -1)) {
+          a_key = all_types[i][a_index]
+          b_key = all_types[i][b_index]
+          func  = conversions[i]
+          break
+        } else {
+          a_index = b_index = NaN
+        }
+      }
+      
+      if (!a_key || !b_key || !func) {
+        throw new Error('Supplied types: ' + a_type + ', ' + b_type + ' were not ' +
+                        'matching or could not be found.')
+      }
+      
+      return [a_key, b_key, func]
     }
   }
 }
