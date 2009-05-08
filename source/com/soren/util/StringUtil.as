@@ -19,12 +19,13 @@ package com.soren.util {
     public static const TITLE:uint    = 3
     
     // Format Tokens
-    private static const STRING:String     = 's'
-    private static const CONVERSION:String = 'c'
-    private static const FLOAT:String      = 'f'
-    private static const INTEGER:String    = 'd'
-    private static const UNSIGNED:String   = 'u'
+    public static const STRING:String     = 's'
+    public static const FLOAT:String      = 'f'
+    public static const INTEGER:String    = 'd'
+    public static const UNSIGNED:String   = 'u'
     
+    // Conversion Tokens. These are inferred and therefore private.
+    private static const CONVERSION:String = 'c'
     private static const CONVERT:String    = 'o'
     private static const DATE:String       = 't'
     private static const REPLACE:String    = 'r'
