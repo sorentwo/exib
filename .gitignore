@@ -1,7 +1,9 @@
 syntax: glob
 *._*
 *.DS_Store
-*.swf
 
-# Specific Files
+# TODO should remain between branches
 doc/TODO.txt
+
+# Compiled .swf files aren't needed
+test/*.swf
