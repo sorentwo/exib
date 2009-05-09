@@ -61,9 +61,7 @@ namespace :exib do
         else              embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first)
         end
         
-        embed_buffer << "\n"
-        embed_buffer << class_template.gsub('#FILE_NAME#', File.basename(file.last, '.*'))
-        embed_buffer << "\n\n"
+        embed_buffer << "\n" + class_template.gsub('#FILE_NAME#', File.basename(file.last, '.*')) + "\n\n"
       end
     end
     
