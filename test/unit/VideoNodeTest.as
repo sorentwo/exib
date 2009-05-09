@@ -5,7 +5,7 @@ package unit {
 
   public class VideoNodeTest extends TestCase {
 
-    private var _source:String = 'assets/video/test_video.flv'
+    private var _source:String = 'test_video.swf'
     
     public function VideoNodeTest(testMethod:String) {
       super(testMethod)
@@ -36,8 +36,8 @@ package unit {
     public function testInvalidURL():void {
       var error:Error
       try {
-        var invalid_url:String = 'assets/video/test_video.mov'
-        var video_node:VideoNode = new VideoNode(invalid_url, 640, 480)
+        var invalid_url:String   = 'test_video.mov'
+        var video_node:VideoNode = new VideoNode(invalid_url)
       } catch (e:Error) {
         error = e
       }

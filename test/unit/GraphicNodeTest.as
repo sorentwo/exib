@@ -5,8 +5,6 @@ package unit {
   
   public class GraphicNodeTest extends TestCase {
     
-    private const ASSET_PATH:String = 'assets/graphics/'
-    
     public function GraphicNodeTest(testMethod:String) {
       super(testMethod)
     }
@@ -29,7 +27,7 @@ package unit {
       var path:String
       
       try {
-        path = ASSET_PATH + 'sample_asset.png'
+        path = 'sample_asset.png'
         var graphic_a:GraphicNode = new GraphicNode(path)
       } catch (e:Error) {
         error = e
@@ -45,7 +43,7 @@ package unit {
       var valid_extensions:Array = ['.png', '.jpg', '.gif']
       for each (var extension:String in valid_extensions) {
         try {
-          var graphic:GraphicNode = new GraphicNode(ASSET_PATH + "sample_asset" + extension)
+          var graphic:GraphicNode = new GraphicNode("sample_asset" + extension)
         } catch (e:Error) {
           error = e
         }
@@ -56,7 +54,7 @@ package unit {
       var invalid_extensions:Array = ['.psd', '.tif']
       for each (extension in invalid_extensions) {
         try {
-          var invalid:GraphicNode = new GraphicNode(ASSET_PATH + 'sample_asset' + extension)
+          var invalid:GraphicNode = new GraphicNode('sample_asset' + extension)
         } catch (e:Error) {
           error = e
         }

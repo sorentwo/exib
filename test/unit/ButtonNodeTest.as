@@ -12,8 +12,6 @@ package unit {
   
   public class ButtonNodeTest extends TestCase {
     
-    private const ASSET_PATH:String = 'assets/graphics/'
-    
     public function ButtonNodeTest(testMethod:String) {
       super(testMethod)
     }
@@ -40,14 +38,9 @@ package unit {
       var press_set:ActionSet   = new ActionSet(act_a)
       var release_set:ActionSet = new ActionSet(act_b)
       
-      var button:ButtonNode = new ButtonNode(ASSET_PATH + 'up.png',
-                                             ASSET_PATH + 'down.png',
-                                             press_set, release_set)
+      var button:ButtonNode = new ButtonNode('up.png', 'down.png', press_set, release_set)
       
       assertEquals(1, button.numChildren)
-      
-      assertEquals(ASSET_PATH + 'up.png', ((button.getChildAt(0) as SimpleButton).upState as GraphicNode).url)
-      assertEquals(ASSET_PATH + 'down.png', ((button.getChildAt(0) as SimpleButton).downState as GraphicNode).url)
       
       // To simulate mouse event we must extract the SimpleButton inside of the
       // button node. To use the Node base class SimpleButton couldn't be extended.

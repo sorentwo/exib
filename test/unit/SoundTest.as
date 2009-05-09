@@ -5,8 +5,6 @@ package unit {
 
   public class SoundTest extends TestCase {
     
-    private const SOUND_PATH:String = 'assets/sounds/'
-    
     public function SoundTest(testMethod:String) {
       super(testMethod)
     }
@@ -27,7 +25,7 @@ package unit {
     public function testLoadSound():void {
       var error:Error
       try {
-        var sound:Sound = new Sound(SOUND_PATH + 'tone.mp3')
+        var sound:Sound = new Sound('tone.mp3')
       } catch (e:Error) {
         error = e
       }
@@ -36,7 +34,7 @@ package unit {
     }
     
     public function testPlaySound():void {
-      var sound:Sound = new Sound(SOUND_PATH + 'tone.mp3')
+      var sound:Sound = new Sound('tone.mp3')
       sound.play(3)
     }
   }

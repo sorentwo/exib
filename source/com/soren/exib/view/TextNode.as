@@ -181,9 +181,15 @@ package com.soren.exib.view {
     private function applyContent():void {
       var new_text:String = _content
       
-      if (hasTokens())   new_text = StringUtil.format(new_text, _arguments.map(extractValues))
-      if (hasCharcase()) new_text = StringUtil.casefix(new_text, _charcase)
+      if (hasTokens()) {
+        var _format_args:Array = _arguments.map(extractValues)
+            _format_args.unshift(new_text)
+            
+        new_text = StringUtil.format.apply(null, _format_args)
+      }
       
+      if (hasCharcase()) new_text = StringUtil.casefix(new_text, _charcase)
+
       _text_field.text = new_text
     }
 
@@ -206,7 +212,7 @@ package com.soren.exib.view {
     * Determine whether this node should have character case conversion applied.
     **/
     private function hasCharcase():Boolean {
-      return (_charcase == undefined) ? false : true
+      return (_charcase == null) ? false : true
     }
     
     /**

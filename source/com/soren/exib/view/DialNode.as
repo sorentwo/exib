@@ -68,7 +68,16 @@ package com.soren.exib.view {
       snap *= .5
       _delta = snap == int(snap) ? snap : int(snap) + 1
     }
-
+    
+    /**
+    * Tells how many possible dial positons the instance has.
+    * 
+    * @return Number of positions
+    **/
+    public function get positions():int {
+      return _positions.length
+    }
+    
     // ---
 
     /**
