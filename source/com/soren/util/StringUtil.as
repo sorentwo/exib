@@ -67,7 +67,7 @@ package com.soren.util {
     * // title = 'The Quick Brown Fox Jumped Over The Lazy Dog.'
     * </listing>
     **/
-    public static function casefix(string:String, charcase:uint):String {
+    public static function casefix(string:String, charcase:String):String {
       var downcased:String = string.toLowerCase()
       
       switch (charcase) {
