@@ -12,7 +12,7 @@ package com.soren.exib.core {
   public class Version {
     
     public static const MAJOR_VERSION:uint = 0
-    public static const MINOR_VERSION:uint = 7
+    public static const MINOR_VERSION:uint = 8
     
     public function Version() {}
     
