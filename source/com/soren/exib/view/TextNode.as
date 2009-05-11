@@ -71,8 +71,8 @@ package com.soren.exib.view {
       _charcase  = charcase
       _arguments = arguments || []
       
+      registerArguments()
       this.addChild(_text_field)
-      
       update()
     }
     

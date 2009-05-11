@@ -27,13 +27,13 @@ package unit {
     // ---
     
     public function testStaticText():void {
-      var text_node:TextNode = new TextNode("Lorem Ipsum", new TextFormat())
+      var text_node:TextNode
       
+      text_node = new TextNode("Lorem Ipsum", new TextFormat())
       assertEquals(1, text_node.numChildren)
       assertEquals('Lorem Ipsum', (text_node.getChildAt(0) as TextField).text)
       
-      text_node.charcase = 'l'
-      text_node.update()
+      text_node = new TextNode('Lorem Ipsum', new TextFormat(), null, 0, 0, 'l')
       assertEquals('lorem ipsum', (text_node.getChildAt(0) as TextField).text)
     }
     
