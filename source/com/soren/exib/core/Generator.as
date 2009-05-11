@@ -123,7 +123,12 @@ package com.soren.exib.core {
     
     // Media -->
     public function genFormat(xml:XML):TextFormat {
-      return new TextFormat(xml.@font, xml.@size, xml.@color)
+      var tf:TextFormat = new TextFormat(xml.@font, xml.@size, xml.@color)
+      
+      if (xml.@leading != undefined) tf.leading       = Number(xml.@leading)
+      if (xml.@spacing != undefined) tf.letterSpacing = Number(xml.@spacing)
+      
+      return tf
     }
     
     public function genSound(xml:XML):Sound {
@@ -361,11 +366,17 @@ package com.soren.exib.core {
     
     public function genTextNode(xml:XML):TextNode {
       var format:TextFormat = _space.get(xml.@format)
-      var align:String      = (xml.@align != undefined) ? xml.@align : 'left'
+          format.align = (xml.@align != undefined) ? xml.@align : 'left'
       
-      var charcase:String
-      var content:String  = xml
       var arguments:Array = []
+      var content:String  = xml
+      
+      var charcase:String, wordwrap:Boolean
+      var height:uint, width:uint = 0
+      
+      if (xml.@height   != undefined) height   = xml.@height
+      if (xml.@width    != undefined) width    = xml.@width
+      if (xml.@wordwrap != undefined) wordwrap = (xml.@wordwrap == 'true') ? true : false
       
       if (/\(.*/.test(xml)) {
         var parsed:Object = /(?P<charcase>[ulst])?\((?P<content>.*)\)\s?,\s?(?P<arguments>.*)/.exec(xml)  
@@ -375,17 +386,7 @@ package com.soren.exib.core {
         for each (var arg:String in to_replace) { arguments.push(retrieveActionable(arg))}
       }
       
-      var text_node:TextNode = new TextNode(content, format, arguments, align)
-      
-      if (charcase) text_node.charcase = charcase
-      if (xml.@height != undefined) text_node.height = xml.@height
-      if (xml.@width != undefined)  text_node.width  = xml.@width
-      
-      // An update must be forced for the text node as content, format, arguments,
-      // or alignment missing will throw an error.
-      text_node.update()
-      
-      return text_node
+      return new TextNode(content, format, arguments, width, height, charcase, wordwrap)
     }
     
     public function genVectorNode(xml:XML):VectorNode {
