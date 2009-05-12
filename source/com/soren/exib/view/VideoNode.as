@@ -71,6 +71,8 @@ package com.soren.exib.view {
     public function play():void {
       if (!this.contains(_video)) addChild(_video)
       _video.gotoAndPlay(0)
+      
+      _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     /**
@@ -78,9 +80,10 @@ package com.soren.exib.view {
     * it will be removed from the display list.
     **/
     public function stop():void {
+      if (!_persistent && this.contains(_video)) removeChild(_video)
       _video.gotoAndStop(0)
       
-      if (!_persistent && this.contains(_video)) this.removeChild(_video)
+      _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     // ---
@@ -100,7 +103,10 @@ package com.soren.exib.view {
     * Triggered on each frame and loop the video if it has reached the end.
     **/
     private function loopPlaybackListener(event:Event):void {
-      if (_video.currentFrame == _video.totalFrames) _video.gotoAndPlay(0)
+      if (_video.currentFrame == _video.totalFrames) {
+        if (_loop) { _video.gotoAndPlay(0) }
+        else       { this.stop()           }
+      }
     }
     
     /**
