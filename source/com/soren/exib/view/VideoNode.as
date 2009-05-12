@@ -9,6 +9,7 @@
 
 package com.soren.exib.view {
 
+  import flash.display.Loader
   import flash.display.MovieClip
   import flash.events.Event
   import com.soren.exib.debug.Log
@@ -38,18 +39,18 @@ package com.soren.exib.view {
       verifyEmbedContainer()
       validateURL(url)
       
-      var class_name:String = processUrlIntoClassName(url)
-      
-      try {
-        _video = new _embed_container[class_name] as MovieClip
-      } catch (e:Error) {
-        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
-      }
-      
       _loop = loop
       _persistent = persistent
       
-      if (_persistent) { _video.gotoAndStop(0); addChild(_video) }
+      var class_name:String = processUrlIntoClassName(url)
+      
+      try {
+        var swf:MovieClip = new _embed_container[class_name]
+        var loader:Loader = swf.getChildAt(0) as Loader
+        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoadComplete)
+      } catch (e:Error) {
+        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
+      }
     }
     
     /**
@@ -69,12 +70,7 @@ package com.soren.exib.view {
     **/
     public function play():void {
       if (!this.contains(_video)) addChild(_video)
-      _video.play()
-
-      //if (_loop) {
-      //  _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
-      //  _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
-      //}
+      _video.gotoAndPlay(0)
     }
     
     /**
@@ -85,10 +81,20 @@ package com.soren.exib.view {
       _video.gotoAndStop(0)
       
       if (!_persistent && this.contains(_video)) this.removeChild(_video)
-      //if (_loop) _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
     }
     
     // ---
+    
+    /**
+    * Handle the completed load event, crucial to actually loading and using the
+    * embedded clip.
+    **/
+    private function handleLoadComplete(event:Event):void {
+      _video = MovieClip(event.target.content.getChildAt(0))
+      _video.stop()
+
+      if (_persistent) addChild(_video)
+    }
     
     /**
     * Triggered on each frame and loop the video if it has reached the end.
