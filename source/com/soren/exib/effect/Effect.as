@@ -145,8 +145,11 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) {
+        if (!node.visible) node.visible = true
+        
         var fade_tween:Tween = new Tween(node, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'], true)
-        fade_tween.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
+            fade_tween.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
+        
         _fade_tweens.push(fade_tween)
       }
     }
@@ -175,7 +178,7 @@ package com.soren.exib.effect {
     * @see show
     * @see opacity
     **/
-    public function hide(targets:Array):void {
+    public function hide(targets:Array, options:Object = null):void {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) { node.visible = false }
@@ -400,7 +403,7 @@ package com.soren.exib.effect {
     * @see hide
     * @see opacity
     **/
-    public function show(targets:Array):void {
+    public function show(targets:Array, options:Object = null):void {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) { node.visible = true }

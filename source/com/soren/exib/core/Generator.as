@@ -537,8 +537,8 @@ package com.soren.exib.core {
       var parsed:Object = member_pattern.exec(member_string)
 
       parsed.targets = convertType(parsed.targets)
-      parsed.options = convertType(parsed.options.toString())
-      parsed.wait    = convertType(parsed.wait) || NaN
+      parsed.options = convertType(parsed.options.toString()) || {}
+      parsed.wait    = convertType(parsed.wait)               || NaN
       
       return parsed
     }
