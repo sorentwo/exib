@@ -103,9 +103,8 @@ package com.soren.exib.view {
     * Triggered on each frame and loop the video if it has reached the end.
     **/
     private function loopPlaybackListener(event:Event):void {
-      if (_video.currentFrame == _video.totalFrames) {
-        if (_loop) { _video.gotoAndPlay(0) }
-        else       { this.stop()           }
+      if (_video.currentFrame == _video.totalFrames) {    
+        (_loop) ? _video.gotoAndPlay(0) : this.stop()
       }
     }
     
