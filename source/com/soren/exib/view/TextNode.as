@@ -72,6 +72,7 @@ package com.soren.exib.view {
       _arguments = arguments || []
       
       registerArguments()
+      replaceEscapedChars()
       this.addChild(_text_field)
       update()
     }
@@ -135,6 +136,13 @@ package com.soren.exib.view {
           argument.addEventListener(Model.CHANGED, changeListener)
         }
       }
+    }
+    
+    /**
+    * Character escapes don't come in through XML. Forcibly replace them.
+    **/
+    private function replaceEscapedChars():void {
+      _content = _content.replace("\\n", "\n")
     }
   }
 }
