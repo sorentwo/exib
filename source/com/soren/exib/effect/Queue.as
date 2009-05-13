@@ -9,6 +9,8 @@
 package com.soren.exib.effect {
 
   import flash.utils.Timer
+  import flash.utils.Dictionary
+  import flash.events.Event
   import flash.events.TimerEvent
   import com.soren.exib.core.Generator
   import com.soren.exib.core.Space
@@ -24,6 +26,8 @@ package com.soren.exib.effect {
     private var _before:Array  = []
     private var _after:Array   = []
     private var _waiting:Array = []
+    
+    private var _effects:Dictionary = new Dictionary()
     
     private var _callback:ActionSet
     private var _processing_before:Boolean
@@ -88,6 +92,9 @@ package com.soren.exib.effect {
     private function playEffect(eo:Object):void {
       var effect:Effect = (_screen_controller) ? new Effect(_screen_controller) : new Effect()
       effect[eo['effect']](eo['targets'], eo['options'])
+      
+      _effects[effect] = effect
+      effect.addEventListener(Effect.EFFECT_COMPLETE, effectCompleteListener)
     }
     
     
@@ -139,6 +146,13 @@ package com.soren.exib.effect {
         
         _processing_before = false
       }
+    }
+    
+    /**
+    * Remove the dictionary's strong reference.
+    **/
+    private function effectCompleteListener(event:Event):void {
+      delete _effects[event.target]
     }
   }
 }

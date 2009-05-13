@@ -12,6 +12,8 @@ package com.soren.exib.effect {
   import fl.transitions.Tween
   import fl.transitions.TweenEvent
   import fl.transitions.easing.*
+  import flash.events.Event
+  import flash.events.EventDispatcher
   import flash.filters.BlurFilter
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
@@ -20,8 +22,10 @@ package com.soren.exib.effect {
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
 
-  public class Effect implements IActionable {
-
+  public class Effect extends EventDispatcher implements IActionable {
+    
+    public static const EFFECT_COMPLETE:String  = 'effect_complete'
+    
     public static const DEFAULT_ALPHA:uint       = 1
     public static const DEFAULT_DURATION:uint    = 1
     public static const DEFAULT_EASING:String    = 'linear_in'
@@ -599,6 +603,8 @@ package com.soren.exib.effect {
         
         if (found) break
       }
+      
+      dispatchEvent(new Event(Effect.EFFECT_COMPLETE))
     }
     
     // ---
