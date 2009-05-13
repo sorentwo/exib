@@ -27,6 +27,7 @@ package com.soren.exib.view {
 
     private var _delta:uint        = 0
     private var _current_snap:uint = 0
+    private var _last_snap:uint    = 0
 
     /**
     * Constructor
@@ -51,13 +52,17 @@ package com.soren.exib.view {
     * travel between pointing north and south, for four positions the dial would
     * point the north, east, south, and west.
     *
-    * @param  position_action Any number of action sets that will be executed
-    *                         when the dial is in the corresponding position.
+    * @param  action_set Any number of action sets that will be executed when the
+    *                    dial is in the corresponding position.
     **/
-    public function add(...action_sets):void {
-      for each (var action_set:ActionSet in action_sets) {
-        _positions.push(action_set)
-      }
+    public function add(ambiguous:ActionSet = null,
+                        clockwise:ActionSet = null,
+                        counterwise:ActionSet = null,
+                        angle_override:int = 0):void {
+      
+      verifyMinimumAction(ambiguous, clockwise, counterwise)
+      
+      _positions.push({ ambiguous: ambiguous, clockwise: clockwise, counterwise: counterwise })
 
       var snap:uint = Math.ceil(360 / _positions.length)
       var x:int = 0
@@ -79,9 +84,9 @@ package com.soren.exib.view {
     }
     
     // ---
-
+    
     /**
-    * @private
+    * Convert the supplied angle from a positive or negative 180 to a 360 scale.
     **/
     private function convertAngle(angle:int):uint {
       var converted:int = 0
@@ -94,38 +99,39 @@ package com.soren.exib.view {
       return converted
     }
 
-    /**
-    * @private
-    **/
     private function mouseDownHandler(event:MouseEvent):void {
     	this.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler)
     }
 
-    /**
-    * @private
-    **/
     private function mouseMoveHandler(event:MouseEvent):void {
     	var angle:int = convertAngle(int(Math.atan2((_graphic.height * .5) - event.localY, (_graphic.width * .5) - event.localX) * 57.2957))
     	var snap:uint = snapTo(angle)
-
+      
+      var clockwise:Boolean
+      clockwise = (snap > _last_snap)
+                ? (_last_snap == _snaps[0] && snap == _snaps[_snaps.length - 1]) ? false : true
+                : (snap == _snaps[0] && _last_snap == _snaps[_snaps.length - 1]) ? true  : false
+                
+      _last_snap = snap
+      
     	if (snap != _current_snap) {
         _container.rotation = snap
     	  _current_snap = snap
-    	  _positions[_snaps.indexOf(snap)].act()
+    	  
+    	  var position:Object = _positions[_snaps.indexOf(snap)]
+    	  position.ambiguous.act()
+    	  if (clockwise  && position.clockwise)   position.clockwise.act()
+    	  if (!clockwise && position.counterwise) position.counterwise.act()
     	}
     }
 
-    /**
-    * @private
-    **/
     private function mouseUpHandler(event:MouseEvent):void {
       this.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler)
     }
 
     /**
-    * @private
-    *
-    * Handle node creation piggybacks off of this
+    * Position the dial graphic and place a control handle on top of it.
+    * Note: Handle node creation piggybacks off of this
     **/
     private function positionGraphic(event:Event):void {
       _graphic.x -= _graphic.width * .5
@@ -143,10 +149,10 @@ package com.soren.exib.view {
     }
 
     /**
-    * @private
+    * Pulls an angle to its closest snap point
     **/
     private function snapTo(angle:uint):uint {
-      var matched_snap:uint = NaN
+      var matched_snap:uint
 
       for (var i:int = 0; i < _snaps.length; i++) {
         var snap:uint = _snaps[i]
@@ -164,6 +170,20 @@ package com.soren.exib.view {
       }
 
       return matched_snap
+    }
+    
+    /**
+    * Verify that of 3 supplied action sets at least one is not null and has at
+    * least one action.
+    **/
+    private function verifyMinimumAction(a:ActionSet, b:ActionSet, c:ActionSet):void {
+      if (!a && !b && !c) {
+        throw new Error('No Valid Actions: You must supply at least one action set')
+      }
+      
+      if ((a && a.isEmpty()) && (b && b.isEmpty()) && (c && c.isEmpty())) {
+        throw new Error('Not Enough Actions: You must supply at least one action')
+      }
     }
   }
 }

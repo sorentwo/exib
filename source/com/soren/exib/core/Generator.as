@@ -279,8 +279,16 @@ package com.soren.exib.core {
       var dial_node:DialNode = new DialNode(xml.@url)
             
       for each (var xml_pos:XML in xml.position) {
-        for each (var xml_inj:XML in xml.inject) { xml_pos.appendChild(<action>{xml_inj.toString()}</action>) }
-        dial_node.add(genActionSet(xml_pos.action))
+        var xml_inj:XML
+        for each (xml_inj in xml.action)    { xml_pos.appendChild(<action>{xml_inj.toString()}</action>)       }
+        for each (xml_inj in xml.inject)    { xml_pos.appendChild(<action>{xml_inj.toString()}</action>)       } // Kept for backwards compatibility
+        for each (xml_inj in xml.clockwise) { xml_pos.appendChild(<clockwise>{xml_inj.toString()}</clockwise>) }
+        for each (xml_inj in xml.counter)   { xml_pos.appendChild(<counter>{xml_inj.toString()}</counter>)     }
+        
+        var ambiguous:ActionSet = genActionSet(xml_pos.action)    || null
+        var clockwise:ActionSet = genActionSet(xml_pos.clockwise) || null
+        var counter:ActionSet   = genActionSet(xml_pos.counter)   || null
+        dial_node.add(ambiguous, clockwise, counter)
       }
       
       return dial_node
