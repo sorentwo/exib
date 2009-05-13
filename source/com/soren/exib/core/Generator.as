@@ -416,14 +416,19 @@ package com.soren.exib.core {
     // ---
 
     /**
-    * @private
+    * Process an array of strings into an object with key / value pairs.
     **/
     private function arrToObject(arr:Array):Object {
       var object:Object = {}
       
       for each (var element:String in arr) {
-        var key_value:Object = /^(?P<key>[a-z_]+):\s?(?P<value>.*)/.exec(element)
-        object[key_value.key] = convertType(key_value.value)
+        var key_value:Object = /^(?P<key>[a-z_]+):[\s\t]*(?P<value>.*)/.exec(element)
+        try {
+          object[key_value.key] = convertType(key_value.value)
+        } catch (e:Error) {
+          Log.getLog().error('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
+        }
+        
       }
       
       return object
@@ -445,7 +450,7 @@ package com.soren.exib.core {
       }
       
       var object_pattern:RegExp = /\{\s?(.*)\s?\}/
-      if (object_pattern.test(element))    return arrToObject(element.replace(object_pattern, "$1").split(/[\s\t]?,[\s\t]/))
+      if (object_pattern.test(element))    return arrToObject(element.replace(object_pattern, "$1").split(/[\s\t]*,[\s\t]*/))
       
       // None of the above, just return the contents as string
       return String(element)
