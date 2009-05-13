@@ -446,7 +446,6 @@ package com.soren.exib.core {
     * @private
     **/
     private function convertType(element:*):* {
-      Log.getLog().debug('Convert type: ' + element)
       if (/^\d+$/.test(element))           return int(element)
       if (/^[\d\.]+$/.test(element))       return Number(element)
       
