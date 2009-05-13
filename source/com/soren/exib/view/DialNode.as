@@ -37,7 +37,7 @@ package com.soren.exib.view {
 
       _container = new Node()
       _container.addChild(_graphic)
-      this.addChild(_container)
+      this.addChildAt(_container, 0) // Placed at the back, vector on top
 
       this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler)
       this.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler)
@@ -135,7 +135,7 @@ package com.soren.exib.view {
       _handle.x    -= _handle.width * .5
       _handle.y    -= _handle.height * .5
       _handle.alpha = .1
-
+      
       this.addChild(_handle)
 
       _handle.buttonMode    = true
