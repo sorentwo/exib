@@ -14,6 +14,8 @@ package com.soren.exib.effect {
   import fl.transitions.easing.*
   import flash.filters.BlurFilter
   import com.soren.exib.core.IActionable
+  import com.soren.exib.core.IEvaluatable
+  import com.soren.exib.core.Space
   import com.soren.exib.debug.Log
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
@@ -33,7 +35,8 @@ package com.soren.exib.effect {
     public static const DEFAULT_SCALE:uint       = 2
     public static const DEFAULT_SPIN:uint        = 360
     
-    private static const GROUP_PATTERN:RegExp = /^\.([a-zA-Z]+)/
+    private static const GROUP_PATTERN:RegExp = /^\.(\w+)$/
+    private static const MODEL_PATTERN:RegExp = /^(_\w+)$/
 
     private var _screen_controller:ScreenController
 
@@ -344,6 +347,36 @@ package com.soren.exib.effect {
     }
     
     /**
+    * Change the size of an object or objects immediately. Sizing, like scaling
+    * is locked to be uniform, meaning the x and y value remain the same.
+    * 
+    * @param  targets   An array of display objects or, if a ScreenController is
+    *                   present, a list of object groups and ids that will be used
+    *                   to attempt to resolve display objects from the current
+    *                   screen.
+    * @param  options   An option hash with any of the following key/value pairs:
+    *                   <ul>
+    *                   <li>scale -> A numerical percentage, i.e. 1 = 100%,
+    *                   1.5 = 150% etc.</li>
+    *                   </ul>
+    *
+    * @example  The following code shows a typical use of size.
+    * 
+    * <listing version='3.0'>
+    * var effect:Effect = new Effect(screen_controller) 
+    * effect.size([.dots], { size: .45 })
+    * </listing>
+    **/
+    public function size(targets:Array, options:Object = null):void {
+      options = mergeOptions(options)
+      targets = resolveTargets(targets)
+      
+      for each (var node:Node in targets) {
+        node.scaleX = node.scaleY = Number(options['scale'])
+      }
+    }
+    
+    /**
     * Change the size of an object or objects over a period of time. Scaling is
     * locked to be uniform, meaning the x and y value remain the same.
     * 
@@ -363,7 +396,7 @@ package com.soren.exib.effect {
     * 
     * <listing version='3.0'>
     * var effect:Effect = new Effect(screen_controller) 
-    * effect.scale([.dots], { start: 1, end: 1.5, duration: .25, easing: linear_in })
+    * effect.scale([.dots], { size: .45, duration: .25, easing: quint_out })
     * </listing>
     **/
     public function scale(targets:Array, options:Object = null):void {
@@ -667,6 +700,9 @@ package com.soren.exib.effect {
       for each (var target:String in targets) {
         if (GROUP_PATTERN.test(target)) {
           resolved = resolved.concat(screen.getChildrenByGroup(target.replace(GROUP_PATTERN, "$1")))
+        } else if (MODEL_PATTERN.test(target)) {
+          var evaluatable:IEvaluatable = Space.getSpace().get(target) as IEvaluatable
+          resolved = resolved.concat(screen.getChildById(evaluatable.value))
         } else {
           resolved = resolved.concat(screen.getChildById(target))
         }
