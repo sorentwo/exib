@@ -446,6 +446,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function convertType(element:*):* {
+      Log.getLog().debug('Convert type: ' + element)
       if (/^\d+$/.test(element))           return int(element)
       if (/^[\d\.]+$/.test(element))       return Number(element)
       
@@ -468,7 +469,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function parseAction(action_string:String):Object {
-      var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*)\)(\s+if\s+(?P<conditional>.*))?$/
+      var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*?)\)(\s+if\s+(?P<conditional>.*))?$/
       if (!action_pattern.test(action_string)) throw new Error(action_string)
       var parsed:Object = action_pattern.exec(action_string)
 
