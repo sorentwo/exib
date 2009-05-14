@@ -209,11 +209,12 @@ package com.soren.util {
     * </listing>
     **/
     public static function format(input:String, ...args):String {
+      var array_re:String      = "(\\[(?P<index>\\d+)\\])?"
       var padding_re:String    = "(?P<padding>0[1-9])?"
       var precision_re:String  = "(\\.(?P<precision>[0-9]))?"
       var convert_re:String    = "((\\{(?P<conversion>[\\w\\/+: ]+)\\})|(?P<token>[a-zA-Z]{1}))"
       
-      var pattern:RegExp = new RegExp('%' + padding_re + precision_re + convert_re, 'g')
+      var pattern:RegExp = new RegExp('%' + array_re + padding_re + precision_re + convert_re, 'g')
       
       var conversion_re:RegExp = /(?P<first>\w+):(?P<second>\w+)(::(?P<post>\w+))?/
       var date_re:RegExp       = /\+(?P<date>\w+)/
@@ -226,7 +227,7 @@ package com.soren.util {
       
       do {
         result = pattern.exec(input)
-        
+
         if (!result) break
         
         var conversion:String = result.conversion
@@ -236,6 +237,8 @@ package com.soren.util {
         
         try             { replacement = args[arg_index]; arg_index ++ }
         catch (e:Error) { throw new Error('Number of variables and tokens do not match') }
+        
+        if (result.index) { replacement = replacement[result.index] }
         
         switch (token) {
           case STRING:

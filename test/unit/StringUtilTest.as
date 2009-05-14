@@ -94,5 +94,12 @@ package unit {
       assertEquals('cold/warm',  StringUtil.format('%{_//}',   'cold_warm'))
       assertEquals('normal cyc', StringUtil.format('%{_/ }',   'normal_cyc'))
   	}
+  	
+  	public function testArrayAccess():void {
+  	  var arr:Array = ['indiana', 'jones']
+  	  assertEquals('indiana', StringUtil.format('%[0]s', arr))
+  	  assertEquals('jones',   StringUtil.format('%[1]s', arr))
+  	  assertEquals(2,         StringUtil.format('%[0]{ounce:cup}', [16, 'cups']))  	  
+  	}
 	}
 }
