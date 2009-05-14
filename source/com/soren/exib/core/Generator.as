@@ -497,16 +497,16 @@ package com.soren.exib.core {
 
       var group_pattern:RegExp = /(^|\s+(?P<operator>and|or)\s+)\((?P<group>[^\)]+)\)/g
       var group:Object = group_pattern.exec(statement)
-
+      
       while (group) {
-        set.push(genSubset(group.group), resolveOperator(group.operator))        
+        set.push(genSubset(group.group), resolveOperator(group.operator))
         group = group_pattern.exec(statement)
       }
-
+      
       // Matching doesn't actually remove the strings, this will.
       statement = statement.replace(group_pattern, '')
       
-      var ungrouped_pattern:RegExp = /(^|\s+(?P<operator>and|or)\s+)(?P<condition>\w+\s+[!<>=]{1,2}\s+\w+)/g
+      var ungrouped_pattern:RegExp = /(?P<operator>^|and|or)\s?(?P<condition>[\w_@#$+*]+\s+[!<>=]{1,2}\s+[\w_@#$+*]+)/g
       var ungrouped:Object = ungrouped_pattern.exec(statement)
       
       while (ungrouped) {
@@ -529,7 +529,7 @@ package com.soren.exib.core {
     * @private
     **/
     private function genCondition(statement:String):Conditional {
-      var pattern:RegExp = /^(?P<operand_one>[\w\d_]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w\d_]+)$/
+      var pattern:RegExp = /^(?P<operand_one>[\w_@#$+*]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w_@#$+*]+)$/
       var parsed:Object = pattern.exec(statement)
 
       parsed.operand_one = (_space.has(parsed.operand_one))

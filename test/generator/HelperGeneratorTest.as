@@ -45,14 +45,14 @@ package generator {
       _space.add(_men,     '_men')
       _space.add(_fairies, '_fairies')
       
-      var true_cons:Array =  ['_power == on && _car == slow',
-                              '(_power == on) && (_car == slow)',
-                              '(_power == on && _car == slow) && (_men == darlings || _power != off)',
-                              '(_power == on && _car == slow) || (_power == off && _car == fast)'
+      var true_cons:Array =  ['_power == on and _car == slow',
+                              '(_power == on) and (_car == slow)',
+                              '(_power == on and _car == slow) and (_men == darlings or _power != off)',
+                              '(_power == on and _car == slow) or (_power == off and _car == fast)'
                              ]
                              
-      var false_cons:Array = ['_power == off && (_car == slow || _men == pigs)',
-                              '_fairies == imaginary || (_power == on && _car == slow) || (_power == off && _men == pigs)'
+      var false_cons:Array = ['_power == off and (_car == slow or _men == pigs)',
+                              '_fairies == imaginary or (_power == on and _car == slow) or (_power == off and _men == pigs)'
                              ]
                       
       for each (var true_con:String in true_cons) {
