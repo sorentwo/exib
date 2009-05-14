@@ -44,11 +44,11 @@ package unit {
       
       assertEquals(0, dial_node.positions)
       
-      dial_node.add(act_set_a, act_set_b)
-      assertEquals(2, dial_node.positions)
+      dial_node.add(act_set_a)
+      assertEquals(1, dial_node.positions)
       
-      dial_node.add(act_set_c, act_set_d)
-      assertEquals(4, dial_node.positions)
+      dial_node.add(act_set_c)
+      assertEquals(2, dial_node.positions)
     }
   }
 }
