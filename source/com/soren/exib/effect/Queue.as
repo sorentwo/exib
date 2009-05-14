@@ -28,23 +28,32 @@ package com.soren.exib.effect {
     private var _waiting:Array = []
     
     private var _effects:Dictionary = new Dictionary()
+    private var _timers:Dictionary  = new Dictionary()
     
     private var _callback:ActionSet
     private var _processing_before:Boolean
     private var _after_wait:uint = 0
     
     /**
-    * Constructor
+    * Queue objects do not take an parameters for construction. To add effects to
+    * the queue see the enqueue() action.
+    * 
+    * @see Queue.enqueue()
     **/
     public function Queue() {}
       
     /**
-    **/
-    public function clearCallback():void {
-      _callback = null
-    }
-
-    /**
+    * Pushes a new effect into the queue.
+    * 
+    * @param  effect  A string representing an effect name. See the Effect class
+    *                 for valid effects.
+    * @param  targets An array of Nodes, node groups, or node id's. If groups or
+    *                 id's are provided the Effect will attempt to resolve them
+    *                 from the ScreenController.
+    * @param  options A key/value hash of effect parameters.
+    * @param  before  Use <code>true</code> to add to the before queue, 
+    *                 <code>false</code> to add to the after queue.
+    * @param  wait    An optional period to wait, in seconds. Accepts float values.
     **/
     public function enqueue(effect:String, targets:Array, options:Object,
                             before:Boolean = true, wait:Number = NaN):void {
@@ -58,12 +67,26 @@ package com.soren.exib.effect {
     }
 
     /**
+    * Remove the current callback action.
+    **/
+    public function clearCallback():void {
+      _callback = null
+    }
+    
+    /**
+    * Set a new callback action. Callbacks are triggered between the before and
+    * after queues.
+    * 
+    * @param  callback  An action set to trigger.
     **/
     public function setCallback(callback:ActionSet):void {
       _callback = callback
     }
     
     /**
+    * Starts processing the queue. If an action string is provided it will be
+    * parsed into an action set and triggered between the before queue and the
+    * after queue.
     **/
     public function start(action_string:String = ''):void {
       if (_waiting.length > 0) return // We don't want to interrupt a queue already going
@@ -79,22 +102,22 @@ package com.soren.exib.effect {
 
       _after_wait = (_before.length > 0) ? _before[_before.length - 1].options.duration * 1000 || 0 : 0
       
-      if      (_before.length > 0)               { process(_before, true)             }
-      else if (_before.length < 1 && _callback)  { triggerCallback(); process(_after) }
-      else if (_before.length < 1 && !_callback) { process(_after)                    }
+           if (_before.length > 0) { process(_before, true)             }
+      else if (_before.length < 1) { triggerCallback(); process(_after) }
     }
     
     // ---
     
     /**
-    * @private
+    * Creats and plays queued effects.
     **/
     private function playEffect(eo:Object):void {
-      var effect:Effect = (_screen_controller) ? new Effect(_screen_controller) : new Effect()
+      var effect:Effect
+      effect = (_screen_controller) ? new Effect(_screen_controller) : new Effect()
+      effect.addEventListener(Effect.EFFECT_COMPLETE, effectCompleteListener)
       effect[eo['effect']](eo['targets'], eo['options'])
       
-      _effects[effect] = effect
-      effect.addEventListener(Effect.EFFECT_COMPLETE, effectCompleteListener)
+      _effects[effect] = effect // Stored for strong reference
     }
     
     
@@ -109,31 +132,36 @@ package com.soren.exib.effect {
         
         if (!eo.hasOwnProperty('wait')) eo.wait = 0
         
-        var wait_timer:Timer = new Timer(eo['wait'], 1)
+        var wait_timer:Timer
+        wait_timer = new Timer(eo['wait'], 1)
         wait_timer.addEventListener(TimerEvent.TIMER_COMPLETE, waitCompleteListener)
         wait_timer.start()
+         
+         _timers[wait_timer] = wait_timer // Stored for strong reference
         
         _waiting.push(eo)
       }
     }
     
     /**
-    * @private
+    * Calls the callback action if it was provided.
     **/
     private function triggerCallback():void {
-      _callback.act()
+      if (_callback) _callback.act()
     }
     
     /**
-    * @private
+    * Signals the end of the before queue and starts the after queue. 
     **/
     private function beforeCompleteListener(event:TimerEvent):void {
-      if (_callback) triggerCallback()
+      triggerCallback()
       process(_after)
+      
+      delete _timers[event.target]
     }
     
     /**
-    * @private
+    * Trigger by an effect timer finishing. Plays the next effect in the queue.
     **/
     private function waitCompleteListener(event:TimerEvent):void {
       playEffect(_waiting.shift())
@@ -144,8 +172,12 @@ package com.soren.exib.effect {
         after_timer.addEventListener(TimerEvent.TIMER_COMPLETE, beforeCompleteListener)
         after_timer.start()
         
+        _timers[after_timer] = after_timer
+        
         _processing_before = false
       }
+      
+      delete _timers[event.target]
     }
     
     /**
