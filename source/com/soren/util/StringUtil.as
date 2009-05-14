@@ -271,7 +271,6 @@ package com.soren.util {
                 replacement = dateFormat(conv_result.date, replacement)
                 break
               case REPLACE:
-                Log.getLog().debug(conv_result.substitution + ':::')
                 replacement = tr(conv_result.substitution, replacement)
                 break
               default:
