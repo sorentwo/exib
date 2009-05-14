@@ -211,13 +211,13 @@ package com.soren.util {
     public static function format(input:String, ...args):String {
       var padding_re:String    = "(?P<padding>0[1-9])?"
       var precision_re:String  = "(\\.(?P<precision>[0-9]))?"
-      var convert_re:String    = "((\\{(?P<conversion>[\\w\\/+\\[\\]:]+)\\})|(?P<token>[a-zA-Z]{1}))"
+      var convert_re:String    = "((\\{(?P<conversion>[\\w\\/+: ]+)\\})|(?P<token>[a-zA-Z]{1}))"
       
       var pattern:RegExp = new RegExp('%' + padding_re + precision_re + convert_re, 'g')
       
       var conversion_re:RegExp = /(?P<first>\w+):(?P<second>\w+)(::(?P<post>\w+))?/
       var date_re:RegExp       = /\+(?P<date>\w+)/
-      var replace_re:RegExp    = /(?P<substitution>.*\/.*)/
+      var replace_re:RegExp    = /(?P<substitution>.+\/.*)/
 
       var output:String  = input
       var arg_index:uint = 0
@@ -271,6 +271,7 @@ package com.soren.util {
                 replacement = dateFormat(conv_result.date, replacement)
                 break
               case REPLACE:
+                Log.getLog().debug(conv_result.substitution + ':::')
                 replacement = tr(conv_result.substitution, replacement)
                 break
               default:

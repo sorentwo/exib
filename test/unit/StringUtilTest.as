@@ -89,9 +89,10 @@ package unit {
   	}
   	
   	public function testReplacementFormatting():void {
-      assertEquals('cat',       StringUtil.format('%{b/a}',   'cbt'))
-      assertEquals('JOE',       StringUtil.format('%{oe/OE}', 'Joe'))
-      assertEquals('cold/warm', StringUtil.format('%{_//}',   'cold_warm'))
+      assertEquals('cat',        StringUtil.format('%{b/a}',   'cbt'))
+      assertEquals('JOE',        StringUtil.format('%{oe/OE}', 'Joe'))
+      assertEquals('cold/warm',  StringUtil.format('%{_//}',   'cold_warm'))
+      assertEquals('normal cyc', StringUtil.format('%{_/ }',   'normal_cyc'))
   	}
 	}
 }
