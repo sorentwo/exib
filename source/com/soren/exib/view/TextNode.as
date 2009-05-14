@@ -123,7 +123,7 @@ package com.soren.exib.view {
     * Determine whether this node has any replacement tokens
     **/
     private function hasTokens():Boolean {
-      var pattern:RegExp = /%[a-z0-9{}]+/g
+      var pattern:RegExp = /%[a-z0-9{}\.\[\]]+/g
       return pattern.test(_content)
     }
     

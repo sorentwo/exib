@@ -6,7 +6,7 @@
 **/
 
 package com.soren.util {
-  import com.soren.exib.debug.Log
+
   public class ConversionUtil {
 
     public static const DEFAULT_ACCURACY:uint = 1
