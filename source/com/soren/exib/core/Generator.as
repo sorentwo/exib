@@ -227,7 +227,6 @@ package com.soren.exib.core {
           case 'multi':
           case 'mmulti':
             new_node = new MultiNode()
-            container = container as MultiNode
             break
           case 'progress':
           case 'mprogress':
@@ -251,8 +250,8 @@ package com.soren.exib.core {
             break
         }
         
-        if (new_node)
-          if (multi) { container.add(genConditionalSet(xml.@when.toString()), new_node) }
+        if (new_node) {
+          if (multi) { (container as MultiNode).add(genConditionalSet(xml.@when.toString()), new_node) }
           else       { container.addChild(new_node) }
         }
         
