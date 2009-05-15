@@ -22,6 +22,8 @@ package com.soren.exib.core {
 
   public class Generator {
     
+    private const KNOWN_NODES:RegExp = /^button|composite|dial|graphic|mask|multi|meter|progress|radio|text|vector|video|mbutton|mcomposite|mdial|mgraphic|mmask|mmulti|mmeter|mprogress|mradio|mtext|mvector|mvideo$/
+    
     private var _space:Space = Space.getSpace()
     
     /**
@@ -192,66 +194,76 @@ package com.soren.exib.core {
       return container
     }
     
-    public function genNodes(xml_list:XMLList, container:Node):void {
+    public function genNodes(xml_list:XMLList, container:Node, multi:Boolean = false):void {
       for each (var xml:XML in xml_list) {
+        
+        var new_node:Node
         
         switch (xml.name().toString()) {
           case 'button':
-            container.addChild(genButtonNode(xml))
+          case 'mbutton':
+            new_node = genButtonNode(xml)
             break
           case 'composite':
-            container.addChild(genCompositeNode(xml))
+          case 'mcomposite':
+            new_node = genCompositeNode(xml)
             break
           case 'dial':
-            container.addChild(genDialNode(xml))
+          case 'mdial':
+            new_node = genDialNode(xml)
             break
           case 'graphic':
-            container.addChild(genGraphicNode(xml))
+          case 'mgraphic':
+            new_node = genGraphicNode(xml)
             break
           case 'mask':
-            container.addChild(genVectorNode(xml))
+          case 'mmask':
+            new_node = genVectorNode(xml)
             break
           case 'meter':
-            container.addChild(genMeterNode(xml))
+          case 'mmeter':
+            new_node = genMeterNode(xml)
             break
           case 'multi':
-            container.addChild(genMultiNode(xml))
+          case 'mmulti':
+            new_node = new MultiNode()
+            container = container as MultiNode
             break
           case 'progress':
-            container.addChild(genProgressNode(xml))
+          case 'mprogress':
+            new_node = genProgressNode(xml)
             break
           case 'radio':
-              container.addChild(genRadioNode(xml))
+          case 'mradio':
+            new_node = genRadioNode(xml)
             break
           case 'text':
-            container.addChild(genTextNode(xml))
+          case 'mtext':
+            new_node = genTextNode(xml)
             break
           case 'vector':
-            container.addChild(genVectorNode(xml))
+          case 'mvector':
+            new_node = genVectorNode(xml)
             break
           case 'video':
-            container.addChild(genVideoNode(xml))
+          case 'mvideo':
+            new_node = genVideoNode(xml)
             break
         }
         
-        // Position
-        var last_node:Node = (container.getChildAt(container.numChildren - 1) as Node)
-        
-        if (xml.@pos != undefined)   last_node.position(xml.@pos)
-        if (xml.@id != undefined)    last_node.id = xml.@id
-        if (xml.@group != undefined) last_node.group = xml.@group
-        
-        if (xml.name().toString() == 'mask') { container.mask = last_node }
-
-        // Check the children of this node
-        var known:RegExp = /^(button|composite|dial|graphic|mask|multi|meter|progress|radio|text|vector|video)$/
-        var has_valid_child:Boolean = false
-        
-        for each (var child:XML in xml.*) {
-          if (known.test(child.name())) { has_valid_child = true; break }
+        if (new_node)
+          if (multi) { container.add(genConditionalSet(xml.@when.toString()), new_node) }
+          else       { container.addChild(new_node) }
         }
-
-        if (has_valid_child) genNodes(xml.*, last_node)
+        
+        if (xml.@pos   != undefined) new_node.position(xml.@pos)
+        if (xml.@id    != undefined) new_node.id = xml.@id
+        if (xml.@group != undefined) new_node.group = xml.@group
+        
+        // Mask applied after it has been positioned or it won't move.
+        if (xml.name().toString() == 'mask') container.mask = new_node
+        
+        if (hasChildNode(xml)) genNodes(xml.*, new_node, (new_node is MultiNode))
       }
     }
     
@@ -307,49 +319,7 @@ package com.soren.exib.core {
                            xml.@right_empty, xml.@right_full,
                            xml.@segments, xml.@spacing)
     }
-    
-    public function genMultiNode(xml:XML):MultiNode {
-      var multi_node:MultiNode = new MultiNode()
-      for each (var xml_child:XML in xml.*) {
-        var child_node:Node
         
-        switch (xml_child.name().toString()) {
-          case 'mbutton':
-            child_node = genButtonNode(xml_child)
-            break
-          case 'mcomposite':
-            child_node = genCompositeNode(xml_child)
-            break
-          case 'mgraphic':
-            child_node = genGraphicNode(xml_child)
-            break
-          case 'mmeter':
-            child_node = genMeterNode(xml_child)
-            break
-          case 'mprogress':
-            child_node = genProgressNode(xml_child)
-            break
-          case 'mtext':
-            child_node = genTextNode(xml_child)
-            break
-          case 'mvector':
-            child_node = genVectorNode(xml_child)
-            break
-          case 'mvideo':
-            child_node = genVideoNode(xml_child)
-            break
-        }
-        
-        if (xml_child.@pos != undefined)   child_node.position(xml_child.@pos)
-        if (xml_child.@id != undefined)    child_node.id = xml_child.@id
-        if (xml_child.@group != undefined) child_node.group = xml_child.@group
-        
-        multi_node.add(genConditionalSet(xml_child.@when.toString()), child_node)
-      }
-      
-      return multi_node
-    }
-    
     public function genProgressNode(xml:XML):ProgressNode {
       var model:ValueModel = retrieveActionable(xml.@model) as ValueModel
       var length:uint = uint(xml.@length)
@@ -561,6 +531,17 @@ package com.soren.exib.core {
     **/
     private function retrieveActionable(actionable_id:String):IActionable {
       return _space.get(actionable_id)
+    }
+  
+    /**
+    * Determine whether the supplied xml has one or more sub-nodes
+    **/
+    private function hasChildNode(xml:XML):Boolean {
+      for each (var child:XML in xml.*) {
+        if (KNOWN_NODES.test(child.name())) return true
+      }
+      
+      return false
     }
   }
 }
