@@ -40,14 +40,14 @@ package unit {
       
       var button:ButtonNode = new ButtonNode('up.png', 'down.png', press_set, release_set)
       
-      assertEquals(1, button.numChildren)
+      // Accounting for one additional child, the hit-test overlay
+      assertEquals(2, button.numChildren)
       
-      // To simulate mouse event we must extract the SimpleButton inside of the
-      // button node. To use the Node base class SimpleButton couldn't be extended.
-      button.getChildAt(0).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN))
+      // To simulate mouse event we must extract the hit overlay inside of the button node.
+      button.getChildAt(button.numChildren - 1).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN))
       assertEquals(1, model.value)
       
-      button.getChildAt(0).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP))
+      button.getChildAt(button.numChildren - 1).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP))
       assertEquals(0, model.value)
     }
   }
