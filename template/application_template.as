@@ -27,9 +27,18 @@ package {
     private const POOLS:Array = [/^_\w+/, /^\*\w+/, /^\+\w+/, /^\$\w+/, /^%\w+/, /^@\w+/]
     
     public function #APPLICATION_NAME#() {
-      Sound.setEmbedContainer(this)
-      GraphicNode.setEmbedContainer(this)
-      VideoNode.setEmbedContainer(this)
+      // Asset loading nodes must have a reference to the class where assets are
+      // embedded. If assets are compiled into a class other than this change
+      // the embed container here.
+      for each (var klass:Class in [Sound, GraphicNode, VideoNode]) {
+        klass.setEmbedContainer(this)
+      }
+      
+      // These objects will be automatically created when the application
+      // launches. Change the default name of each here.
+      _default_screen_name = '_screen'
+      _default_effect_name = '_effect'
+      _default_log_name    = '_log'
       
       start(ConfigEXML, POOLS)
     }
