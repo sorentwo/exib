@@ -14,8 +14,8 @@ package com.soren.exib.view {
   
   public class Node extends Sprite implements INode {
     
-    protected var _id:String
-    protected var _group:String
+    protected var _id:String    = ''
+    protected var _groups:Array = []
     
     // Implemented directly because this can not be a dynamic class. Get / Set
     // methods seem overkill, but may be used in the future.
@@ -24,50 +24,97 @@ package com.soren.exib.view {
     public var pulse_count:uint = 0
     public var pulse_total:uint = 0
     
+    /**
+    * Lets you create an empty Node container.
+    **/
     public function Node() {}
     
     /**
+    * @param  node_id A unique identifier for the node. Uniqueness is implicite,
+    *                 and is not checked.
     **/
     public function set id(node_id:String):void {
       _id = node_id
     }
     
     /**
+    * The unique id of this node. If no id is set an empty string is returned.
     **/
     public function get id():String {
-      return (_id) ? _id : ''
+      return _id
     }
     
     /**
+    * Set one or more groups.
+    * 
+    * @param  groups  An array of group names.
     **/
-    public function set group(group_id:String):void {
-      _group = group_id
-    }
-    
-    /**
-    **/
-    public function get group():String {
-      return (_group) ? _group : ''
-    }
+    public function set groups(groups:Array):void {
+      if (groups.length < 1) throw new Error('Not enough groups, at least one is required')
       
+      for each (var group:* in groups) {
+        if (!group is String) throw new Error('String required, invalid object: ' + group)
+      }
+      
+      _groups = groups
+    }
+    
     /**
+    * Get the groups that this node belongs to as an array of strings.
+    * 
+    * @return An array of group names.
+    **/
+    public function get groups():Array {
+      return _groups
+    }
+    
+    /**
+    * Add a new group to the list of groups this node belongs to. Groups are not
+    * case sensitive and are normalized.
+    * 
+    * @param  group Name of the group to add.
+    **/
+    public function addGroup(group:String):void {
+      if (_groups.indexOf(group) != -1) throw new Error('Node already belongs to group: ' + group)
+      
+      _groups.push(group.toLowerCase())
+    }
+    
+    /**
+    * Check whether this node instance belongs to the provided group. Groups are
+    * not case sensitive.
+    **/
+    public function hasGroup(group:String):Boolean {
+      return (_groups.indexOf(group.toLowerCase()) == -1) ? false : true
+    }
+    
+    /**
+    * Returns zero or more child nodes that match the supplied group.
+    * 
+    * @param group  A group to match.
+    * @return       An array of zero or more nodes.
     **/
     public function getChildrenByGroup(group:String):Array {
       return bsearch(group, 'group', true)
     }
     
     /**
-    * Returns the first node it finds that matches the supplied id
+    * Returns the first node it finds that matches the supplied id.
+    * 
+    * @param  id  A unique id to match against this node's children.
+    * @return     A node if one was found, otherwise <code>null</code>.
     **/
     public function getChildById(id:String):* {
       return bsearch(id, 'id', false)
     }
     
     /**
+    * A shortcut method for placing a node by x,y coordinates.
     * 
+    * @param  coordinates A x and y coordinate pair in the form "x,y"
     **/
     public function position(coordinates:String):void {
-      var pattern:RegExp = /(?P<x>-?\d+)\s?,\s?(?P<y>-?\d+)/
+      var pattern:RegExp = /(?P<x>-?\d+)\s*,\s*(?P<y>-?\d+)/
       
       if (!pattern.test(coordinates)) throw new Error("Invalid coordinates: " + coordinates)
       
@@ -77,7 +124,8 @@ package com.soren.exib.view {
     }
     
     /**
-    * 
+    * Abstract method to be overridden by sub-classes. Intended to trigger a
+    * display update for the instance.
     **/
     public function update():void {}
     
@@ -91,7 +139,7 @@ package com.soren.exib.view {
     }
     
     /**
-    * Unload every child node.
+    * Remove every child from this node's display list.
     **/
     protected function unloadAll():void {
       while (this.numChildren > 0) { removeChildAt(0) }
@@ -113,9 +161,9 @@ package com.soren.exib.view {
       while (unsearched.length > 0) {
         if (!(unsearched[0] is Node)) { unsearched.shift(); continue}
         var current_node:Node = unsearched.shift()
-        
-        if (current_node.hasOwnProperty(property) &&
-            current_node[property].toLowerCase() == normalized_target) {
+
+        if ((property == 'id'    && current_node[property].toLowerCase() == normalized_target) ||
+            (property == 'group' && current_node.hasGroup(normalized_target))) {
           if (multiple) { matching.push(current_node) }
           else          { matching.push(current_node); break }
         }

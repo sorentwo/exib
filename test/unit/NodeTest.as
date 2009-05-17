@@ -8,26 +8,15 @@ package unit {
     public function NodeTest(testMethod:String) {
       super(testMethod)
     }
-
-    /**
-    * Prepare for test, create instance of class that we are testing.
-    * Invoked by TestCase.runMethod function.
-    **/
-    protected override function setUp():void { }
-
-    /**
-    * Clean up after test, delete instance of class that we were testing.
-    **/
-    protected override function tearDown():void { }
     
     // ---
     
     public function testAccessors():void {
       var node:Node = new Node()
       node.id = 'unique'
-      node.group = 'meta'
+      node.groups = ['meta', 'omega']
       assertEquals('unique', node.id)
-      assertEquals('meta', node.group)
+      assertEquals('meta,omega', node.groups.toString())
     }
     
     public function testPlacement():void {
@@ -70,23 +59,14 @@ package unit {
       b.id = 'header'
       e.id = 'footer'
       
-      b.group = c.group = 'slidable'
-      d.group = e.group = f.group = 'fadable'
+      b.groups = c.groups = ['slidable']
+      d.groups = e.groups = ['fadable', 'blurable']
+      f.groups = ['fadable', 'blurable']
       
       screen.addChild(a)
       a.addChild(b); a.addChild(c)
       b.addChild(d)
       c.addChild(e); c.addChild(f)
-      
-      var found_nodes:Array
-      found_nodes = screen.getChildrenByGroup('slidable')
-      assertEquals(2, found_nodes.length)
-      
-      found_nodes = screen.getChildrenByGroup('fadable')
-      assertEquals(3, found_nodes.length)             
-      
-      found_nodes = screen.getChildrenByGroup('nonexistent')
-      assertEquals(0, found_nodes.length)
       
       var found_node:Node
       assertNotNull(screen.getChildById('container'))
@@ -94,6 +74,26 @@ package unit {
       assertNotNull(screen.getChildById('footer'))
       
       assertNull(screen.getChildById('bibliography'))
+      
+      var found_nodes:Array
+      found_nodes = screen.getChildrenByGroup('slidable')
+      assertEquals(2, found_nodes.length)
+      
+      found_nodes = screen.getChildrenByGroup('fadable')
+      assertEquals(3, found_nodes.length)
+      
+      found_nodes = screen.getChildrenByGroup('blurable')
+      assertEquals(3, found_nodes.length)
+      
+      found_nodes = screen.getChildrenByGroup('nonexistent')
+      assertEquals(0, found_nodes.length)
+      
+      a.addGroup('scalable'); f.addGroup('scalable')
+      found_nodes = screen.getChildrenByGroup('scalable')
+      assertEquals(2, found_nodes.length)
+      
+      assertTrue(a.hasGroup('scalable'))
+      assertFalse(a.hasGroup('fadable'))
     }
   }
 }

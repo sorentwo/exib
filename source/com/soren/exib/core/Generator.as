@@ -257,7 +257,7 @@ package com.soren.exib.core {
         
         if (xml.@pos   != undefined) new_node.position(xml.@pos)
         if (xml.@id    != undefined) new_node.id = xml.@id
-        if (xml.@group != undefined) new_node.group = xml.@group
+        if (xml.@group != undefined) new_node.groups = xml.@group.toString().split(/\s+/)
         
         // Mask applied after it has been positioned or it won't move.
         if (xml.name().toString() == 'mask') container.mask = new_node
