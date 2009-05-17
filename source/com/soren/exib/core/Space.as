@@ -11,7 +11,6 @@
 
 package com.soren.exib.core {
 
-  import com.soren.exib.debug.Log
   import com.soren.exib.manager.IManager
   import com.soren.exib.manager.Manager
   
@@ -24,11 +23,8 @@ package com.soren.exib.core {
     * Space is a singleton, construction can not be used
     **/
     public function Space() {
-      if (_instance) {
-        Log.getLog().debug('Can only be accessed through Space.getSpace()')
-      } else {
-        createDefaultPool()
-      }
+      if (_instance) throw new Error('Can only be accessed through Space.getSpace()')
+      else           createDefaultPool()
     }
     
     /**
