@@ -88,7 +88,11 @@ package unit {
   	  assertEquals(25, StringUtil.format("%{rawsec:modsec}",  5305))
   	}
   	
-  	public function testReplacementFormatting():void {
+  	public function testTranslate():void {
+  	  assertEquals('oz',              StringUtil.translate('ounces/oz', 'ounces'))
+  	  assertEquals('high, med, low',  StringUtil.translate('\\s+/, ', 'high med  low'))
+  	  assertEquals('warm,cold',       StringUtil.translate('(\\w+),(\\w+)/$2,$1', 'cold,warm'))
+  	  
       assertEquals('cat',        StringUtil.format('%{b/a}',   'cbt'))
       assertEquals('JOE',        StringUtil.format('%{oe/OE}', 'Joe'))
       assertEquals('cold/warm',  StringUtil.format('%{_//}',   'cold_warm'))

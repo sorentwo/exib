@@ -90,6 +90,7 @@ package com.soren.util {
     * See examples below.
     * 
     * @param  format  A replacement string in the form of /pattern/replacement/.
+    *                 Pattern will be interpreted as a RegExp.
     * @param  input   The string that will be searched and have replacements
     *                 performed on it.
     *
@@ -99,7 +100,7 @@ package com.soren.util {
     * 
     * <listing version='3.0'>
     * var string:String   = 'The quick brown cat'
-    * var replaced:String = StringUtil.tr('/brown/orange/', string)
+    * var replaced:String = StringUtil.translate('/brown/orange/', string)
     * 
     * // Yields 'The quick orange cat'
     * trace(replaced)
@@ -112,13 +113,14 @@ package com.soren.util {
     * trace(replaced)
     * </listing>
     **/
-    public static function tr(format:String, input:String):String {
+    public static function translate(format:String, input:String):String {
       var pattern:RegExp = /(?P<match>.*?)\/(?P<substitute>.*)/
       
       if (!pattern.test(format)) throw new Error('Invalid format: ' + format)
       
       var result:Object = pattern.exec(format)
-      return input.replace(result.match, result.substitute)
+      var match:RegExp  = new RegExp(result.match, 'g')
+      return input.replace(match, result.substitute)
     }
     
     /**
@@ -274,7 +276,7 @@ package com.soren.util {
                 replacement = dateFormat(conv_result.date, replacement)
                 break
               case REPLACE:
-                replacement = tr(conv_result.substitution, replacement)
+                replacement = translate(conv_result.substitution, replacement)
                 break
               default:
                 throw new Error('Invalid conversion pattern: ' + conversion)
