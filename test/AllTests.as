@@ -49,7 +49,7 @@ package {
       var manager_tests:Array   = [ManagerTest]
       var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
       var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest, SoundTest]
-      var util_tests:Array      = [AdvancedMathTest, DateUtilTest, ExtendedArrayTest, KeyUtilTest, PadTest, ConversionUtilTest, StringUtilTest]
+      var util_tests:Array      = [AbbreviateTest, AdvancedMathTest, DateUtilTest, ExtendedArrayTest, KeyUtilTest, PadTest, ConversionUtilTest, StringUtilTest]
       var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
       var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
       

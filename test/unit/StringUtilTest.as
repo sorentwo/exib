@@ -105,5 +105,11 @@ package unit {
   	  assertEquals('jones',   StringUtil.format('%[1]s', arr))
   	  assertEquals(2,         StringUtil.format('%[0]{ounce:cup}', [16, 'cups']))  	  
   	}
+  	
+  	public function testAbbreviation():void {
+  	  assertEquals('c',    StringUtil.format('%{:abbr:}', 'cup'))
+  	  assertEquals('gal',  StringUtil.format('%{:abbr:}', 'gallon'))
+  	  assertEquals('oz.',  StringUtil.format('%{:abbr:}.', 'ounce'))
+  	}
 	}
 }

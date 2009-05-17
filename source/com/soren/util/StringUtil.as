@@ -1,6 +1,4 @@
 /**
-* StringUtil
-* 
 * A collection of string formatting tools.
 *
 * Copyright (c) 2008 Parker Selbert
@@ -27,6 +25,7 @@ package com.soren.util {
     
     // Conversion Tokens. These are inferred and therefore private.
     private static const CONVERSION:String = 'c'
+    private static const ABBREVIATE:String = 'a'
     private static const CONVERT:String    = 'o'
     private static const DATE:String       = 't'
     private static const REPLACE:String    = 'r'
@@ -218,6 +217,7 @@ package com.soren.util {
       
       var pattern:RegExp = new RegExp('%' + array_re + padding_re + precision_re + convert_re, 'g')
       
+      var abbr_re:RegExp       = /:abbr:/
       var conversion_re:RegExp = /(?P<first>\w+):(?P<second>\w+)(::(?P<post>\w+))?/
       var date_re:RegExp       = /\+(?P<date>\w+)/
       var replace_re:RegExp    = /(?P<substitution>.+\/.*)/
@@ -258,11 +258,15 @@ package com.soren.util {
           case CONVERSION:
             var conv_token:String, conv_result:Object
             
-                 if (conversion_re.test(conversion)) { conv_token = CONVERT; conv_result = conversion_re.exec(conversion) }
+                 if (abbr_re.test(conversion))       { conv_token = ABBREVIATE                                            }
+            else if (conversion_re.test(conversion)) { conv_token = CONVERT; conv_result = conversion_re.exec(conversion) }
             else if (date_re.test(conversion))       { conv_token = DATE; conv_result = date_re.exec(conversion)          }
             else if (replace_re.test(conversion))    { conv_token = REPLACE; conv_result = replace_re.exec(conversion)    }
 
             switch (conv_token) {
+              case ABBREVIATE:
+                replacement = Abbreviate.abbreviate(replacement)
+                break
               case CONVERT:
                 var params:Array = ConversionUtil.getTypesAndFunction(conv_result.first, conv_result.second)                
                 replacement = params[2].call(null, params[0], params[1], replacement)

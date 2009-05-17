@@ -8,6 +8,7 @@ package {
   import com.soren.exib.service.Sound
   import com.soren.exib.view.GraphicNode
   import com.soren.exib.view.VideoNode
+  import com.soren.util.Abbreviate
   
   public class #APPLICATION_NAME# extends Application {
     
@@ -39,6 +40,9 @@ package {
       _default_screen_name = '_screen'
       _default_effect_name = '_effect'
       _default_log_name    = '_log'
+      
+      // Set any custom or atypical abbreviations here.
+      // Abbreviate.addAuxilliary('cups', 'c')
       
       start(ConfigEXML, POOLS)
     }
