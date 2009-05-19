@@ -72,8 +72,8 @@ package com.soren.util {
       var norm:String = word.toLowerCase()
       var abbr:String
 
-           if (KNOWN.hasOwnProperty(norm))      abbr = KNOWN[norm]
-      else if (AUXILLIARY.hasOwnProperty(norm)) abbr = AUXILLIARY[norm]
+           if (AUXILLIARY.hasOwnProperty(norm)) abbr = AUXILLIARY[norm]
+      else if (KNOWN.hasOwnProperty(norm))      abbr = KNOWN[norm]
 
       return (abbr) ? abbr : word
     }
