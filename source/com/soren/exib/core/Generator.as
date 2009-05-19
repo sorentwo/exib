@@ -299,7 +299,7 @@ package com.soren.exib.core {
         var ambiguous:ActionSet = genActionSet(xml_pos.action)    || null
         var clockwise:ActionSet = genActionSet(xml_pos.clockwise) || null
         var counter:ActionSet   = genActionSet(xml_pos.counter)   || null
-        dial_node.add(ambiguous, clockwise, counter)
+        dial_node.add(uint(xml_pos.@snap), ambiguous, clockwise, counter)
       }
       
       return dial_node

@@ -1,6 +1,4 @@
 /**
-* DialNode
-*
 * Creates a graphical dial that can be spinned to a limited set of positions.
 * Positions are added by supplying a new ActionSet. For each new position added
 * the circle of travel will be divided evenly by one more. For example, adding
@@ -15,6 +13,7 @@ package com.soren.exib.view {
   import flash.events.Event
   import flash.events.MouseEvent
   import com.soren.exib.helper.ActionSet
+  import com.soren.exib.debug.Log
 
   public class DialNode extends Node {
 
@@ -23,14 +22,15 @@ package com.soren.exib.view {
     private var _handle:VectorNode
 
     private var _positions:Array = []
-    private var _snaps:Array     = []
 
-    private var _delta:uint        = 0
     private var _current_snap:uint = 0
     private var _last_snap:uint    = 0
 
     /**
-    * Constructor
+    * Create a new dial instance by providing the url of the graphic to be used
+    * as the dial.
+    * 
+    * @param  graphic_url URL of the graphic to use for the dial
     **/
     public function DialNode(graphic_url:String) {
       _graphic = new GraphicNode(graphic_url)
@@ -55,23 +55,22 @@ package com.soren.exib.view {
     * @param  action_set Any number of action sets that will be executed when the
     *                    dial is in the corresponding position.
     **/
-    public function add(ambiguous:ActionSet = null,
+    public function add(snap:uint,
+                        ambiguous:ActionSet = null,
                         clockwise:ActionSet = null,
-                        counterwise:ActionSet = null,
-                        angle_override:int = 0):void {
+                        counter:ActionSet   = null):void {
       
-      verifyMinimumAction(ambiguous, clockwise, counterwise)
+      verifyMinimumAction(ambiguous, clockwise, counter)
+      verifySnap(snap)
       
-      _positions.push({ ambiguous: ambiguous, clockwise: clockwise, counterwise: counterwise })
-
-      var snap:uint = Math.ceil(360 / _positions.length)
-      var x:int = 0
-      _snaps = [x]
-
-      while (x < (360 - snap)) { _snaps.push(x += snap) }
-
-      snap *= .5
-      _delta = snap == int(snap) ? snap : int(snap) + 1
+      _positions.push(new DialPositionInfo(snap, ambiguous, clockwise, counter))
+      _positions.sortOn('snap', Array.NUMERIC)
+      
+      calculateGrabAngles()
+      
+      Log.getLog().debug(_positions[0].snap)
+      Log.getLog().debug(_positions[0].preceding)
+      Log.getLog().debug(_positions[0].anteceding)
     }
     
     /**
@@ -79,11 +78,37 @@ package com.soren.exib.view {
     * 
     * @return Number of positions
     **/
-    public function get positions():int {
+    public function get numPositions():int {
       return _positions.length
     }
     
     // ---
+    
+    /**
+    * Calculate the grab angle before and after each snap.
+    **/
+    private function calculateGrabAngles():void {
+      var prev_snap:int, next_snap:int
+      
+      for (var i:int = 0; i < _positions.length; i++) {
+        if (_positions.length == 1) {
+          prev_snap = _positions[i].snap
+          next_snap = _positions[i].snap
+        } else if (_positions.length > 1 && i == 0) {
+          prev_snap = _positions[_positions.length - 1].snap - 360
+          next_snap = _positions[i + 1].snap
+        } else if (_positions.length > 1 && i == _positions.length - 1) {
+          prev_snap = _positions[i - 1].snap
+          next_snap = 360 + _positions[0].snap
+        } else {
+          prev_snap = _positions[i - 1].snap
+          next_snap = _positions[i + 1].snap
+        }
+        
+        _positions[i].preceding  = (_positions[i].snap - prev_snap) * .5
+        _positions[i].anteceding = (next_snap - _positions[i].snap) * .5
+      }
+    }
     
     /**
     * Convert the supplied angle from a positive or negative 180 to a 360 scale.
@@ -109,8 +134,8 @@ package com.soren.exib.view {
       
       var clockwise:Boolean
       clockwise = (snap > _last_snap)
-                ? (_last_snap == _snaps[0] && snap == _snaps[_snaps.length - 1]) ? false : true
-                : (snap == _snaps[0] && _last_snap == _snaps[_snaps.length - 1]) ? true  : false
+                ? (_last_snap == _positions[0].snap && snap == _positions[_positions.length - 1].snap) ? false : true
+                : (snap == _positions[0].snap && _last_snap == _positions[_positions.length - 1].snap) ? true  : false
                 
       _last_snap = snap
       
@@ -118,10 +143,11 @@ package com.soren.exib.view {
         _container.rotation = snap
     	  _current_snap = snap
     	  
-    	  var position:Object = _positions[_snaps.indexOf(snap)]
+    	  for each (var position:DialPositionInfo in _positions) { if (position.snap == snap) break }
+    	  
     	  position.ambiguous.act()
-    	  if (clockwise  && position.clockwise)   position.clockwise.act()
-    	  if (!clockwise && position.counterwise) position.counterwise.act()
+    	  if (clockwise  && position.clockwise) position.clockwise.act()
+    	  if (!clockwise && position.counter)   position.counter.act()
     	}
     }
 
@@ -154,17 +180,19 @@ package com.soren.exib.view {
     private function snapTo(angle:uint):uint {
       var matched_snap:uint
 
-      for (var i:int = 0; i < _snaps.length; i++) {
-        var snap:uint = _snaps[i]
-
-        if ((angle >= snap) && (angle < (snap + _delta))) {
+      for (var i:int = 0; i < _positions.length; i++) {
+        var snap:uint = _positions[i].snap
+        var pre:uint  = _positions[i].preceding
+        var ant:uint  = _positions[i].anteceding
+        
+        if ((angle >= snap) && (angle < (snap + ant))) {
           matched_snap = snap
           break
-        } else if ((angle < snap) && (angle >= (snap - _delta))) {
+        } else if ((angle < snap) && (angle >= (snap - pre))) {
           matched_snap = snap
           break
-        } else if (angle > (360 - _delta)) {
-          matched_snap = 0
+        } else if (angle > (360 - _positions[0].preceding)) {
+          matched_snap = _positions[0].snap
           break
         }
       }
@@ -183,6 +211,17 @@ package com.soren.exib.view {
       
       if ((a && a.isEmpty()) && (b && b.isEmpty()) && (c && c.isEmpty())) {
         throw new Error('Not Enough Actions: You must supply at least one action')
+      }
+    }
+    
+    /**
+    * Verify that the provided snap isn't already used with this dial.
+    **/
+    private function verifySnap(snap:uint):void {
+      if (snap > 360) throw new Error('Snap angle greater than 360: ' + snap)
+      
+      for each (var position:DialPositionInfo in _positions) {
+        if (position.snap == snap) throw new Error('Snap already used: ' + snap)
       }
     }
   }
