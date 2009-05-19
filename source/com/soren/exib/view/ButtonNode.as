@@ -21,6 +21,7 @@ package com.soren.exib.view {
     protected var _up_graphic:GraphicNode
     protected var _press_set:ActionSet
     protected var _release_set:ActionSet
+    protected var _press_activated:Boolean
     
     /**
     * Create a new button node.
@@ -75,6 +76,8 @@ package com.soren.exib.view {
       this.addChildAt(_down_graphic, 0)
       
       if (_press_set) _press_set.act()
+      
+      _press_activated = true
     }
     
     /**
@@ -83,6 +86,8 @@ package com.soren.exib.view {
     protected function actOnMouseOut(event:MouseEvent):void {
       if (this.contains(_down_graphic)) this.removeChild(_down_graphic)
       if (!this.contains(_up_graphic))  this.addChildAt(_up_graphic, 0)
+      
+      _press_activated = false
     }
     
     /**
@@ -92,7 +97,9 @@ package com.soren.exib.view {
       if (this.contains(_down_graphic)) this.removeChild(_down_graphic)
       if (!this.contains(_up_graphic))  this.addChildAt(_up_graphic, 0)
       
-      if (_release_set) _release_set.act()
+      if (_press_activated && _release_set) _release_set.act()
+      
+      _press_activated = false
     }
     
     /**
