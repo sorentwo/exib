@@ -142,7 +142,7 @@ package com.soren.exib.view {
     * Character escapes don't come in through XML. Forcibly replace them.
     **/
     private function replaceEscapedChars():void {
-      _content = _content.replace("\\n", "\n")
+      _content = _content.replace(/\\n/g, "\n")
     }
   }
 }
