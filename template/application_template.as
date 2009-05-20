@@ -32,7 +32,7 @@ package {
       // embedded. If assets are compiled into a class other than this change
       // the embed container here.
       for each (var klass:Class in [Sound, GraphicNode, VideoNode]) {
-        klass.setEmbedContainer(this)
+        klass['setEmbedContainer'](this)
       }
       
       // These objects will be automatically created when the application
