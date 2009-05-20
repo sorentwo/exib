@@ -26,18 +26,19 @@ package com.soren.exib.effect {
     
     public static const EFFECT_COMPLETE:String  = 'effect_complete'
     
-    public static const DEFAULT_ALPHA:uint       = 1
-    public static const DEFAULT_DURATION:uint    = 1
-    public static const DEFAULT_EASING:String    = 'linear_in'
-    public static const DEFAULT_FADE_FROM:uint   = 1
-    public static const DEFAULT_FADE_TO:uint     = 0
-    public static const DEFAULT_PULSE_COUNT:uint = 4
-    public static const DEFAULT_PULSE_FROM:uint  = 1
-    public static const DEFAULT_PULSE_TO:uint    = 0
-    public static const DEFAULT_RELATIVE:Boolean = true
-    public static const DEFAULT_ROTATION:uint    = 180
-    public static const DEFAULT_SCALE:uint       = 2
-    public static const DEFAULT_SPIN:uint        = 360
+    public static const DEFAULT_ALPHA:uint          = 1
+    public static const DEFAULT_DURATION:uint       = 1
+    public static const DEFAULT_EASING:String       = 'linear_in'
+    public static const DEFAULT_FADE_FROM:uint      = 1
+    public static const DEFAULT_FADE_TO:uint        = 0
+    public static const DEFAULT_PULSE_COUNT:uint    = 4
+    public static const DEFAULT_PULSE_FROM:uint     = 1
+    public static const DEFAULT_PULSE_TO:uint       = 0
+    public static const DEFAULT_RELATIVE:Boolean    = true
+    public static const DEFAULT_REGISTRATION:String = 'center'
+    public static const DEFAULT_ROTATION:uint       = 180
+    public static const DEFAULT_SCALE:uint          = 2
+    public static const DEFAULT_SPIN:uint           = 360
     
     private static const GROUP_PATTERN:RegExp = /^\.(\w+)$/
     private static const MODEL_PATTERN:RegExp = /^(_\w+)$/
@@ -314,6 +315,66 @@ package com.soren.exib.effect {
     }
     
     /**
+    * Change the registration point of an object to any of its corners or the
+    * center point. Future implementation may accept a set of coordinates, this
+    * does not. This is not a timed effect.
+    * <p>Multiple objects will be registered individually according to their own
+    * relative sizes. After the registration has been changed any new effects
+    * applied to the node(s), namely scale, will be applied from the new
+    * registration point.</p>
+    * <p>This effect is really only intended for graphic and text nodes, nodes
+    * that only have one child which is visible all the time. The nature of
+    * registration points in flash makes changing the registration of more 
+    * complex nodes too difficult at this time.</p>
+    * 
+    * @param  targets   An array of display objects or, if a ScreenController is
+    *                   present, a list of object groups and ids that will be used
+    *                   to attempt to resolve display objects from the current
+    *                   screen.
+    * @param  options   An option hash with any of the following key/value pairs:
+    *                   <ul>
+    *                   <li>registration -> Any of the following registration
+    *                   strings: 'center, top_left, top_mid, top_right, right_mid,
+    *                   bottom_right, bottom_mid, bottom_left, left_mid'</li>
+    *                   </ul>
+    * @example  The following code shows a typical register usage. It assumes
+    *           that there is a ScreenController named <code>screen_controller</code>
+    *           and that there is a TextNode named <code>#texty</code> within
+    *           the current screen.
+    * <listing version='3.0'>
+    * var effect:Effect = new Effect(screen_controller)
+    * effect.register([#texty], { registration: center })
+    * </listing>
+    **/
+    public function register(targets:Array, options:Object = null):void {
+      options = mergeOptions(options)
+      targets = resolveTargets(targets)
+      
+      var reg_x:int, reg_y:int
+      
+      for each (var node:Node in targets) {
+        
+        switch (options['registration'].replace(' ', '')) {
+          case 'center':       reg_x = node.width / 2; reg_y = node.height / 2; break
+          case 'top_left':     reg_x = 0;              reg_y = 0; break
+          case 'top_mid':      reg_x = node.width / 2; reg_y = 0; break
+          case 'top_right':    reg_x = node.width;     reg_y = 0; break
+          case 'right_mid':    reg_x = node.width;     reg_y = node.height / 2; break
+          case 'left_mid' :    reg_x = 0;              reg_y = node.height / 2; break
+          case 'bottom_left':  reg_x = 0;              reg_y = node.height; break
+          case 'bottom_mid':   reg_x = node.width / 2; reg_y = node.height; break
+          case 'bottom_right': reg_x = node.width;     reg_y = node.height; break
+          default: throw new Error('Invalid registration string: ' + options['registration'])
+        }
+
+        node.getChildAt(0).x -= reg_x
+        node.getChildAt(0).y -= reg_y
+        node.x += reg_x
+        node.y += reg_y
+      }
+    }
+    
+    /**
     * Like move, show, or hide this is not a timed effect. It immediately rotates
     * the specified object(s) the given rotation. For a timed version of the
     * rotate effect use spin.
@@ -347,36 +408,6 @@ package com.soren.exib.effect {
       
       for each (var node:Node in targets) {
         node.rotation = (options['relative']) ? node.rotation + options['rotation'] : options['rotation']
-      }
-    }
-    
-    /**
-    * Change the size of an object or objects immediately. Sizing, like scaling
-    * is locked to be uniform, meaning the x and y value remain the same.
-    * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
-    * @param  options   An option hash with any of the following key/value pairs:
-    *                   <ul>
-    *                   <li>scale -> A numerical percentage, i.e. 1 = 100%,
-    *                   1.5 = 150% etc.</li>
-    *                   </ul>
-    *
-    * @example  The following code shows a typical use of size.
-    * 
-    * <listing version='3.0'>
-    * var effect:Effect = new Effect(screen_controller) 
-    * effect.size([.dots], { size: .45 })
-    * </listing>
-    **/
-    public function size(targets:Array, options:Object = null):void {
-      options = mergeOptions(options)
-      targets = resolveTargets(targets)
-      
-      for each (var node:Node in targets) {
-        node.scaleX = node.scaleY = Number(options['scale'])
       }
     }
     
@@ -444,6 +475,36 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) { node.visible = true }
+    }
+    
+    /**
+    * Change the size of an object or objects immediately. Sizing, like scaling
+    * is locked to be uniform, meaning the x and y value remain the same.
+    * 
+    * @param  targets   An array of display objects or, if a ScreenController is
+    *                   present, a list of object groups and ids that will be used
+    *                   to attempt to resolve display objects from the current
+    *                   screen.
+    * @param  options   An option hash with any of the following key/value pairs:
+    *                   <ul>
+    *                   <li>scale -> A numerical percentage, i.e. 1 = 100%,
+    *                   1.5 = 150% etc.</li>
+    *                   </ul>
+    *
+    * @example  The following code shows a typical use of size.
+    * 
+    * <listing version='3.0'>
+    * var effect:Effect = new Effect(screen_controller) 
+    * effect.size([.dots], { size: .45 })
+    * </listing>
+    **/
+    public function size(targets:Array, options:Object = null):void {
+      options = mergeOptions(options)
+      targets = resolveTargets(targets)
+      
+      for each (var node:Node in targets) {
+        node.scaleX = node.scaleY = Number(options['scale'])
+      }
     }
 
     /**
@@ -615,18 +676,19 @@ package com.soren.exib.effect {
     private function mergeOptions(options:Object):Object {
       var merged_options:Object = {}
       
-      merged_options['alpha']       = DEFAULT_ALPHA
-      merged_options['duration']    = DEFAULT_DURATION
-      merged_options['easing']      = DEFAULT_EASING
-      merged_options['fade_from']   = DEFAULT_FADE_FROM
-      merged_options['fade_to']     = DEFAULT_FADE_TO
-      merged_options['times']       = DEFAULT_PULSE_COUNT
-      merged_options['pulse_from']  = DEFAULT_PULSE_FROM
-      merged_options['pulse_to']    = DEFAULT_PULSE_TO
-      merged_options['relative']    = DEFAULT_RELATIVE
-      merged_options['rotation']    = DEFAULT_ROTATION
-      merged_options['scale']       = DEFAULT_SCALE
-      merged_options['spin']        = DEFAULT_SPIN
+      merged_options['alpha']        = DEFAULT_ALPHA
+      merged_options['duration']     = DEFAULT_DURATION
+      merged_options['easing']       = DEFAULT_EASING
+      merged_options['fade_from']    = DEFAULT_FADE_FROM
+      merged_options['fade_to']      = DEFAULT_FADE_TO
+      merged_options['times']        = DEFAULT_PULSE_COUNT
+      merged_options['pulse_from']   = DEFAULT_PULSE_FROM
+      merged_options['pulse_to']     = DEFAULT_PULSE_TO
+      merged_options['relative']     = DEFAULT_RELATIVE
+      merged_options['registration'] = DEFAULT_REGISTRATION
+      merged_options['rotation']     = DEFAULT_ROTATION
+      merged_options['scale']        = DEFAULT_SCALE
+      merged_options['spin']         = DEFAULT_SPIN
 
       for (var prop:String in options) { merged_options[prop] = options[prop] }
 
