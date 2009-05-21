@@ -8,10 +8,10 @@
 
 package com.soren.exib.effect {
 
-  import flash.utils.Timer
-  import flash.utils.Dictionary
   import flash.events.Event
   import flash.events.TimerEvent
+  import flash.utils.Dictionary
+  import flash.utils.Timer
   import com.soren.exib.core.Generator
   import com.soren.exib.core.Space
   import com.soren.exib.helper.ActionSet
