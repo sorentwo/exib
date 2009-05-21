@@ -111,7 +111,16 @@ package com.soren.exib.service {
       }
     }
     
-    public function conditionalChangeListener(event:Event):void {
+    /**
+    * Shortcut method for reset()->start(). The timer is reset to 0 and started
+    * again.
+    **/
+    public function restart():void {
+      reset()
+      start()
+    }
+    
+    protected function conditionalChangeListener(event:Event):void {
       if (Boolean(_conditional_set) && _conditional_set.evaluate()) {
         complete()
       }
