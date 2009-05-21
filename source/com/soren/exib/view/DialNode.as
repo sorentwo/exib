@@ -67,10 +67,6 @@ package com.soren.exib.view {
       _positions.sortOn('snap', Array.NUMERIC)
       
       calculateGrabAngles()
-      
-      Log.getLog().debug(_positions[0].snap)
-      Log.getLog().debug(_positions[0].preceding)
-      Log.getLog().debug(_positions[0].anteceding)
     }
     
     /**
@@ -166,7 +162,7 @@ package com.soren.exib.view {
       _handle       = new VectorNode('circle', { radius: _graphic.width * .5 })
       _handle.x    -= _handle.width * .5
       _handle.y    -= _handle.height * .5
-      _handle.alpha = .1
+      _handle.alpha = 0
       
       this.addChild(_handle)
 
