@@ -15,6 +15,7 @@ package com.soren.exib.effect {
   import flash.events.Event
   import flash.events.EventDispatcher
   import flash.filters.BlurFilter
+  import flash.filters.GlowFilter
   import flash.utils.Dictionary
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
@@ -27,19 +28,23 @@ package com.soren.exib.effect {
     
     public static const EFFECT_COMPLETE:String  = 'effect_complete'
     
-    public static const DEFAULT_ALPHA:uint          = 1
-    public static const DEFAULT_DURATION:uint       = 1
-    public static const DEFAULT_EASING:String       = 'linear_in'
-    public static const DEFAULT_FADE_FROM:uint      = 1
-    public static const DEFAULT_FADE_TO:uint        = 0
-    public static const DEFAULT_PULSE_COUNT:uint    = 4
-    public static const DEFAULT_PULSE_FROM:uint     = 1
-    public static const DEFAULT_PULSE_TO:uint       = 0
-    public static const DEFAULT_RELATIVE:Boolean    = true
-    public static const DEFAULT_REGISTRATION:String = 'center'
-    public static const DEFAULT_ROTATION:uint       = 180
-    public static const DEFAULT_SCALE:uint          = 2
-    public static const DEFAULT_SPIN:uint           = 360
+    public static const DEFAULT_ALPHA:uint           = 1
+    public static const DEFAULT_DURATION:uint        = 1
+    public static const DEFAULT_EASING:String        = 'linear_in'
+    public static const DEFAULT_FADE_FROM:uint       = 1
+    public static const DEFAULT_FADE_TO:uint         = 0
+    public static const DEFAULT_GLOW_ALPHA_FROM:uint = 0
+    public static const DEFAULT_GLOW_ALPHA_TO:uint   = 1
+    public static const DEFAULT_GLOW_BLUR_FROM:uint  = 0
+    public static const DEFAULT_GLOW_BLUR_TO:uint    = 6
+    public static const DEFAULT_PULSE_COUNT:uint     = 4
+    public static const DEFAULT_PULSE_FROM:uint      = 1
+    public static const DEFAULT_PULSE_TO:uint        = 0
+    public static const DEFAULT_RELATIVE:Boolean     = true
+    public static const DEFAULT_REGISTRATION:String  = 'center'
+    public static const DEFAULT_ROTATION:uint        = 180
+    public static const DEFAULT_SCALE:uint           = 2
+    public static const DEFAULT_SPIN:uint            = 360
     
     private static const GROUP_PATTERN:RegExp = /^\.(\w+)$/
     private static const MODEL_PATTERN:RegExp = /^(_\w+)$/
@@ -48,12 +53,15 @@ package com.soren.exib.effect {
 
     private var _blur_tweens:Dictionary  = new Dictionary()
     private var _fade_tweens:Dictionary  = new Dictionary()
+    private var _glow_tweens:Dictionary  = new Dictionary()
     private var _scale_tweens:Dictionary = new Dictionary()
     private var _slide_tweens:Dictionary = new Dictionary()
     private var _spin_tweens:Dictionary  = new Dictionary()
     private var _pulse_tweens:Dictionary = new Dictionary()
-    private var _active_tweens:Array = [_blur_tweens, _fade_tweens, _scale_tweens,
-                                        _slide_tweens, _spin_tweens, _pulse_tweens]
+    private var _active_tweens:Array = [
+      _blur_tweens, _fade_tweens, _glow_tweens, _scale_tweens, _slide_tweens,
+      _spin_tweens,_pulse_tweens
+    ]
 
     /**
     * Create an instance of the Effect class and optionally define its association
@@ -100,7 +108,7 @@ package com.soren.exib.effect {
     *
     * <listing version="3.0">
     * var effect:Effect = new Effect(screen_controller)
-    * effect.blur([#button], { blur_x_from: 0, blur_y_from: 0, blur_x_to: 8, blur_y_to: 8, duration: .5})
+    * effect.blur([#button], { color: 0xFF0000, blur_x_from: 0, blur_y_from: 0, blur_x_to: 8, blur_y_to: 8, duration: .5})
     * </listing>
     **/
     public function blur(targets:Array, options:Object = null):void {
@@ -162,7 +170,55 @@ package com.soren.exib.effect {
         _fade_tweens[fade_tween] = fade_tween
       }
     }
+    
+    /**
+    * Performed a timed glow on one or more objects.
+    * 
+    * @param  targets   An array of display objects or, if a ScreenController is
+    *                   present, a list of object groups and ids that will be used
+    *                   to attempt to resolve display objects from the current
+    *                   screen.
+    * @param  options   An option hash with any of the following key/value pairs:
+    *                   <ul>
+    *                   <li>blur_from -> An integer between 0 and 32, where
+    *                   blurring will begin. Multiples of two are optimized.
+    *                   </li>
+    *                   <li>blur_to -> An integer between 0 and 32, where
+    *                   blurring will end. Multiples of two are optimized.
+    *                   </li>
+    *                   <li>alpha_from -> A number between 0 and 1.</li>
+    *                   <li>alpha_to -> A number between 0 and 1</li>
+    *                   <li>duration -> Seconds, a number in greater than 0</li>
+    *                   <li>easing -> One of the valid easing algorithms</li>
+    *                   </ul>
+    *
+    * @example  The following code shows a typical glow on objects found within
+    *           a screen instance. It assumes that there is a ScreenController
+    *           named screen_controller and that there is a node with the id
+    *           of #button.
+    *
+    * <listing version="3.0">
+    * var effect:Effect = new Effect(screen_controller)
+    * effect.glow([#button], { blur_from: 0, blur_to: 6, alpha_from: 0, alpha_to: 1, duration: .5})
+    * </listing>
+    **/
+    public function glow(targets:Array, options:Object = null):void {
+      options = mergeOptions(options)
+      targets = resolveTargets(targets)
+      
+      for each (var node:Node in targets) {
+        node.glow_color = uint(options['glow_color'])
+        var glow_blur:Tween  = new Tween(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'], true)
+        var glow_alpha:Tween = new Tween(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'], true)
 
+        glow_blur.addEventListener(TweenEvent.MOTION_CHANGE, glowTweenUpdate)
+        glow_alpha.addEventListener(TweenEvent.MOTION_CHANGE, glowTweenUpdate)
+        glow_blur.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
+        glow_alpha.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
+        _glow_tweens[glow_blur] = glow_blur
+      }
+    }
+    
     /**
     * Immediately make one or more objects invisible. It should be noted that
     * invisible and an alpha of 0 are not the same thing - if a hidden object has
@@ -624,12 +680,35 @@ package com.soren.exib.effect {
     // ---
     
     /**
+    * Clear all of a particular type of filter.
+    **/
+    private function clearFilters(node:Node, klass:Class):void {
+      for (var i:int = 0; i < node.filters.length; i++) {
+        if (node.filters[i] is klass) node.filters.splice(i, 1)
+      }
+    }
+    
+    /**
     * Called by a blur tween's motion change event. Responsible for updating the
     * node's blur level.
     **/
     private function blurTweenUpdate(event:TweenEvent):void {
       var node:Node = event.target.obj as Node
-      node.filters = [ new BlurFilter(node.blur_x, node.blur_y, 2) ]
+      
+      //clearFilters(node, BlurFilter)
+      node.filters = [new BlurFilter(node.blur_x, node.blur_y, 2)]
+    }
+    
+    /**
+    * Called by a glow tween's motion change event. Responsible for updating the
+    * node's glow level.
+    **/
+    private function glowTweenUpdate(event:TweenEvent):void {
+      var node:Node = event.target.obj as Node
+      var inner:Boolean, knockout:Boolean = false
+
+      //clearFilters(node, GlowFilter)
+      node.filters = [new GlowFilter(node.glow_color, node.glow_alpha, node.glow_blur, node.glow_blur, 2, 2, inner, knockout)]
     }
     
     /**
@@ -670,6 +749,10 @@ package com.soren.exib.effect {
       var merged_options:Object = {}
       
       merged_options['alpha']        = DEFAULT_ALPHA
+      merged_options['alpha_from']   = DEFAULT_GLOW_ALPHA_FROM
+      merged_options['alpha_to']     = DEFAULT_GLOW_ALPHA_TO
+      merged_options['blur_from']    = DEFAULT_GLOW_BLUR_FROM
+      merged_options['blur_to']      = DEFAULT_GLOW_BLUR_TO
       merged_options['duration']     = DEFAULT_DURATION
       merged_options['easing']       = DEFAULT_EASING
       merged_options['fade_from']    = DEFAULT_FADE_FROM
