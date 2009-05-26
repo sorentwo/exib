@@ -367,7 +367,7 @@ package com.soren.exib.effect {
         
         var pulse:Tween = new Tween(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], true)
         pulse.addEventListener(TweenEvent.MOTION_FINISH, pulseTweenFinish)
-        _pulse_tweens.push(pulse)
+        _pulse_tweens[pulse] = pulse
       }
     }
     
