@@ -362,6 +362,7 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) {
+        node.pulse_alpha = node.alpha
         node.pulse_count = 0
         node.pulse_total = uint(options['times'])
         
@@ -665,14 +666,17 @@ package com.soren.exib.effect {
     /**
     * Terminate any in-progress effect and set it back to the start point.
     **/
-    public function kill():void {
-      for each (var tween_array:Array in _active_tweens) {
-        for each (var tween:Tween in tween_array) {
-          tween.stop()
-          tween.rewind()
-          // This was used to ensure that the pulse would come out at a finished
-          // level. Questionable, leaving it out for the time being.
-          // tween.obj.alpha = tween.finish;
+    public function kill(targets:Array = null):void {
+      if (targets) targets = resolveTargets(targets)
+
+      for each (var tween_dict:Dictionary in _active_tweens) {
+        for each (var tween:Tween in tween_dict) {
+          if (!targets || (targets && targets.indexOf(tween.obj) > -1)) {
+            tween.stop()
+            if (tween.obj.pulse_alpha != -1) tween.obj.alpha = tween.obj.pulse_alpha
+                        
+            delete tween_dict[tween]
+          }
         }
       }
     }
