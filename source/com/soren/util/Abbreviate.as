@@ -43,7 +43,7 @@ package com.soren.util {
     private static var AUXILLIARY:Object = {}
 
     /**
-    * Singleton, non-used constructor.
+    * Static container only.
     **/
     public function Abbreviate() {
       throw new Error('Abbreviate class is a static container only')
