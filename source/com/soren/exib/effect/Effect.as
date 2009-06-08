@@ -117,15 +117,21 @@ package com.soren.exib.effect {
       for each (var node:Node in targets) {
         if (options.hasOwnProperty('blur_x_from')) {
           var blur_x:Tween = new Tween(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
+          
           blur_x.addEventListener(TweenEvent.CHANGE, blurTweenUpdate)
           blur_x.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+          blur_x.start()
+          
           _blur_tweens[blur_x] = blur_x
         }
         
         if (options.hasOwnProperty('blur_y_from')) {
           var blur_y:Tween = new Tween(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
+          
           blur_y.addEventListener(TweenEvent.CHANGE, blurTweenUpdate)
           blur_y.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+          blur_y.start()
+          
           _blur_tweens[blur_y] = blur_y
         }
       }
@@ -162,9 +168,10 @@ package com.soren.exib.effect {
 
       for each (var node:Node in targets) {
         if (!node.visible) node.visible = true
-        
         var fade_tween:Tween = new Tween(node, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'])
-            fade_tween.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+        
+        fade_tween.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+        fade_tween.start()
         
         _fade_tweens[fade_tween] = fade_tween
       }
@@ -211,10 +218,15 @@ package com.soren.exib.effect {
         var glow_alpha:Tween = new Tween(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
 
         glow_blur.addEventListener(TweenEvent.CHANGE, glowTweenUpdate)
-        glow_alpha.addEventListener(TweenEvent.CHANGE, glowTweenUpdate)
         glow_blur.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+        glow_blur.start()
+        
+        glow_alpha.addEventListener(TweenEvent.CHANGE, glowTweenUpdate)
         glow_alpha.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
-        _glow_tweens[glow_blur] = glow_blur
+        glow_alpha.start()
+        
+        _glow_tweens[glow_blur]  = glow_blur
+        _glow_tweens[glow_alpha] = glow_alpha
       }
     }
     
@@ -366,7 +378,9 @@ package com.soren.exib.effect {
         
         var pulse:Tween = new Tween(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'])
         pulse.addEventListener(TweenEvent.FINISH, pulseTweenFinish)
-        _pulse_tweens.push(pulse)
+        pulse.start()
+        
+        _pulse_tweens[pulse] = pulse
       }
     }
     
@@ -497,8 +511,12 @@ package com.soren.exib.effect {
       for each (var node:Node in targets) {
         var scale_x:Tween = new Tween(node, 'scaleX', options['easing'], node.scaleX, Number(options['scale']), options['duration'])
         var scale_y:Tween = new Tween(node, 'scaleY', options['easing'], node.scaleY, Number(options['scale']), options['duration'])
+        
         scale_y.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
         scale_x.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
+        scale_y.start()
+        scale_x.start()
+        
         _scale_tweens[scale_x] = scale_x
         _scale_tweens[scale_y] = scale_y
       }
@@ -608,15 +626,21 @@ package com.soren.exib.effect {
           var start_x:int   = (options['relative']) ? node.x + int(options['start_x']) : options['start_x']
           var end_x:int     = (options['relative']) ? node.x + int(options['end_x'])   : options['end_x']
           var slide_x:Tween = new Tween(node, 'x', options['easing'], start_x, end_x, options['duration'])
+          
           slide_x.addEventListener(TweenEvent.CHANGE, tweenCompleteListener)
+          slide_x.start()
+          
           _slide_tweens[slide_x] = slide_x
         }
 
         if (options.hasOwnProperty('start_y')) {
-          var start_y:uint = (options['relative']) ? node.y + int(options['start_y']) : options['start_y']
-          var end_y:uint   = (options['relative']) ? node.y + int(options['end_y'])   : options['end_y']
+          var start_y:uint  = (options['relative']) ? node.y + int(options['start_y']) : options['start_y']
+          var end_y:uint    = (options['relative']) ? node.y + int(options['end_y'])   : options['end_y']
           var slide_y:Tween = new Tween(node, 'y', options['easing'], start_y, end_y, options['duration'])
+          
           slide_y.addEventListener(TweenEvent.CHANGE, tweenCompleteListener)
+          slide_y.start()
+          
           _slide_tweens[slide_y] = slide_y
         }
       }
@@ -657,6 +681,8 @@ package com.soren.exib.effect {
       for each (var node:Node in targets) {
         var spin:Tween = new Tween(node, 'rotation', options['easing'], node.rotation, options['spin'], options['duration'])
         spin.addEventListener(TweenEvent.CHANGE, tweenCompleteListener)
+        spin.start()
+        
         _spin_tweens[spin] = spin
       }
     }

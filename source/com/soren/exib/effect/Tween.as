@@ -163,7 +163,7 @@ package com.soren.exib.effect {
       var time:uint  = _timer.currentCount
       var total:uint = _timer.repeatCount
       
-      _target[_property] = _easing.call(time, _begin, _finish, total)
+      _target[_property] = _easing.call(null, time, _begin, _finish, total)
       
       dispatchEvent(new TweenEvent(TweenEvent.CHANGE))
     }
