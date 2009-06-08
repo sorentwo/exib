@@ -10,19 +10,15 @@ package com.soren.exib.effect.easing {
 	  }
 		
 		public static function easeIn(t:Number, b:Number, c:Number, d:Number):Number {
-			return easeAll(t, b, c, d)
+			return c * t / d + b
 		}
 		
 		public static function easeOut (t:Number, b:Number, c:Number, d:Number):Number {
-			return easeAll(t, b, c, d)
+			return c * t / d + b
 		}
 		
 		public static function easeInOut (t:Number, b:Number, c:Number, d:Number):Number {
-			return easeAll(t, b, c, d)
-		}
-		
-		private function easeAll(t:Number, b:Number, c:Number, d:Number):Number {
-		  return c * t / d + b
+			return c * t / d + b
 		}
 	}
 }

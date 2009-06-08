@@ -2,14 +2,14 @@ package com.soren.exib.effect.easing {
   
 	public class Elastic {
 	  
-		private static const 2PI:Number = Math.PI * 2
+		public static const PI2:Number = Math.PI * 2
 		
-		  /**
-  	  * Static container only
-  	  **/
-  	  public function Elastic():void {
-  	    throw new Error('Elastic class is a static container only')
-  	  }
+	  /**
+	  * Static container only
+	  **/
+	  public function Elastic():void {
+	    throw new Error('Elastic class is a static container only')
+	  }
 		
 		public static function easeIn(t:Number, b:Number, c:Number, d:Number, a:Number = 0, p:Number = 0):Number {
 			var s:Number
@@ -19,10 +19,10 @@ package com.soren.exib.effect.easing {
 			
 			if (!p) p = d * .3
 			
-			if (!a || a < Math.abs(c)) { a=c; s = p / 4 }
-			else                       { s = p / 2PI * Math.asin (c / a) }
+			if (!a || a < Math.abs(c)) { a=c; s = p / 4                  }
+			else                       { s = p / PI2 * Math.asin (c / a) }
 			
-			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * 2PI / p )) + b
+			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * PI2 / p )) + b
 		}
 		
 		public static function easeOut(t:Number, b:Number, c:Number, d:Number, a:Number = 0, p:Number = 0):Number {
@@ -33,10 +33,10 @@ package com.soren.exib.effect.easing {
 			
 			if (!p) p = d *.3
 			
-			if (!a || a < Math.abs(c)) { a = c; s = p / 4 }
-			else                       { s = p / 2PI * Math.asin(c / a) }
+			if (!a || a < Math.abs(c)) { a = c; s = p / 4               }
+			else                       { s = p / PI2 * Math.asin(c / a) }
 			
-			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * 2PI / p) + c + b)
+			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * PI2 / p) + c + b)
 		}
 		
 		public static function easeInOut(t:Number, b:Number, c:Number, d:Number, a:Number = 0, p:Number = 0):Number {
@@ -47,11 +47,11 @@ package com.soren.exib.effect.easing {
 			
 			if (!p) p = d * (.3 * 1.5)
 			
-			if (!a || a < Math.abs(c)) { a = c; s = p / 4 }
-			else                       { s = p / 2PI * Math.asin(c / a) }
+			if (!a || a < Math.abs(c)) { a = c; s = p / 4               }
+			else                       { s = p / PI2 * Math.asin(c / a) }
 			
-			if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * 2PI / p)) + b
-			else       return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * 2PI / p) * .5 + c + b
+			if (t < 1) { return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * PI2 / p)) + b   }
+			else       { return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * PI2 / p) * .5 + c + b }
 		}
 	}
 }
