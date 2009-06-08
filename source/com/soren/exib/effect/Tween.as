@@ -16,12 +16,11 @@ package com.soren.exib.effect {
   
   public class Tween extends EventDispatcher {
     
-    private var _begin:Number    = 0
-    private var _duration:Number = 1
-    private var _easing:Function = Linear.easeInOut
-    private var _finish:Number   = 1
-    private var _property:String = 'x'
-    private var _target:Node     = null
+    private var _begin:Number
+    private var _easing:Function
+    private var _finish:Number
+    private var _property:String
+    private var _target:Node
     
     private var _timer:Timer
     
