@@ -108,7 +108,7 @@ package com.soren.exib.effect {
       _timer.addEventListener(TimerEvent.TIMER, render)
       _timer.addEventListener(TimerEvent.TIMER_COMPLETE, complete)
       
-      dispatchEvent(new TweenEvent(TweenEvent.START))
+      dispatchEvent(new TweenEvent(TweenEvent.START, _target))
     }
     
     /**
@@ -117,7 +117,7 @@ package com.soren.exib.effect {
     public function stop():void {
       _timer.stop()
       
-      dispatchEvent(new TweenEvent(TweenEvent.STOP))
+      dispatchEvent(new TweenEvent(TweenEvent.STOP, _target))
     }
     
     /**
@@ -144,14 +144,14 @@ package com.soren.exib.effect {
       _timer.removeEventListener(TimerEvent.TIMER, render)
       _timer.removeEventListener(TimerEvent.TIMER_COMPLETE, complete)
       
-      dispatchEvent(new TweenEvent(TweenEvent.FINISH))
+      dispatchEvent(new TweenEvent(TweenEvent.FINISH, _target))
     }
     
     private function jump(forward:Boolean):void {      
       _target[_property] = (forward) ? _finish : _begin
       _timer.stop()
       
-      dispatchEvent(new TweenEvent(TweenEvent.CHANGE))
+      dispatchEvent(new TweenEvent(TweenEvent.CHANGE, _target))
       complete(new TimerEvent(TimerEvent.TIMER_COMPLETE))
     }
     
@@ -164,7 +164,7 @@ package com.soren.exib.effect {
       
       _target[_property] = _easing.call(null, time, _begin, _finish, total)
       
-      dispatchEvent(new TweenEvent(TweenEvent.CHANGE))
+      dispatchEvent(new TweenEvent(TweenEvent.CHANGE, _target))
     }
   }
 }
