@@ -11,7 +11,6 @@ package com.soren.exib.effect {
 
   import fl.transitions.Tween
   import fl.transitions.TweenEvent
-  import fl.transitions.easing.*
   import flash.events.Event
   import flash.events.EventDispatcher
   import flash.filters.BlurFilter
@@ -21,6 +20,7 @@ package com.soren.exib.effect {
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.core.Space
   import com.soren.exib.debug.Log
+  import com.soren.exib.effect.easing.*
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
 
@@ -799,31 +799,94 @@ package com.soren.exib.effect {
         case 'bounce_out':
           easing_method = Bounce.easeOut
           break
+        case 'circular_in':
+          easing_method = Circular.easeIn
+          break
+        case 'circular_out':
+          easing_method = Circular.easeOut
+          break
+        case 'circular_in_out':
+          easing_method = Circular.easeInOut
+          break
+        case 'cubic_in':
+          easing_method = Cubic.easeIn
+          break
+        case 'cubic_out':
+          easing_method = Cubic.easeOut
+          break
+        case 'cubic_in_out':
+          easing_method = Cubic.easeInOut
+          break
+        case 'elastic_in':
+          easing_method = Elastic.easeIn
+          break
+        case 'elastic_out':
+          easing_method = Elastic.easeOut
+          break
+        case 'elastic_in_out':
+          easing_method = Elastic.easeInOut
+          break
+        case 'exponential_in':
+          easing_method = Exponential.easeIn
+          break
+        case 'exponential_out':
+          easing_method = Exponential.easeOut
+          break
+        case 'exponential_in_out':
+          easing_method = Exponential.easeInOut
+          break
         case 'linear_in':
-          easing_method = Regular.easeIn
+          easing_method = Linear.easeIn
           break
         case 'linear_in_out':
-          easing_method = Regular.easeInOut
+          easing_method = Linear.easeInOut
           break
         case 'linear_out':
-          easing_method = Regular.easeOut
+          easing_method = Linear.easeOut
+          break
+        case 'quad_in':
+          easing_method = Quad.easeIn
+          break
+        case 'quad_in_out':
+          easing_method = Quad.easeInOut
+          break
+        case 'quad_out':
+          easing_method = Quad.easeOut
+          break
+        case 'quart_in':
+          easing_method = Quart.easeIn
+          break
+        case 'quart_in_out':
+          easing_method = Quart.easeInOut
+          break
+        case 'quart_out':
+          easing_method = Quart.easeOut
           break
         case 'quint_in':
-          easing_method = Strong.easeIn
+          easing_method = Quint.easeIn
           break
         case 'quint_in_out':
-          easing_method = Strong.easeInOut
+          easing_method = Quint.easeInOut
           break
         case 'quint_out':
-          easing_method = Strong.easeOut
+          easing_method = Quint.easeOut
           break
         case 'sine_in':
-          easing_method = Strong.easeIn
+          easing_method = Sine.easeIn
           break
         case 'sine_in_out':
-          easing_method = Strong.easeInOut
+          easing_method = Sine.easeInOut
           break
         case 'sine_out':
+          easing_method = Sine.easeOut
+          break
+        case 'strong_in':
+          easing_method = Strong.easeIn
+          break
+        case 'strong_in_out':
+          easing_method = Strong.easeInOut
+          break
+        case 'strong_out':
           easing_method = Strong.easeOut
           break
       }
