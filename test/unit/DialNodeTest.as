@@ -42,13 +42,13 @@ package unit {
       
       var dial_node:DialNode = new DialNode(_graphic_url)
       
-      assertEquals(0, dial_node.positions)
+      assertEquals(0, dial_node.numPositions)
       
-      dial_node.add(act_set_a)
-      assertEquals(1, dial_node.positions)
+      dial_node.add(0, act_set_a)
+      assertEquals(1, dial_node.numPositions)
       
-      dial_node.add(act_set_c)
-      assertEquals(2, dial_node.positions)
+      dial_node.add(180, act_set_c)
+      assertEquals(2, dial_node.numPositions)
     }
   }
 }
