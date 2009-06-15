@@ -84,6 +84,13 @@ package unit {
 	 	 assertEquals(5, vm['min'])
 	 	}
 	 	
+	 	public function testToString():void {
+	 	  var vm:ValueModel = new ValueModel(0, 0, 10)
+	 	  assertEquals(vm.toString(), vm.value)
+	 	  vm.value = 5
+	 	  assertEquals(vm.toString(), vm.value)
+	 	}
+	 	
 	 	// ---
 	 	
 	 	private function changeListener(event:Event):void {

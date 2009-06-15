@@ -17,7 +17,9 @@ package com.soren.exib.model {
     
     public static var CHANGED:String = 'CHANGED'
     
-    public function Model() {}
+    public function Model() {
+      throw new Error('Abstract class only. Class must be extended.')
+    }
     
     protected function dispatch():void {
       dispatchEvent(new Event(Model.CHANGED))
@@ -28,6 +30,6 @@ package com.soren.exib.model {
     public function get value():* {}
     public function set value(value:*):void {}
     public function reset():void {}
-    public override function toString():String { return '' }
+    public override function toString():String { return this.value }
   }
 }
