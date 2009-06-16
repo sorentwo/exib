@@ -466,7 +466,7 @@ package com.soren.exib.core {
       // Matching doesn't actually remove the strings, this will.
       statement = statement.replace(group_pattern, '')
       
-      var ungrouped_pattern:RegExp = /(?P<operator>^|and|or)\s?(?P<condition>[\w_@#$+*]+\s+[!<>=]{1,2}\s+[\w_@#$+*]+)/g
+      var ungrouped_pattern:RegExp = /(?P<operator>^|and|or)\s?(?P<condition>[\w_@#$+*.\[\]]+\s+[!<>=]{1,2}\s+[\w_@#$+*.\[\]]+)/g
       var ungrouped:Object = ungrouped_pattern.exec(statement)
       
       while (ungrouped) {
@@ -483,17 +483,31 @@ package com.soren.exib.core {
     }
     
     private function genCondition(statement:String):Conditional {
-      var pattern:RegExp = /^(?P<operand_one>[\w_@#$+*]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w_@#$+*]+)$/
-      var parsed:Object = pattern.exec(statement)
-
-      parsed.operand_one = (_space.has(parsed.operand_one))
-                         ? _space.get(parsed.operand_one)
-                         : parsed.operand_one
-      parsed.operand_two = (_space.has(parsed.operand_two))
-                         ? _space.get(parsed.operand_two)
-                         : parsed.operand_two
-
-      return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
+      var cond_pattern:RegExp = /^(?P<operand_one>.+?)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>.+)$/
+      var eval_pattern:RegExp = /^(?P<model>.+?)(\.(?P<method>\w+))?(\[(?P<index>\d+)\])?$/
+      
+      var parsed:Object     = cond_pattern.exec(statement)
+      var broken_one:Object = eval_pattern.exec(parsed.operand_one)
+      var broken_two:Object = eval_pattern.exec(parsed.operand_two)
+      
+      var operand_one:Object, operand_two:Object
+      
+      broken_one.index = (broken_one.index) ? int(broken_one.index) : -1
+      broken_two.index = (broken_two.index) ? int(broken_two.index) : -1
+      
+      if (_space.has(broken_one.model)) {
+        operand_one = new Evaluator(_space.get(broken_one.model), broken_one.method, broken_one.index)
+      } else {
+        operand_one = broken_one.model
+      }
+      
+      if (_space.has(broken_two.model)) {
+        operand_two = new Evaluator(_space.get(broken_two.model), broken_two.method, broken_two.index)
+      } else {
+        operand_two = broken_two.model
+      }
+      
+      return new Conditional(operand_one, parsed.operator, operand_two)
     }
     
     private function parseQueueMember(member_string:String):Object {

@@ -3,8 +3,9 @@ package generator {
   import asunit.framework.TestCase
   import flash.display.Sprite
   import com.soren.exib.core.*
+  import com.soren.exib.debug.Log
   import com.soren.exib.helper.*
-  import com.soren.exib.model.StateModel
+  import com.soren.exib.model.*
 
   public class HelperGeneratorTest extends TestCase {
 
@@ -56,11 +57,40 @@ package generator {
                              ]
                       
       for each (var true_con:String in true_cons) {
-        assertTrue(_generator.genConditionalSet(true_con).evaluate())
+        try {
+          assertTrue(_generator.genConditionalSet(true_con).evaluate())
+        } catch (e:Error) {
+          throw new Error(true_con)
+        }
+        
       }
       
       for each (var false_con:String in false_cons) {
         assertFalse(_generator.genConditionalSet(false_con).evaluate())
+      }
+    }
+    
+    public function testGenEvaluator():void {
+      var _vm_a:ValueModel = new ValueModel(0,0,1)
+      var _vm_b:ValueModel = new ValueModel(1,0,1)
+      var _pre:PresetModel = new PresetModel()
+      
+      _pre.watch(_vm_a)
+      _pre.watch(_vm_b)
+      _pre.save()
+      
+      _space.add(_vm_a, '_vm_a')
+      _space.add(_vm_b, '_vm_b')
+      _space.add(_pre,  '_pre')
+      
+      var true_cons:Array = ['_vm_a.value == 0',
+                             '_vm_a.max == 1',
+                             '_vm_a.min == _vm_b.min',
+                             '_pre.value[0] == 0',
+                             '_pre.value[1] == _vm_b']
+
+      for each (var true_con:String in true_cons) {
+        assertTrue(_generator.genConditionalSet(true_con).evaluate())
       }
     }
   }
