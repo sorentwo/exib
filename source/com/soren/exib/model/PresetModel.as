@@ -63,7 +63,7 @@ package com.soren.exib.model {
     * 
     * @param  new_model   A new model that implements the IModel interface
     **/
-    public function watch(new_model:IModel):void {
+    public function watch(new_model:Model):void {
       for each (var watched:Object in _watched) {
         if (watched.model == new_model) {
           throw new Error("Model: " + new_model + " already registered")

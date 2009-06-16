@@ -17,9 +17,7 @@ package com.soren.exib.model {
     
     public static var CHANGED:String = 'CHANGED'
     
-    public function Model() {
-      throw new Error('Abstract class only. Class must be extended.')
-    }
+    public function Model() {}
     
     protected function dispatch():void {
       dispatchEvent(new Event(Model.CHANGED))
