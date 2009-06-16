@@ -411,9 +411,6 @@ package com.soren.exib.core {
       return object
     }
     
-    /**
-    * @private
-    **/
     private function convertType(element:*):* {
       if (/^\d+$/.test(element))           return int(element)
       if (/^[\d\.]+$/.test(element))       return Number(element)
@@ -433,9 +430,6 @@ package com.soren.exib.core {
       return String(element)
     }
     
-    /**
-    * @private
-    **/
     private function parseAction(action_string:String):Object {
       var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*?)\)(\s+if\s+(?P<conditional>.*))?$/
       if (!action_pattern.test(action_string)) throw new Error(action_string)
@@ -458,9 +452,6 @@ package com.soren.exib.core {
       return parsed
     }
     
-    /**
-    * @private
-    **/
     private function genSubset(statement:String):ConditionalSet {
       var set:ConditionalSet = new ConditionalSet()
 
@@ -486,17 +477,11 @@ package com.soren.exib.core {
       return set
     }
     
-    /**
-    * @private
-    **/
     private function resolveOperator(operator:*):uint {
       operator = operator || 'and'
       return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
     }
     
-    /**
-    * @private
-    **/
     private function genCondition(statement:String):Conditional {
       var pattern:RegExp = /^(?P<operand_one>[\w_@#$+*]+)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>[\w_@#$+*]+)$/
       var parsed:Object = pattern.exec(statement)
@@ -511,9 +496,6 @@ package com.soren.exib.core {
       return new Conditional(parsed.operand_one, parsed.operator, parsed.operand_two)
     }
     
-    /**
-    * @private
-    **/
     private function parseQueueMember(member_string:String):Object {
       var member_pattern:RegExp = /^(?P<effect>[a-z]+)\s*?\(\s*?(?P<targets>\[.*\])(\s*?,\s*?)?(?P<options>\{.*\})?(,\s*?)?(?P<wait>\.?\d+)?\)/
       var parsed:Object = member_pattern.exec(member_string)
@@ -525,9 +507,6 @@ package com.soren.exib.core {
       return parsed
     }
     
-    /**
-    * @private
-    **/
     private function retrieveActionable(actionable_id:String):IActionable {
       return _space.get(actionable_id)
     }
