@@ -251,8 +251,12 @@ package com.soren.exib.core {
         }
         
         if (new_node) {
-          if (multi) { (container as MultiNode).add(genConditionalSet(xml.@when.toString()), new_node) }
-          else       { container.addChild(new_node) }
+          if (multi) {
+            if (xml.@when.toString() == 'default') { (container as MultiNode).setDefault(new_node) }
+            else { (container as MultiNode).add(genConditionalSet(xml.@when.toString()), new_node) }
+          } else {
+            container.addChild(new_node)
+          }
         }
         
         if (xml.@pos   != undefined) new_node.position(xml.@pos)

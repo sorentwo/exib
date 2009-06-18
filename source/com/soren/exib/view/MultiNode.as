@@ -16,6 +16,7 @@ package com.soren.exib.view {
   public class MultiNode extends Node implements IMultiNode {
     
     protected var _possibilities:Array = []
+    protected var _default:Node
     
     /**
     * Constructs a new MultiNode instance. The node will be invisible and unused
@@ -38,18 +39,27 @@ package com.soren.exib.view {
       update()
     }
     
+    public function setDefault(node:Node):void {
+      _default = node
+      update()
+    }
+    
     /**
     * Update will refresh the node's children, showing the first node that has a
     * true condition.
     **/
     override public function update():void {
       unloadAll()
+      var possibility_matched:Boolean = false
       for each (var possibility:Object in _possibilities) {
         if (possibility.conditional_set.evaluate()) {
           load(possibility.node)
+          possibility_matched = true
           break
         }
       }
+      
+      if (!possibility_matched && _default) load(_default)
     }
     
     // ---
