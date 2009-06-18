@@ -110,7 +110,7 @@ package com.soren.exib.core {
       if (Boolean(xml.event_action))    event_set    = genActionSet(xml.event_action)
       if (Boolean(xml.complete_action)) complete_set = genActionSet(xml.complete_action)
       if (Boolean(xml.complete_when))   conditionals = genConditionalSet(xml.complete_when)
-      
+
       return new Daemon(uint(xml.@delay), event_set, complete_set, conditionals)
     }
     
@@ -159,7 +159,7 @@ package com.soren.exib.core {
 
       if (statement != '') { superset = genSubset(statement) }
       else {                 superset = new ConditionalSet() }
-
+      
       return superset
     }
     
@@ -466,9 +466,9 @@ package com.soren.exib.core {
       // Matching doesn't actually remove the strings, this will.
       statement = statement.replace(group_pattern, '')
       
-      var ungrouped_pattern:RegExp = /(?P<operator>^|and|or)\s?(?P<condition>[\w_@#$+*.\[\]]+\s+[!<>=]{1,2}\s+[\w_@#$+*.\[\]]+)/g
+      var ungrouped_pattern:RegExp = /(?P<operator>^|and|or)\s*(?P<condition>[\w_@#$+*.\[\]]+\s+[!<>=]{1,2}\s+[\w_@#$+*.\[\]]+)/g
       var ungrouped:Object = ungrouped_pattern.exec(statement)
-      
+
       while (ungrouped) {
         set.push(genCondition(ungrouped.condition), resolveOperator(ungrouped.operator))
         ungrouped = ungrouped_pattern.exec(statement)
@@ -476,12 +476,7 @@ package com.soren.exib.core {
 
       return set
     }
-    
-    private function resolveOperator(operator:*):uint {
-      operator = operator || 'and'
-      return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
-    }
-    
+        
     private function genCondition(statement:String):Conditional {
       var cond_pattern:RegExp = /^(?P<operand_one>.+?)[\s\t]?(?P<operator>[!<>=]{1,2})[\s\t]?(?P<operand_two>.+)$/
       var eval_pattern:RegExp = /^(?P<model>.+?)(\.(?P<method>\w+))?(\[(?P<index>\d+)\])?$/
@@ -500,14 +495,19 @@ package com.soren.exib.core {
       } else {
         operand_one = broken_one.model
       }
-      
+
       if (_space.has(broken_two.model)) {
         operand_two = new Evaluator(_space.get(broken_two.model), broken_two.method, broken_two.index)
       } else {
         operand_two = broken_two.model
       }
-      
+
       return new Conditional(operand_one, parsed.operator, operand_two)
+    }
+    
+    private function resolveOperator(operator:*):uint {
+      operator = operator || 'and'
+      return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
     }
     
     private function parseQueueMember(member_string:String):Object {
