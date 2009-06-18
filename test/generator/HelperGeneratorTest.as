@@ -40,13 +40,16 @@ package generator {
       var _car:StateModel     = new StateModel('slow', 'fast')
       var _men:StateModel     = new StateModel('darlings', 'pigs')
       var _fairies:StateModel = new StateModel('real', 'imaginary')
+      var _startup:StateModel = new StateModel('true', 'false')
       
       _space.add(_power,   '_power')
       _space.add(_car,     '_car')
       _space.add(_men,     '_men')
       _space.add(_fairies, '_fairies')
+      _space.add(_startup, '_startup')
       
-      var true_cons:Array =  ['_power == on and _car == slow',
+      var true_cons:Array =  [' _startup == true',
+                              '_power == on and _car == slow',
                               '(_power == on) and (_car == slow)',
                               '(_power == on and _car == slow) and (_men == darlings or _power != off)',
                               '(_power == on and _car == slow) or (_power == off and _car == fast)'
@@ -57,12 +60,7 @@ package generator {
                              ]
                       
       for each (var true_con:String in true_cons) {
-        try {
-          assertTrue(_generator.genConditionalSet(true_con).evaluate())
-        } catch (e:Error) {
-          throw new Error(true_con)
-        }
-        
+        assertTrue(_generator.genConditionalSet(true_con).evaluate())
       }
       
       for each (var false_con:String in false_cons) {
