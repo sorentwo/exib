@@ -141,6 +141,8 @@ package com.soren.exib.helper {
       var operands:Array = [_operand_one, _operand_two]
       
       for each (var operand:* in operands) {
+        if (operand is Evaluator) operand = operand.evaluatable
+        
         if (!(operand is EventDispatcher)) continue
         if (add) { operand.addEventListener(EVENT_TYPE, listener)
         } else   { operand.removeEventListener(EVENT_TYPE, listener) }

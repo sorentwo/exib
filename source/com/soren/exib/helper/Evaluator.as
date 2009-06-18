@@ -34,5 +34,9 @@ package com.soren.exib.helper {
       var temp_value:* = (!_method) ? _evaluatable.value : _evaluatable[_method]
       return (_index == -1) ? temp_value : temp_value[_index]
     }
+    
+    public function get evaluatable():IEvaluatable { return _evaluatable }
+    public function get method():String            { return _method      }
+    public function get index():int                { return _index       }
   }
 }
