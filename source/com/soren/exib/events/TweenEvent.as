@@ -8,10 +8,7 @@ package com.soren.exib.events {
   
   public class TweenEvent extends Event {
     
-    public static const CHANGE:String = 'change'
     public static const FINISH:String = 'finish'
-    public static const START:String  = 'start'
-    public static const STOP:String   = 'stop'
     
     private var _target:Object
     
