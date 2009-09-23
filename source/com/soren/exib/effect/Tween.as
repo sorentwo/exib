@@ -9,12 +9,10 @@ package com.soren.exib.effect {
   
   import flash.display.Stage
   import flash.events.Event
-  import flash.events.EventDispatcher
   import flash.utils.Dictionary
-  import com.soren.exib.events.TweenEvent
   import com.soren.exib.view.Node
   
-  public class Tween extends EventDispatcher {
+  public class Tween {
     
     private static var _tween:Tween      = new Tween()
     private static var _list:Array       = new Array()
@@ -150,7 +148,7 @@ package com.soren.exib.effect {
         if ((tween_object.yoyoing == false && tween_object.frame == tween_object.total_frames) ||
             (tween_object.yoyoing == true  && tween_object.frame == 0)) {
           if (tween_object.yoyo_count > 0) { yoyo(tween_object)     }
-          else                             { complete(tween_object) }
+          else                             { remove(tween_object) }
         }
       }
     }
@@ -179,7 +177,7 @@ package com.soren.exib.effect {
       tween_object.target[tween_object.property] = (forward) ? tween_object.finish : tween_object.begin
       tween_object.frame = tween_object.total_frames
       
-      complete(tween_object)
+      remove(tween_object)
     }
 
     /**
@@ -197,15 +195,6 @@ package com.soren.exib.effect {
     private function togglePause(target:Node = null, toggle:Boolean = true):void {
       var to_pause:Array = (target) ? findTweensByTarget(target) : _list
       for each (var tween_object:TweenObject in to_pause) { tween_object.paused = toggle }
-    }
-    
-    /**
-    * Dispatch the complete event and remove the object from tracking
-    **/
-    private function complete(tween_object:TweenObject):void {
-      remove(tween_object)
-      
-      dispatchEvent(new TweenEvent(TweenEvent.FINISH, tween_object.target))
     }
     
     /**
