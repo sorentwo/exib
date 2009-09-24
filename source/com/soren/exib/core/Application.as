@@ -10,9 +10,10 @@
 package com.soren.exib.core {
 
   import flash.display.Sprite
+  import flash.events.Event
   import flash.utils.ByteArray
   import com.soren.exib.debug.Log
-  import com.soren.exib.effect.Effect
+  import com.soren.exib.effect.*
   import com.soren.exib.view.*
   
   public class Application extends Sprite {
@@ -39,9 +40,10 @@ package com.soren.exib.core {
     **/
     public function start(ConfigEXML:Class, pools:Array):void {
       for each (var pool_pattern:RegExp in pools) {
-        Space.getSpace().createPool(pool_pattern)
+        _space.createPool(pool_pattern)
       }
       
+      // Logging
       Log.getLog().level = Log.DEBUG
       Log.getLog().throwOnError = true
       Log.getLog().clear()
@@ -49,10 +51,23 @@ package com.soren.exib.core {
       Log.getLog().debug('Extended XML Interface Builder :: Version ' + Version.version())
       Log.getLog().debug('=============================================')
       
+      // Listener for presence on the stage. Necessary for tweening.
+      addEventListener(Event.ADDED_TO_STAGE, registerStageForTween)
+      
+      // XML Processing
       process(getXMLFromEmbeddedClass(ConfigEXML))
     }
 
     // ---
+    
+    /**
+    * @private
+    * 
+    * Register the stage to the tween class
+    **/
+    private function registerStageForTween(event:Event):void {
+      Tween.getTween().registerStage(stage)
+    }
     
     /**
     * @private
