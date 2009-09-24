@@ -9,10 +9,14 @@ package com.soren.exib.effect {
   
   import flash.display.Stage
   import flash.events.Event
+  import flash.filters.BlurFilter
+  import flash.filters.GlowFilter
   import flash.utils.Dictionary
   import com.soren.exib.view.Node
   
   public class Tween {
+    
+    private static const KNOWN_FILTERS:RegExp = /blur_x|blur_y|glow_alpha|glow_blur/
     
     private static var _tween:Tween      = new Tween()
     private static var _list:Array       = new Array()
@@ -61,13 +65,16 @@ package com.soren.exib.effect {
                         yoyo_count:uint = 0):void {
       
       var total_frames:uint = uint(duration * _fps)
-      var frame:uint        = 0
+      var frame:uint = 0
       
       // Ensure that there is only one tween active at a time per-target-property
       var existing_tween:TweenObject = findTweenByTargetAndProperty(target, property)
       if (existing_tween) remove(existing_tween)
       
-      var new_tween:TweenObject = new TweenObject(target, property, easing, begin, finish, total_frames, frame, yoyo_count)
+      var new_tween:TweenObject = new TweenObject(target, property, easing, begin, finish, total_frames, frame, yoyo_count)      
+      
+      // Check whether or not this tween is a filter tween.
+      new_tween.filtering = KNOWN_FILTERS.test(property)
       
       // Double referenced. Needed for looping + anti-garbage-collection
       _list.push(new_tween)
@@ -166,6 +173,22 @@ package com.soren.exib.effect {
       var ease:Number   = tween_object.easing.call(null, time, begin, finish, total)
       
       tween_object.target[tween_object.property] = ease
+      
+      if (tween_object.filtering) renderFilter(tween_object)
+    }
+    
+    /**
+    * Render the property as a filter, not a standard property.
+    **/
+    private function renderFilter(tween_object:TweenObject):void {
+      var node:Node = tween_object.target
+      
+      switch (tween_object.property) {
+        case 'blur_x': 
+        case 'blur_y':      node.filters = [new BlurFilter(node.blur_x, node.blur_y, 2)]; break
+        case 'glow_alpha':
+        case 'glow_blur':   node.filters = [new GlowFilter(node.glow_color, node.glow_alpha, node.glow_blur, node.glow_blur, 2, 2, false, false)]; break
+      }
     }
     
     /**

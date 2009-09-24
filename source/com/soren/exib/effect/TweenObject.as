@@ -19,8 +19,9 @@ package com.soren.exib.effect {
     
     private var _frame:uint
     private var _yoyo_count:uint
-    private var _paused:Boolean  = false
-    private var _yoyoing:Boolean = false
+    private var _paused:Boolean    = false
+    private var _yoyoing:Boolean   = false
+    private var _filtering:Boolean = false
     
     public function TweenObject(target:Node, property:String, easing:Function,
                                 begin:Number, finish:Number, total_frames:uint,
@@ -62,6 +63,14 @@ package com.soren.exib.effect {
     }
     
     // Read / Write
+    public function get filtering():Boolean {
+      return _filtering
+    }
+    
+    public function set filtering(is_filtering:Boolean):void {
+      _filtering = is_filtering
+    }
+
     public function get frame():uint {
       return _frame
     }

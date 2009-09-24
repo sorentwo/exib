@@ -9,12 +9,9 @@
 
 package com.soren.exib.effect {
 
-  import flash.filters.BlurFilter
-  import flash.filters.GlowFilter
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.core.Space
-  import com.soren.exib.debug.Log
   import com.soren.exib.effect.easing.*
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
@@ -100,25 +97,13 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) {
-        /*if (options.hasOwnProperty('blur_x_from')) {
-          var blur_x:Tween = new Tween(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
-          
-          blur_x.addEventListener(TweenEvent.CHANGE, blurTweenUpdate)
-          blur_x.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
-          blur_x.start()
-          
-          _blur_tweens[blur_x] = blur_x
+        if (options.hasOwnProperty('blur_x_from')) {
+          _tween.add(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
         }
         
         if (options.hasOwnProperty('blur_y_from')) {
-          var blur_y:Tween = new Tween(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
-          
-          blur_y.addEventListener(TweenEvent.CHANGE, blurTweenUpdate)
-          blur_y.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
-          blur_y.start()
-          
-          _blur_tweens[blur_y] = blur_y
-        }*/
+          _tween.add(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
+        }
       }
     }
 
@@ -193,20 +178,9 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
       
       for each (var node:Node in targets) {
-        /*node.glow_color = uint(options['glow_color'])
-        var glow_blur:Tween  = new Tween(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'])
-        var glow_alpha:Tween = new Tween(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
-
-        glow_blur.addEventListener(TweenEvent.CHANGE, glowTweenUpdate)
-        glow_blur.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
-        glow_blur.start()
-        
-        glow_alpha.addEventListener(TweenEvent.CHANGE, glowTweenUpdate)
-        glow_alpha.addEventListener(TweenEvent.FINISH, tweenCompleteListener)
-        glow_alpha.start()
-        
-        _glow_tweens[glow_blur]  = glow_blur
-        _glow_tweens[glow_alpha] = glow_alpha*/
+        node.glow_color = uint(options['glow_color'])
+        _tween.add(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'])
+        _tween.add(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
       }
     }
     
@@ -651,40 +625,6 @@ package com.soren.exib.effect {
         _tween.stop()
       }
     }
-
-    // ---
-    
-    /**
-    * Clear all of a particular type of filter.
-    **/
-    private function clearFilters(node:Node, klass:Class):void {
-      for (var i:int = 0; i < node.filters.length; i++) {
-        if (node.filters[i] is klass) node.filters.splice(i, 1)
-      }
-    }
-    
-    /**
-    * Called by a blur tween's motion change event. Responsible for updating the
-    * node's blur level.
-    **/
-    /*private function blurTweenUpdate(event:TweenEvent):void {
-      var node:Node = event.target.obj as Node
-      
-      //clearFilters(node, BlurFilter)
-      node.filters = [new BlurFilter(node.blur_x, node.blur_y, 2)]
-    }*/
-    
-    /**
-    * Called by a glow tween's motion change event. Responsible for updating the
-    * node's glow level.
-    **/
-    /*private function glowTweenUpdate(event:TweenEvent):void {
-      var node:Node = event.target.obj as Node
-      var inner:Boolean, knockout:Boolean = false
-
-      //clearFilters(node, GlowFilter)
-      node.filters = [new GlowFilter(node.glow_color, node.glow_alpha, node.glow_blur, node.glow_blur, 2, 2, inner, knockout)]
-    }*/
     
     // ---
     
