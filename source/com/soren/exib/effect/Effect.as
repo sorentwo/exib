@@ -9,22 +9,14 @@
 
 package com.soren.exib.effect {
 
-  import fl.transitions.Tween
-  import fl.transitions.TweenEvent
-  import fl.transitions.easing.*
-  import flash.events.Event
-  import flash.events.EventDispatcher
-  import flash.filters.BlurFilter
-  import flash.filters.GlowFilter
-  import flash.utils.Dictionary
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.core.Space
-  import com.soren.exib.debug.Log
+  import com.soren.exib.effect.easing.*
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
 
-  public class Effect extends EventDispatcher implements IActionable {
+  public class Effect implements IActionable {
     
     public static const EFFECT_COMPLETE:String  = 'effect_complete'
     
@@ -50,18 +42,7 @@ package com.soren.exib.effect {
     private static const MODEL_PATTERN:RegExp = /^(_\w+)$/
 
     private var _screen_controller:ScreenController
-
-    private var _blur_tweens:Dictionary  = new Dictionary()
-    private var _fade_tweens:Dictionary  = new Dictionary()
-    private var _glow_tweens:Dictionary  = new Dictionary()
-    private var _scale_tweens:Dictionary = new Dictionary()
-    private var _slide_tweens:Dictionary = new Dictionary()
-    private var _spin_tweens:Dictionary  = new Dictionary()
-    private var _pulse_tweens:Dictionary = new Dictionary()
-    private var _active_tweens:Array = [
-      _blur_tweens, _fade_tweens, _glow_tweens, _scale_tweens, _slide_tweens,
-      _spin_tweens,_pulse_tweens
-    ]
+    private var _tween:Tween = Tween.getTween()
 
     /**
     * Create an instance of the Effect class and optionally define its association
@@ -117,17 +98,11 @@ package com.soren.exib.effect {
 
       for each (var node:Node in targets) {
         if (options.hasOwnProperty('blur_x_from')) {
-          var blur_x:Tween = new Tween(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'], true)
-          blur_x.addEventListener(TweenEvent.MOTION_CHANGE, blurTweenUpdate)
-          blur_x.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-          _blur_tweens[blur_x] = blur_x
+          _tween.add(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
         }
         
         if (options.hasOwnProperty('blur_y_from')) {
-          var blur_y:Tween = new Tween(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'], true)
-          blur_y.addEventListener(TweenEvent.MOTION_CHANGE, blurTweenUpdate)
-          blur_y.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-          _blur_tweens[blur_y] = blur_y
+          _tween.add(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
         }
       }
     }
@@ -163,11 +138,7 @@ package com.soren.exib.effect {
 
       for each (var node:Node in targets) {
         if (!node.visible) node.visible = true
-        
-        var fade_tween:Tween = new Tween(node, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'], true)
-            fade_tween.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-        
-        _fade_tweens[fade_tween] = fade_tween
+        _tween.add(node, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'])
       }
     }
     
@@ -208,14 +179,8 @@ package com.soren.exib.effect {
       
       for each (var node:Node in targets) {
         node.glow_color = uint(options['glow_color'])
-        var glow_blur:Tween  = new Tween(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'], true)
-        var glow_alpha:Tween = new Tween(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'], true)
-
-        glow_blur.addEventListener(TweenEvent.MOTION_CHANGE, glowTweenUpdate)
-        glow_alpha.addEventListener(TweenEvent.MOTION_CHANGE, glowTweenUpdate)
-        glow_blur.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-        glow_alpha.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-        _glow_tweens[glow_blur] = glow_blur
+        _tween.add(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'])
+        _tween.add(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
       }
     }
     
@@ -361,14 +326,8 @@ package com.soren.exib.effect {
       options = mergeOptions(options)
       targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
-        node.pulse_alpha = node.alpha
-        node.pulse_count = 0
-        node.pulse_total = uint(options['times'])
-        
-        var pulse:Tween = new Tween(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], true)
-        pulse.addEventListener(TweenEvent.MOTION_FINISH, pulseTweenFinish)
-        _pulse_tweens[pulse] = pulse
+      for each (var node:Node in targets) {    
+        _tween.add(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], uint(options['times']))
       }
     }
     
@@ -497,12 +456,8 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
 
       for each (var node:Node in targets) {
-        var scale_x:Tween = new Tween(node, 'scaleX', options['easing'], node.scaleX, Number(options['scale']), options['duration'], true)
-        var scale_y:Tween = new Tween(node, 'scaleY', options['easing'], node.scaleY, Number(options['scale']), options['duration'], true)
-        scale_y.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-        scale_x.addEventListener(TweenEvent.MOTION_FINISH, tweenCompleteListener)
-        _scale_tweens[scale_x] = scale_x
-        _scale_tweens[scale_y] = scale_y
+        _tween.add(node, 'scaleX', options['easing'], node.scaleX, Number(options['scale']), options['duration'])
+        _tween.add(node, 'scaleY', options['easing'], node.scaleY, Number(options['scale']), options['duration'])
       }
     }
     
@@ -609,17 +564,15 @@ package com.soren.exib.effect {
         if (options.hasOwnProperty('start_x')) {
           var start_x:int   = (options['relative']) ? node.x + int(options['start_x']) : options['start_x']
           var end_x:int     = (options['relative']) ? node.x + int(options['end_x'])   : options['end_x']
-          var slide_x:Tween = new Tween(node, 'x', options['easing'], start_x, end_x, options['duration'], true)
-          slide_x.addEventListener(TweenEvent.MOTION_CHANGE, tweenCompleteListener)
-          _slide_tweens[slide_x] = slide_x
+          
+          _tween.add(node, 'x', options['easing'], start_x, end_x, options['duration'])
         }
 
         if (options.hasOwnProperty('start_y')) {
-          var start_y:uint = (options['relative']) ? node.y + int(options['start_y']) : options['start_y']
-          var end_y:uint   = (options['relative']) ? node.y + int(options['end_y'])   : options['end_y']
-          var slide_y:Tween = new Tween(node, 'y', options['easing'], start_y, end_y, options['duration'], true)
-          slide_y.addEventListener(TweenEvent.MOTION_CHANGE, tweenCompleteListener)
-          _slide_tweens[slide_y] = slide_y
+          var start_y:uint  = (options['relative']) ? node.y + int(options['start_y']) : options['start_y']
+          var end_y:uint    = (options['relative']) ? node.y + int(options['end_y'])   : options['end_y']
+
+          _tween.add(node, 'y', options['easing'], start_y, end_y, options['duration'])
         }
       }
     }
@@ -657,91 +610,20 @@ package com.soren.exib.effect {
       targets = resolveTargets(targets)
       
       for each (var node:Node in targets) {
-        var spin:Tween = new Tween(node, 'rotation', options['easing'], node.rotation, options['spin'], options['duration'], true)
-        spin.addEventListener(TweenEvent.MOTION_CHANGE, tweenCompleteListener)
-        _spin_tweens[spin] = spin
+        _tween.add(node, 'rotation', options['easing'], node.rotation, options['spin'], options['duration'])
       }
     }
 
     /**
-    * Terminate any in-progress effect and set it back to the start point.
+    * Terminate any in-progress effects, or a collection of effects for specified
+    * targets and set them back to the start point.
     **/
-    public function kill(targets:Array = null):void {
-      if (targets) targets = resolveTargets(targets)
-
-      for each (var tween_dict:Dictionary in _active_tweens) {
-        for each (var tween:Tween in tween_dict) {
-          if (!targets || (targets && targets.indexOf(tween.obj) > -1)) {
-            tween.stop()
-            if (tween.obj.pulse_alpha != -1) tween.obj.alpha = tween.obj.pulse_alpha
-                        
-            delete tween_dict[tween]
-          }
-        }
-      }
-    }
-
-    // ---
-    
-    /**
-    * Clear all of a particular type of filter.
-    **/
-    private function clearFilters(node:Node, klass:Class):void {
-      for (var i:int = 0; i < node.filters.length; i++) {
-        if (node.filters[i] is klass) node.filters.splice(i, 1)
-      }
-    }
-    
-    /**
-    * Called by a blur tween's motion change event. Responsible for updating the
-    * node's blur level.
-    **/
-    private function blurTweenUpdate(event:TweenEvent):void {
-      var node:Node = event.target.obj as Node
-      
-      //clearFilters(node, BlurFilter)
-      node.filters = [new BlurFilter(node.blur_x, node.blur_y, 2)]
-    }
-    
-    /**
-    * Called by a glow tween's motion change event. Responsible for updating the
-    * node's glow level.
-    **/
-    private function glowTweenUpdate(event:TweenEvent):void {
-      var node:Node = event.target.obj as Node
-      var inner:Boolean, knockout:Boolean = false
-
-      //clearFilters(node, GlowFilter)
-      node.filters = [new GlowFilter(node.glow_color, node.glow_alpha, node.glow_blur, node.glow_blur, 2, 2, inner, knockout)]
-    }
-    
-    /**
-    * Called by the pulse tween's motion complete event. Will yoyo the effect
-    * until the total pulse count is reached, at which point the tween will be
-    * removed.
-    **/
-    private function pulseTweenFinish(event:TweenEvent):void {
-      var node:Node   = event.target.obj as Node
-      var tween:Tween = event.target as Tween
-      
-      node.pulse_count += 1
-      
-      if (node.pulse_count == node.pulse_total) {
-        tweenCompleteListener(event)
+    public function stop(targets:Array = null):void {
+      if (targets) {
+        for each (var node:Node in resolveTargets(targets)) { _tween.stop(node) }
       } else {
-        tween.yoyo()
+        _tween.stop()
       }
-    }
-    
-    /**
-    * Removes completed tweens from their collections.
-    **/
-    private function tweenCompleteListener(event:TweenEvent):void {
-      for each (var tween_dict:Dictionary in _active_tweens) {
-        if (tween_dict.hasOwnProperty(event.target)) delete tween_dict[event.target]
-      }
-      
-      dispatchEvent(new Event(Effect.EFFECT_COMPLETE))
     }
     
     // ---
@@ -803,31 +685,94 @@ package com.soren.exib.effect {
         case 'bounce_out':
           easing_method = Bounce.easeOut
           break
+        case 'circular_in':
+          easing_method = Circular.easeIn
+          break
+        case 'circular_out':
+          easing_method = Circular.easeOut
+          break
+        case 'circular_in_out':
+          easing_method = Circular.easeInOut
+          break
+        case 'cubic_in':
+          easing_method = Cubic.easeIn
+          break
+        case 'cubic_out':
+          easing_method = Cubic.easeOut
+          break
+        case 'cubic_in_out':
+          easing_method = Cubic.easeInOut
+          break
+        case 'elastic_in':
+          easing_method = Elastic.easeIn
+          break
+        case 'elastic_out':
+          easing_method = Elastic.easeOut
+          break
+        case 'elastic_in_out':
+          easing_method = Elastic.easeInOut
+          break
+        case 'exponential_in':
+          easing_method = Exponential.easeIn
+          break
+        case 'exponential_out':
+          easing_method = Exponential.easeOut
+          break
+        case 'exponential_in_out':
+          easing_method = Exponential.easeInOut
+          break
         case 'linear_in':
-          easing_method = Regular.easeIn
+          easing_method = Linear.easeIn
           break
         case 'linear_in_out':
-          easing_method = Regular.easeInOut
+          easing_method = Linear.easeInOut
           break
         case 'linear_out':
-          easing_method = Regular.easeOut
+          easing_method = Linear.easeOut
+          break
+        case 'quad_in':
+          easing_method = Quad.easeIn
+          break
+        case 'quad_in_out':
+          easing_method = Quad.easeInOut
+          break
+        case 'quad_out':
+          easing_method = Quad.easeOut
+          break
+        case 'quart_in':
+          easing_method = Quart.easeIn
+          break
+        case 'quart_in_out':
+          easing_method = Quart.easeInOut
+          break
+        case 'quart_out':
+          easing_method = Quart.easeOut
           break
         case 'quint_in':
-          easing_method = Strong.easeIn
+          easing_method = Quint.easeIn
           break
         case 'quint_in_out':
-          easing_method = Strong.easeInOut
+          easing_method = Quint.easeInOut
           break
         case 'quint_out':
-          easing_method = Strong.easeOut
+          easing_method = Quint.easeOut
           break
         case 'sine_in':
-          easing_method = Strong.easeIn
+          easing_method = Sine.easeIn
           break
         case 'sine_in_out':
-          easing_method = Strong.easeInOut
+          easing_method = Sine.easeInOut
           break
         case 'sine_out':
+          easing_method = Sine.easeOut
+          break
+        case 'strong_in':
+          easing_method = Strong.easeIn
+          break
+        case 'strong_in_out':
+          easing_method = Strong.easeInOut
+          break
+        case 'strong_out':
           easing_method = Strong.easeOut
           break
       }
