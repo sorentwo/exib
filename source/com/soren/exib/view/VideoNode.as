@@ -22,6 +22,7 @@ package com.soren.exib.view {
     private static var _embed_container:*
     
     private var _loop:Boolean
+    private var _hold:Boolean
     private var _persistent:Boolean
     private var _video:MovieClip
 
@@ -34,13 +35,17 @@ package com.soren.exib.view {
     * @param  persistent  If true the clip will be visible at all times. If false
     *                     the clip will be visible when playing and invisible
     *                     otherwise.
+    * @param  hold        If true the clip will remain visible after it plays,
+    *                     but will dissapear when explicitely stopped. This option
+    *                     is incompatible with looping.
     **/
-    public function VideoNode(url:String, loop:Boolean = true, persistent:Boolean = false) {
+    public function VideoNode(url:String, loop:Boolean = true, persistent:Boolean = false, hold:Boolean = false) {
       verifyEmbedContainer()
       validateURL(url)
       
       _loop = loop
       _persistent = persistent
+      _hold = hold
       
       var class_name:String = processUrlIntoClassName(url)
       
@@ -103,8 +108,10 @@ package com.soren.exib.view {
     * Triggered on each frame and loop the video if it has reached the end.
     **/
     private function loopPlaybackListener(event:Event):void {
-      if (_video.currentFrame == _video.totalFrames) {    
-        (_loop) ? _video.gotoAndPlay(0) : this.stop()
+      if (_video.currentFrame == _video.totalFrames) {
+             if (_loop && (_hold || !_hold)) { _video.gotoAndPlay(0)                  }
+        else if (!_loop && _hold)            { _video.gotoAndStop(_video.totalFrames) }
+        else                                 { stop() }
       }
     }
     

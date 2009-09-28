@@ -384,11 +384,12 @@ package com.soren.exib.core {
     
     public function genVideoNode(xml:XML):VideoNode {
       var loop:Boolean = (Boolean(xml.@loop))       ? (xml.@loop.toString() == 'true') ? true : false : false
+      var hold:Boolean = (Boolean(xml.@hold))       ? (xml.@hold.toString() == 'true') ? true : false : false
       var pers:Boolean = (Boolean(xml.@persistent)) ? (xml.@persistent.toString() == 'true') ? true : false : false
       
       // Video is the only node that requires explicite control, because of this
       // it must be added to the global space.
-      var video:VideoNode = new VideoNode(xml.@url, loop, pers)
+      var video:VideoNode = new VideoNode(xml.@url, loop, pers, hold)
       _space.add(video, xml.@id)
       
       return video
@@ -405,7 +406,7 @@ package com.soren.exib.core {
       for each (var element:String in arr) {
         var key_value:Object = /^(?P<key>[a-z_]+):[\s\t]*(?P<value>.*)/.exec(element)
         try {
-          object[key_value.key] = convertType(key_value.value)
+          object[key_value.key] = convertType(key_value.value.replace(/\s/, ''))
         } catch (e:Error) {
           Log.getLog().error('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
         }
