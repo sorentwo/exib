@@ -12,6 +12,7 @@ package com.soren.exib.effect {
   import flash.filters.BlurFilter
   import flash.filters.GlowFilter
   import flash.utils.Dictionary
+  import com.soren.exib.debug.Log
   import com.soren.exib.view.Node
   
   public class Tween {
@@ -20,7 +21,7 @@ package com.soren.exib.effect {
     
     private static var _tween:Tween      = new Tween()
     private static var _list:Array       = new Array()
-    private static var _cache:Dictionary = new Dictionary()
+    private static var _cache:Dictionary = new Dictionary(false)
     
     private static var _stage:Stage
     private static var _fps:Number
@@ -75,7 +76,7 @@ package com.soren.exib.effect {
       
       // Check whether or not this tween is a filter tween.
       new_tween.filtering = KNOWN_FILTERS.test(property)
-      
+
       // Double referenced. Needed for looping + anti-garbage-collection
       _list.push(new_tween)
       _cache[new_tween] = new_tween
@@ -148,13 +149,13 @@ package com.soren.exib.effect {
     **/
     private function update(event:Event):void {
       if (_list.length < 1) return
-      
+
       for each (var tween_object:TweenObject in _list) {
         if (tween_object.paused == false) render(tween_object)
 
         if ((tween_object.yoyoing == false && tween_object.frame == tween_object.total_frames) ||
             (tween_object.yoyoing == true  && tween_object.frame == 0)) {
-          if (tween_object.yoyo_count > 0) { yoyo(tween_object)     }
+          if (tween_object.yoyo_count > 0) { yoyo(tween_object) }
           else                             { remove(tween_object) }
         }
       }
@@ -170,10 +171,11 @@ package com.soren.exib.effect {
       var begin:Number  = tween_object.begin
       var finish:Number = tween_object.finish
       var total:uint    = tween_object.total_frames
-      var ease:Number   = tween_object.easing.call(null, time, begin, finish, total)
-      
+      var change:Number = finish - begin
+      var ease:Number   = tween_object.easing.call(null, time, begin, change, total)
+
       tween_object.target[tween_object.property] = ease
-      
+
       if (tween_object.filtering) renderFilter(tween_object)
     }
     

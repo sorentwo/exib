@@ -12,6 +12,7 @@ package com.soren.exib.effect {
   import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.core.Space
+  import com.soren.exib.debug.Log
   import com.soren.exib.effect.easing.*
   import com.soren.exib.view.ScreenController
   import com.soren.exib.view.Node
@@ -326,8 +327,9 @@ package com.soren.exib.effect {
       options = mergeOptions(options)
       targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {    
-        _tween.add(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], uint(options['times']))
+      for each (var node:Node in targets) {
+        var times:uint = (options.hasOwnProperty('times')) ? uint(options['times']) : 1000
+        _tween.add(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], times)
       }
     }
     
@@ -656,7 +658,7 @@ package com.soren.exib.effect {
 
       merged_options['easing']   = resolveEasing(merged_options['easing'])
       merged_options['relative'] = (merged_options['relative'] == 'true') ? true : false
-      
+
       return merged_options
     }
 
@@ -665,7 +667,7 @@ package com.soren.exib.effect {
     **/
     private function resolveEasing(easing_id:String):Function {
       var easing_method:Function
-
+      
       switch (easing_id.toLowerCase()) {
         case 'back_in':
           easing_method = Back.easeIn
@@ -777,6 +779,8 @@ package com.soren.exib.effect {
           break
       }
 
+      if (easing_method == null) throw new Error('No easing method found for string: ' + easing_id)
+      
       return easing_method
     }
     
