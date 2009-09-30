@@ -383,13 +383,26 @@ package com.soren.exib.core {
     }
     
     public function genVideoNode(xml:XML):VideoNode {
-      var loop:Boolean = (Boolean(xml.@loop))       ? (xml.@loop.toString() == 'true') ? true : false : false
-      var hold:Boolean = (Boolean(xml.@hold))       ? (xml.@hold.toString() == 'true') ? true : false : false
-      var pers:Boolean = (Boolean(xml.@persistent)) ? (xml.@persistent.toString() == 'true') ? true : false : false
+      var mode:uint
+      var hold:uint
+      switch (xml.@mode.toString()) {
+        case 'standard': mode = VideoNode.STANDARD_MODE; break
+        case 'loop':     mode = VideoNode.LOOP_MODE;     break
+        case 'hold':     mode = VideoNode.HOLD_MODE;     break
+        default:         mode = VideoNode.STANDARD_MODE
+      }
+      
+      switch (xml.@hold.toString()) {
+        case 'first': hold = VideoNode.HOLD_FIRST; break
+        case 'both':  hold = VideoNode.HOLD_BOTH;  break
+        case 'last':  hold = VideoNode.HOLD_LAST;  break
+        case 'loop':  hold = VideoNode.HOLD_LOOP;  break
+        default:      hold = VideoNode.HOLD_FIRST
+      }
       
       // Video is the only node that requires explicite control, because of this
       // it must be added to the global space.
-      var video:VideoNode = new VideoNode(xml.@url, loop, pers, hold)
+      var video:VideoNode = new VideoNode(xml.@url, mode, hold)
       _space.add(video, xml.@id)
       
       return video

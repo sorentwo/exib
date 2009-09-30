@@ -17,34 +17,36 @@ package com.soren.exib.view {
 
   public class VideoNode extends Node implements IActionable {
 
-    private static const VALID_URL:RegExp = /\w+\.swf$/
+    private static const VALID_URL:RegExp     = /\w+\.swf$/
+    
+    public static const STANDARD_MODE:uint   = 0
+    public static const LOOP_MODE:uint       = 1
+    public static const HOLD_MODE:uint       = 2
+    public static const HOLD_FIRST:uint      = 0
+    public static const HOLD_LAST:uint       = 1
+    public static const HOLD_BOTH:uint       = 2
+    public static const HOLD_LOOP:uint       = 3
     
     private static var _embed_container:*
-    
-    private var _loop:Boolean
-    private var _hold:Boolean
-    private var _persistent:Boolean
+
+    private var _mode:uint
+    private var _hold:uint
     private var _video:MovieClip
 
     /**
     * Create a new VideoNode instance.
     * 
-    * @param  url         The url of the SWF video clip to load.
-    * @param  loop        If true the video will play infinitely. If false the
-    *                     video will only play once.
-    * @param  persistent  If true the clip will be visible at all times. If false
-    *                     the clip will be visible when playing and invisible
-    *                     otherwise.
-    * @param  hold        If true the clip will remain visible after it plays,
-    *                     but will dissapear when explicitely stopped. This option
-    *                     is incompatible with looping.
+    * @param  url     The url of the SWF video clip to load.
+    * @param  mode    Determines the behavior for this video, see the mode constants
+    * @param  hold    If <code>hold mode</code> is chosen this determines the frame
+    *                 that will be held. By using one of the constants the first or
+    *                 last frames can be used instead.
     **/
-    public function VideoNode(url:String, loop:Boolean = true, persistent:Boolean = false, hold:Boolean = false) {
+    public function VideoNode(url:String, mode:uint = STANDARD_MODE, hold:uint = HOLD_FIRST) {
       verifyEmbedContainer()
       validateURL(url)
       
-      _loop = loop
-      _persistent = persistent
+      _mode = mode
       _hold = hold
       
       var class_name:String = processUrlIntoClassName(url)
@@ -77,7 +79,7 @@ package com.soren.exib.view {
       if (!this.contains(_video)) addChild(_video)
       _video.gotoAndPlay(0)
       
-      _video.addEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      _video.addEventListener(Event.ENTER_FRAME, endPlaybackListener)
     }
     
     /**
@@ -85,10 +87,41 @@ package com.soren.exib.view {
     * it will be removed from the display list.
     **/
     public function stop():void {
-      if (!_persistent && this.contains(_video)) removeChild(_video)
-      _video.gotoAndStop(0)
+      switch (_mode) {
+        case STANDARD_MODE:
+        case LOOP_MODE:
+          if (this.contains(_video)) removeChild(_video)
+          _video.gotoAndStop(0)
+          break
+        case HOLD_MODE:
+          switch (_hold) {
+            case HOLD_FIRST:
+            case HOLD_BOTH:
+            case HOLD_LOOP:
+              _video.gotoAndStop(0)
+              break
+            case HOLD_LAST:
+              _video.gotoAndStop(0)
+              if (this.contains(_video)) removeChild(_video)
+              break
+          }
+      }
       
-      _video.removeEventListener(Event.ENTER_FRAME, loopPlaybackListener)
+      _video.removeEventListener(Event.ENTER_FRAME, endPlaybackListener)
+    }
+    
+    /**
+    * Remove the video from the stage. Overrides any mode or hold settings.
+    **/
+    public function remove():void {
+      if (this.contains(_video)) removeChild(_video)
+    }
+    
+    /**
+    * Return the video to its original state.
+    **/
+    public function reset():void {
+      handleLoadComplete(new Event(Event.ENTER_FRAME))
     }
     
     // ---
@@ -99,19 +132,52 @@ package com.soren.exib.view {
     **/
     private function handleLoadComplete(event:Event):void {
       _video = MovieClip(event.target.content.getChildAt(0))
-      _video.stop()
-
-      if (_persistent) addChild(_video)
+      handleHold()
+    }
+    
+    /**
+    **/
+    private function handleHold():void {
+      if (_mode == HOLD_MODE) {
+        switch (_hold) {
+          case HOLD_FIRST:
+          case HOLD_BOTH:
+            _video.gotoAndStop(0)
+            addChild(_video)
+            break
+          case HOLD_LOOP:
+            _video.play()
+            addChild(_video)
+            break
+        } 
+      }
     }
     
     /**
     * Triggered on each frame and loop the video if it has reached the end.
     **/
-    private function loopPlaybackListener(event:Event):void {
+    private function endPlaybackListener(event:Event):void {
       if (_video.currentFrame == _video.totalFrames) {
-             if (_loop && (_hold || !_hold)) { _video.gotoAndPlay(0)                  }
-        else if (!_loop && _hold)            { _video.gotoAndStop(_video.totalFrames) }
-        else                                 { stop() }
+        switch (_mode) {
+          case STANDARD_MODE:
+            stop()
+            break
+          case LOOP_MODE:
+            _video.gotoAndPlay(0)
+            break
+          case HOLD_MODE:
+            switch (_hold) {
+              case HOLD_FIRST:
+                stop()
+                break
+              case HOLD_LOOP:
+                _video.gotoAndPlay(0)
+                break
+              case HOLD_BOTH:
+              case HOLD_LAST:
+                _video.gotoAndStop(_video.totalFrames)
+            }
+        }
       }
     }
     
