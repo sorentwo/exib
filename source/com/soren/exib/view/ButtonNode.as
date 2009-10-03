@@ -84,10 +84,7 @@ package com.soren.exib.view {
     * Handles the mouse out event. Ensures button-like behavior.
     **/
     protected function actOnMouseOut(event:MouseEvent):void {
-      if (this.contains(_down_graphic)) this.removeChild(_down_graphic)
-      if (!this.contains(_up_graphic))  this.addChildAt(_up_graphic, 0)
-      
-      _press_activated = false
+      actOnMouseUp(event)
     }
     
     /**
