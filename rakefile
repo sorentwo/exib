@@ -1,5 +1,4 @@
 require 'rake'
-require 'rdiscount'
 
 # Exib Tasks  ------------------------------------------------------------------
 
@@ -53,15 +52,15 @@ end
 # Generate Documentation -------------------------------------------------------
 
 task :generate_docs do
-  require 'rdiscount'
-  source = 'doc/README.txt'
-  target = File.join(DESTINATION, 'doc', 'README.html')
-  
-  unless uptodate?(target, source)
-    File.open(target, "w") do |f|
-      f << RDiscount.new(File.read(source)).to_html
-    end
-  end
+  # require 'rdiscount'
+  # source = 'doc/README.txt'
+  # target = File.join(DESTINATION, 'doc', 'README.html')
+  # 
+  # unless uptodate?(target, source)
+  #   File.open(target, "w") do |f|
+  #     f << RDiscount.new(File.read(source)).to_html
+  #   end
+  # end
 end
 
 # Initialize Repository --------------------------------------------------------
@@ -103,7 +102,7 @@ end
 
 task :generate_asdocs do
   asdoc_bin  = '/opt/flex/bin/asdoc'
-  source_paths = ['source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
+  source_paths = ['source']
   
   sh   %{#{asdoc_bin} -compiler.source-path=#{source_paths.join(',')} -doc-sources=./source}
   mv   'asdoc-output', 'doc/asdoc'
@@ -120,8 +119,8 @@ end
 task :compile_asunit do
   puts BANNER
   
-  mxmlc_bin    = '/opt/flex/bin/mxmlc'
-  source_paths = ['source', '/opt', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
+  mxmlc_bin    = 'mxmlc'
+  source_paths = ['source', '/opt/aslib']
   
   sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} test/#{TEST_BASENAME}.mxml}
   
