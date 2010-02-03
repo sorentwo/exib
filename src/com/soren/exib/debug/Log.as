@@ -9,14 +9,9 @@
 
 package com.soren.exib.debug {
   
-  import flash.events.StatusEvent
-  import flash.events.SecurityErrorEvent
-  import flash.net.LocalConnection
   import com.soren.exib.core.IActionable
 
   public class Log implements IActionable {
-    
-    public static const SATELLITE:String = 'satellite'
     
     public static const DEBUG:uint = 0
     public static const WARN:uint  = 1
@@ -25,7 +20,6 @@ package com.soren.exib.debug {
     public static const LEVELS:Array = ['DEBUG', 'WARN', 'ERROR', 'FATAL']
 
     private static var _instance:Log = new Log()
-    private static var _connection:LocalConnection
     
     private static var _level:uint = DEBUG
     private static var _throw_on_error:Boolean = false
@@ -37,13 +31,7 @@ package com.soren.exib.debug {
     /**
     * Returns *the* Logger instance.
     **/
-    public static function getLog():Log {
-      if (_connection == null) {
-        _connection = new LocalConnection()
-        _connection.addEventListener(StatusEvent.STATUS, new Function())
-        _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, new Function())
-      }
-      
+    public static function getLog():Log {      
       return _instance
     }
     
@@ -109,13 +97,6 @@ package com.soren.exib.debug {
       throw new Error('FATAL: ' + message)
     }
     
-    /**
-    * Clears the currently displayed trace statements.
-    **/
-    public function clear():void {
-      _connection.send(SATELLITE, 'clear')
-    }
-    
     // ---
     
     /**
@@ -138,13 +119,7 @@ package com.soren.exib.debug {
     **/
     private function write(level:uint, message:String):void {
       if (level >= _level) {
-        var output:String = LEVELS[level] + ': ' + message + '\n'
-
-        try { _connection.send(SATELLITE, 'write', output) }
-        catch(e:Error) { }
-        
-        // Fallback to Flash's trace
-        trace(output)
+        trace(LEVELS[level] + ': ' + message + '\n')
       }
     }
   }
