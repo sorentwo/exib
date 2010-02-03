@@ -7,9 +7,10 @@ package {
 	import com.soren.exib.service.Sound
 	import com.soren.exib.view.GraphicNode
 	import com.soren.exib.view.VideoNode
-	import com.soren.exib.debug.Log
 	
-  public class AllTests extends TestSuite {
+  public class UnitTests extends TestSuite {
+    
+    include "./TestHelper.as"
     
     // BEGIN EMBED (Embedded files for testing)
     [Embed(source='assets/graphics/dial.png')]
@@ -34,14 +35,10 @@ package {
     public var test_video:Class
     // END EMBED
     
-    public function AllTests () {
+    public function UnitTests () {      
       for each (var klass:Class in [Sound, GraphicNode, VideoNode]) {
         klass['setEmbedContainer'](this)
       }
-      
-      Log.getLog().level = Log.DEBUG
-      Log.getLog().throwOnError = true
-      Log.getLog().clear()
       
       super()
       
@@ -59,24 +56,5 @@ package {
         iterateTestArray(test_array)
       }
     }
-    
-	  // ---
-	  
-	  private function iterateTestArray(array:Array):void {
-      for each (var test_class:Class in array) {
-        runTests(test_class)
-      }	    
-	  }
-	  
-	  private function runTests(test_class:Class):void {
-      var description:XML = describeType(test_class)
-      var pattern:RegExp  = /test.*/
-      
-      for each (var method:XML in description..method) {
-        if (pattern.test(method.@name)) {
-          addTest(new test_class(method.@name))
-        }
-      }
-	  }
 	}
 }

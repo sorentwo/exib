@@ -37,7 +37,6 @@ task :copy_files => [:copy_config, :copy_rake, :copy_satellite, :copy_app]
 
 task(:copy_config)   { cp 'template/config_template.exml',  File.join(DESTINATION, 'assets/config/config.exml') }
 task(:copy_rake)     { cp 'template/project_rakefile',      File.join(DESTINATION, 'rakefile')                  }
-task(:copy_satellite) { cp 'template/satellite.swf',        File.join(DESTINATION, 'debug/satellite.swf')       }
 
 task(:copy_app) do
   application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
@@ -106,12 +105,6 @@ task :generate_asdocs do
   
   sh   %{#{asdoc_bin} -compiler.source-path=#{source_paths.join(',')} -doc-sources=./source}
   mv   'asdoc-output', 'doc/asdoc'
-end
-
-# Logger Satellite -------------------------------------------------------------
-
-task :open_logger_satellite do
-  sh %{open template/satellite.swf -a '/Applications/Flash\ Player.app'}
 end
 
 # Run ASUnit Tests -------------------------------------------------------------
