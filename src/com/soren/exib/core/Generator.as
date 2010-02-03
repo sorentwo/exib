@@ -421,7 +421,7 @@ package com.soren.exib.core {
         try {
           object[key_value.key] = convertType(key_value.value.replace(/\s/, ''))
         } catch (e:Error) {
-          Log.getLog().error('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
+          throw ('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
         }
         
       }

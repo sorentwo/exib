@@ -41,14 +41,9 @@ package unit {
       var unique_id:String = 'test_id'
       _instance.add(new Object(), unique_id)
       
-      var error:Error
-      try {
+      assertThrows(Error, function():void {
         _instance.add(new Object(), unique_id)
-      } catch (e:Error) {
-        error = e
-      }
-      
-      assertNotNull(error)
+      })
     }
     
     public function testGet():void {
@@ -58,14 +53,7 @@ package unit {
     }
     
     public function testGetMissing():void {
-      var error:Error
-      try {
-        _instance.get('missing')
-      } catch (e:Error) {
-        error = e
-      }
-
-      assertNotNull(error)
+      assertNull(_instance.get('missing'))
     }
     
     public function testHas():void {

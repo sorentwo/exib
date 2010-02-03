@@ -37,7 +37,7 @@ package com.soren.exib.service {
       try {
         _sound = new _embed_container[class_name] as flash.media.Sound
       } catch (e:Error) {
-        Log.getLog().error('Unable to load requested sound: ' + url + '\n' + e)
+        throw ('Unable to load requested sound: ' + url + '\n' + e)
       }
     }
     
@@ -85,7 +85,7 @@ package com.soren.exib.service {
     * @private
     **/
     private function validateURL(url:String):void {
-      if (!VALID_URL.test(url)) { Log.getLog().error('Invalid url: ' + url) }
+      if (!VALID_URL.test(url)) { throw ('Invalid url: ' + url) }
     }
   }
 }

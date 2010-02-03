@@ -43,7 +43,7 @@ package {
       super()
       
       var tests:Array = [
-        // AUTO
+        AbbreviateTest, ActionSetTest, ActionTest, AdvancedMathTest, ButtonNodeTest, ClockModelTest, ConditionalSetTest, ConditionalTest, ConversionUtilTest, CronTest, DaemonTest, DateUtilTest, DialNodeTest, EvaluatorTest, ExtendedArrayTest, FormulaTest, GraphicNodeTest, HistoryModelTest, HotkeyTest, KeyUtilTest, ManagerTest, MeterNodeTest, MultiNodeTest, NodeTest, PadTest, PresetModelTest, ProgressNodeTest, ScreenControllerTest, ScreenNodeTest, SoundTest, StateModelTest, StringUtilTest, TaskTest, TextNodeTest, ValueModelTest, VectorNodeTest, VideoNodeTest, ViewTest // AUTO
       ]
 
       iterateTestArray(tests)

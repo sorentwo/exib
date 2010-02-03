@@ -1,11 +1,28 @@
-require 'rake'
+require 'rubygems'
 
-# Exib Tasks  ------------------------------------------------------------------
+################################################################################
+# Options
+################################################################################
+
+OPT = {}
+OPT[:project_name] = 'exib'
+OPT[:src_dir]      = 'src'
+OPT[:bin_dir]      = 'bin'
+OPT[:libraries]    = %W(/opt/aslib/asunit)
+
+OPT[:test_dir]     = 'test'
+OPT[:test_suite]   = 'UnitTests.as'
+OPT[:test_runner]  = 'ExibRunner.as'
+OPT[:runner_path]  = File.join(OPT[:test_dir], OPT[:test_runner])
+
+OPT[:base_dirs]    = %w(assets bin doc src)
+OPT[:asset_dirs]   = %w(config fonts graphics sounds videos)
+
+################################################################################
+# Exib Tasks
+################################################################################
 
 DESTINATION = ENV['DEST'] || File.expand_path("~/Desktop/exib_project")
-
-BASE_DIRS   = %w(assets debug deploy deliver doc source)
-ASSET_DIRS  = %w(config fonts graphics sounds videos)
 
 namespace :exib do
   desc "Generates a new EXIB project"
@@ -20,8 +37,8 @@ end
 
 task :make_dir_structure => [ :make_base_dirs, :make_asset_dirs]
 
-task(:make_base_dirs)  { make_dest_dirs BASE_DIRS            }
-task(:make_asset_dirs) { make_dest_dirs ASSET_DIRS, 'assets' }
+task(:make_base_dirs)  { make_dest_dirs OPT[:base_dirs]            }
+task(:make_asset_dirs) { make_dest_dirs OPT[:asset_dirs], 'assets' }
 
 # Copy Files -------------------------------------------------------------------
 
@@ -81,45 +98,35 @@ task :init_repo do
   chdir original_dir
 end
 
-# ActionScript Tasks -----------------------------------------------------------
+################################################################################
+# Testing Tasks
+################################################################################
 
-BANNER = "\n\n#{'#'*80}\n\n"
-TEST_BASENAME = ENV['TEST'] || 'ExibTestRunner'
-
-namespace :as do
-  desc "Generates ASDoc documentation for the main EXIB project"
-  task :asdoc => [ :generate_asdocs ]
+namespace :test do
+  desc 'Compile and run the test harness'
+  task :units => :link_units do
+    sh %{ mxmlc -use-network=false -debug=true -compiler.source-path=#{OPT[:src_dir]},#{OPT[:libraries]} #{OPT[:runner_path]} }
+    sh %{ fdb #{OPT[:runner_path].gsub('as', 'swf')} }
+  end
   
-  desc "Runs ASUnit testing for the EXIB project"
-  task :test => [ :compile_asunit, :run_compiled_test ]
-  
-  desc "Open the LoggerSatellite for debugging"
-  task :satellite => [ :open_logger_satellite ]
-end
+  desc 'Find all unit tests and auto-fill the test harness'
+  task :link_units do
+    require 'tempfile'
+    
+    tests = Dir.glob("#{OPT[:test_dir]}/unit/*Test.as").join(', ').gsub('test/unit/', '').gsub('.as', '')
+    temp  = Tempfile.new('units')
 
-# Generate ASDoc Structure -----------------------------------------------------
-
-task :generate_asdocs do
-  asdoc_bin  = '/opt/flex/bin/asdoc'
-  source_paths = ['source']
-  
-  sh   %{#{asdoc_bin} -compiler.source-path=#{source_paths.join(',')} -doc-sources=./source}
-  mv   'asdoc-output', 'doc/asdoc'
-end
-
-# Run ASUnit Tests -------------------------------------------------------------
-
-task :compile_asunit do
-  puts BANNER
-  
-  mxmlc_bin    = 'mxmlc'
-  source_paths = ['source', '/opt/aslib']
-  
-  sh %{#{mxmlc_bin} -use-network=false -compiler.source-path=#{source_paths.join(',')} test/#{TEST_BASENAME}.mxml}
-  
-  puts BANNER
-end
-
-task :run_compiled_test do
-  sh %{open test/#{TEST_BASENAME}.swf -a '/Applications/Flash\ Player.app'}
+    File.open(File.join(OPT[:test_dir], OPT[:test_suite])) do |file|
+      file.each_line do |line|
+        if line =~ /(\s+)?(.*)\/\/ AUTO$/
+          temp << "#{$1}#{tests} // AUTO\n"
+        else
+          temp << line
+        end
+      end
+    end
+    
+    temp.open
+    cp temp.path, File.join(OPT[:test_dir], OPT[:test_suite])
+  end
 end

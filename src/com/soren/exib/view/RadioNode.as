@@ -92,7 +92,7 @@ package com.soren.exib.view {
     private function verifyUniqueValue(value:*):void {
       for each (var option:Object in _options) {
         if (option.value == value) {
-          Log.getLog().error('Value supplied is not unique: ' + option)
+          throw ('Value supplied is not unique: ' + option)
         }
       }
     }

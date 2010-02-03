@@ -99,7 +99,7 @@ package com.soren.exib.view {
     * the left, right, and middle segments.
     **/
     public function set segments(segments:uint):void {
-      if (segments < MIN_SEGMENTS) Log.getLog().error('Meter Node: Minimum Segments = ' + MIN_SEGMENTS)
+      if (segments < MIN_SEGMENTS) throw ('Meter Node: Minimum Segments = ' + MIN_SEGMENTS)
       _segments = segments
       
       // Die silently, update isn't possible if assets aren't loaded.

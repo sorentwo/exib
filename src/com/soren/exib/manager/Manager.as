@@ -30,7 +30,7 @@ package com.soren.exib.manager {
     **/
     public function add(object:*, object_id:String):void {
       if (this.has(object_id)) {
-        Log.getLog().error('Adding ' + object_id + ' failed, id already exists.')
+        trace('Adding ' + object_id + ' failed, id already exists.')
       }
       
       _managed[object_id.toLowerCase()] = object
@@ -45,8 +45,12 @@ package com.soren.exib.manager {
     public function get(object_id:String):* {
       var found:Object = _managed[object_id.toLowerCase()]
       
-      if (found) { return found }
-      else       { Log.getLog().error('Object with id: ' + object_id + ' not found') }
+      if (found) {
+        return found
+      } else {
+        trace('Object with id: ' + object_id + ' not found')
+        return null
+      }
     }
     
     /**

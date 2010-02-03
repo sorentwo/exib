@@ -8,17 +8,6 @@ package unit {
     public function GraphicNodeTest(testMethod:String) {
       super(testMethod)
     }
-
-    /**
-    * Prepare for test, create instance of class that we are testing.
-    * Invoked by TestCase.runMethod function.
-    **/
-    protected override function setUp():void { }
-
-    /**
-    * Clean up after test, delete instance of class that we were testing.
-    **/
-    protected override function tearDown():void { }
     
     // ---
     
@@ -53,13 +42,9 @@ package unit {
       
       var invalid_extensions:Array = ['.psd', '.tif']
       for each (extension in invalid_extensions) {
-        try {
-          var invalid:GraphicNode = new GraphicNode('sample_asset' + extension)
-        } catch (e:Error) {
-          error = e
-        }
-        
-        assertNotNull(error)
+        assertThrows(Error, function():void {
+          new GraphicNode('sample_asset' + extension)
+        })
       }
     }
   }

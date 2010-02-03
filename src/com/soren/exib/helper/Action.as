@@ -43,7 +43,7 @@ package com.soren.exib.helper {
       
       if (actionable is String)           { _actionable_id = actionable }
       else if (actionable is IActionable) { _actionable = actionable }
-      else                                { Log.getLog().error('Invalid object supplied as actionable' + actionable) }
+      else                                { throw ('Invalid object supplied as actionable' + actionable) }
       
       _method     = method
       _arguments  = args

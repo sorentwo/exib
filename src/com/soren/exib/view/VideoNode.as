@@ -56,7 +56,7 @@ package com.soren.exib.view {
         var loader:Loader = swf.getChildAt(0) as Loader
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoadComplete)
       } catch (e:Error) {
-        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
+        trace('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
     }
     
@@ -193,14 +193,14 @@ package com.soren.exib.view {
     * Verify the supplied container of embedded assets.
     **/
     private function verifyEmbedContainer():void {
-      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
+      if (!_embed_container) throw('No embed container set, cannot load embedded assets')
     }
   
     /**
     * Ensure the url provided is a valid video.
     **/
     private function validateURL(url:String):void {
-      if (!VALID_URL.test(url)) Log.getLog().error('Invalid URL: ' + url)
+      if (!VALID_URL.test(url)) trace('Invalid URL: ' + url)
     }
   }
 }

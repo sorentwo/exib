@@ -32,7 +32,7 @@ package com.soren.exib.view {
       try {
         addChild(new _embed_container[class_name] as Bitmap)
       } catch (e:Error) {
-        Log.getLog().error('Unable to load embedded graphic: ' + class_name + '\n' + e)
+        trace('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
     }
 
@@ -57,14 +57,14 @@ package com.soren.exib.view {
     * @private
     **/
     private function verifyEmbedContainer():void {
-      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
+      if (!_embed_container) throw('No embed container set, cannot load embedded assets')
     }
     
     /**
     * @private
     **/
     private function validateURL(url:String):void {
-      if (!VALID_URL.test(url)) { Log.getLog().error('Invalid url: ' + url) }
+      if (!VALID_URL.test(url)) { trace('Invalid url: ' + url) }
     }
   }
 }
