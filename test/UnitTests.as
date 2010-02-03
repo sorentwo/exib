@@ -42,19 +42,11 @@ package {
       
       super()
       
-      var helper_tests:Array    = [ConditionalTest, ConditionalSetTest, ActionTest, ActionSetTest, FormulaTest, EvaluatorTest]
-      var manager_tests:Array   = [ManagerTest]
-      var model_tests:Array     = [ValueModelTest, StateModelTest, HistoryModelTest, ClockModelTest, PresetModelTest]
-      var service_tests:Array   = [CronTest, DaemonTest, TaskTest, HotkeyTest, SoundTest]
-      var util_tests:Array      = [AbbreviateTest, AdvancedMathTest, DateUtilTest, ExtendedArrayTest, KeyUtilTest, PadTest, ConversionUtilTest, StringUtilTest]
-      var view_tests:Array      = [NodeTest, GraphicNodeTest, ButtonNodeTest, DialNodeTest, MeterNodeTest, MultiNodeTest, ProgressNodeTest, TextNodeTest, VectorNodeTest, VideoNodeTest, ScreenNodeTest, ScreenControllerTest]
-      var generator_tests:Array = [ModelGenerationTest, ServiceGeneratorTest, MediaGeneratorTest, HelperGeneratorTest]
-      
-      var all_tests:Array = [helper_tests, manager_tests, model_tests, service_tests, util_tests, view_tests, generator_tests]
-      
-      for each (var test_array:Array in all_tests) {
-        iterateTestArray(test_array)
-      }
+      var tests:Array = [
+        // AUTO
+      ]
+
+      iterateTestArray(tests)
     }
 	}
 }
