@@ -1,4 +1,4 @@
-package com.soren.exib.effect.easing {
+package com.soren.sfx.easing {
   
 	public class Quad {
 	  

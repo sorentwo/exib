@@ -1,25 +1,19 @@
 /**
 * The Effect class provides simple shortcuts for animating one or more objects.
-* It is designed to be used on the children of a screen instance, but if no
-* ScreenController is provided to the instance it assumes that effects are being
-* performed directly on objects provided.
 *
-* Copyright (c) 2009 Parker Selbert
+* @copyright Copyright (c) 2009 Soren LLC
+* @author    Parker Selbert — parker@sorentwo.com
 **/
 
-package com.soren.exib.effect {
+package com.soren.sfx {
+  
+  import flash.display.DisplayObject
+  import flash.display.DisplayObjectContainer
+  import com.soren.sfx.easing.*
 
-  import com.soren.exib.core.IActionable
-  import com.soren.exib.core.IEvaluatable
-  import com.soren.exib.core.Space
-  import com.soren.exib.debug.Log
-  import com.soren.exib.effect.easing.*
-  import com.soren.exib.view.ScreenController
-  import com.soren.exib.view.Node
-
-  public class Effect implements IActionable {
+  public class Effect {
     
-    public static const EFFECT_COMPLETE:String  = 'effect_complete'
+    public static const EFFECT_COMPLETE:String = 'effect_complete'
     
     public static const DEFAULT_ALPHA:uint           = 1
     public static const DEFAULT_DURATION:uint        = 1
@@ -42,29 +36,17 @@ package com.soren.exib.effect {
     private static const GROUP_PATTERN:RegExp = /^\.(\w+)$/
     private static const MODEL_PATTERN:RegExp = /^(_\w+)$/
 
-    private var _screen_controller:ScreenController
-    private var _tween:Tween = Tween.getTween()
+    private var _tween:Tween = Tween.getInstance()
 
     /**
-    * Create an instance of the Effect class and optionally define its association
-    * with a ScreenController.
-    *
-    * @param screen_controller  If a ScreenController instance is provided all
-    *                           targets provided are assumed to be id or group
-    *                           names and Effect will attempt to resolve display
-    *                           objects from the current Screen.
+    * Create an instance of the Effect class.
     **/
-    public function Effect(screen_controller:ScreenController = null) {
-      if (screen_controller) _screen_controller = screen_controller
-    }
+    public function Effect() { }
 
     /**
     * Perform a timed blur on one or more objects.
     *
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>blur_x_from -> An integer between 0 and 32, where x
@@ -85,7 +67,7 @@ package com.soren.exib.effect {
     *
     * @example  The following code shows a typical blur on objects found within
     *           a screen instance. It assumes that there is a ScreenController
-    *           named screen_controller and that there is a node with the id
+    *           named screen_controller and that there is a object with the id
     *           of #button.
     *
     * <listing version="3.0">
@@ -93,28 +75,24 @@ package com.soren.exib.effect {
     * effect.blur([#button], { color: 0xFF0000, blur_x_from: 0, blur_y_from: 0, blur_x_to: 8, blur_y_to: 8, duration: .5})
     * </listing>
     **/
-    public function blur(targets:Array, options:Object = null):void {
+    /*public function blur(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
+      for each (var object:DisplayObject in targets) {
         if (options.hasOwnProperty('blur_x_from')) {
-          _tween.add(node, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
+          _tween.add(object, 'blur_x', options['easing'], options['blur_x_from'], options['blur_x_to'], options['duration'])
         }
         
         if (options.hasOwnProperty('blur_y_from')) {
-          _tween.add(node, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
+          _tween.add(object, 'blur_y', options['easing'], options['blur_y_from'], options['blur_y_to'], options['duration'])
         }
       }
-    }
+    }*/
 
     /**
     * Perform a timed fade on one or more objects.
     *
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>fade_from -> A number from 0 to 1.</li>
@@ -125,7 +103,7 @@ package com.soren.exib.effect {
     *
     * @example  The following code shows a half-second fade on objects found within
     *           a screen instance. It assumes that there is a ScreenController
-    *           named screen_controller and that there is a node with the id
+    *           named screen_controller and that there is a object with the id
     *           of #container.
     *
     * <listing version="3.0">
@@ -135,21 +113,17 @@ package com.soren.exib.effect {
     **/
     public function fade(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
-        if (!node.visible) node.visible = true
-        _tween.add(node, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'])
+      for each (var object:DisplayObject in targets) {
+        if (!object.visible) object.visible = true
+        _tween.add(object, 'alpha', options['easing'], options['fade_from'], options['fade_to'], options['duration'])
       }
     }
     
     /**
     * Performed a timed glow on one or more objects.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>blur_from -> An integer between 0 and 32, where
@@ -166,7 +140,7 @@ package com.soren.exib.effect {
     *
     * @example  The following code shows a typical glow on objects found within
     *           a screen instance. It assumes that there is a ScreenController
-    *           named screen_controller and that there is a node with the id
+    *           named screen_controller and that there is an object with the id
     *           of #button.
     *
     * <listing version="3.0">
@@ -174,16 +148,15 @@ package com.soren.exib.effect {
     * effect.glow([#button], { blur_from: 0, blur_to: 6, alpha_from: 0, alpha_to: 1, duration: .5})
     * </listing>
     **/
-    public function glow(targets:Array, options:Object = null):void {
+    /*public function glow(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
       
-      for each (var node:Node in targets) {
-        node.glow_color = uint(options['glow_color'])
-        _tween.add(node, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'])
-        _tween.add(node, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
+      for each (var object:DisplayObject in targets) {
+        object.glow_color = uint(options['glow_color'])
+        _tween.add(object, 'glow_blur', options['easing'], options['blur_from'], options['blur_to'], options['duration'])
+        _tween.add(object, 'glow_alpha', options['easing'], options['alpha_from'], options['alpha_to'], options['duration'])
       }
-    }
+    }*/
     
     /**
     * Immediately make one or more objects invisible. It should be noted that
@@ -198,7 +171,7 @@ package com.soren.exib.effect {
     * 
     * @example  The following code shows immediately hiding a set of objects found
     *           within a screen instance. It assumes that there is a ScreenController
-    *           named screen_controller and that there is a number of nodes with
+    *           named screen_controller and that there is a number of objects with
     *           the group of objects.
     * 
     * <listing version="3.0">
@@ -210,9 +183,7 @@ package com.soren.exib.effect {
     * @see opacity
     **/
     public function hide(targets:Array, options:Object = null):void {
-      targets = resolveTargets(targets)
-
-      for each (var node:Node in targets) { node.visible = false }
+      for each (var object:DisplayObject in targets) { object.visible = false }
     }
 
     /**
@@ -221,23 +192,20 @@ package com.soren.exib.effect {
     * usefull for ensuring that a subsequent slide effect will happen the same
     * way if run multiple times.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>x -> Any valid x coordinate. It is possible to place
-    *                   the target node(s) out of view.</li>
+    *                   the target object(s) out of view.</li>
     *                   <li>y -> Any valid y coordinate. It is possible to place
-    *                   the target node(s) out of view.</li>
+    *                   the target object(s) out of view.</li>
     *                   <li>relative -> If true x and y are translated from the
     *                   current position, if false the x and y are absolute to
     *                   the container of each object. Defaults to true.</li>
     *                   </ul>
     * 
-    * @example  The following code shows a node being positioned absolutely before
-    *           it will be slid. It assumes that there is a ScreenController
+    * @example  The following code shows a object being positioned absolutely
+    *           before it will be slid. It assumes that there is a ScreenController
     *           named <code>screen_controller</code> and that there is an object
     *           named <code>#container</code> within the current screen.
     * <listing version='3.0'>
@@ -248,12 +216,11 @@ package com.soren.exib.effect {
     **/
     public function move(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
+      for each (var object:DisplayObject in targets) {
         for each (var prop:String in ['x', 'y']) {
           if (options.hasOwnProperty(prop)) {
-            node[prop] = (options['relative']) ? node[prop] + int(options[prop]) : int(options[prop])
+            object[prop] = (options['relative']) ? object[prop] + int(options[prop]) : int(options[prop])
           }
         }
       }
@@ -263,10 +230,7 @@ package com.soren.exib.effect {
     * Like move, hide, or show this is not a timed effect. It immediately sets
     * the target object(s) opacity, or alpha, to the provided level.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>alpha -> An unsigned integer from 0 to 1, where 0 is
@@ -275,7 +239,7 @@ package com.soren.exib.effect {
     *                   distorted.</li>
     *                   </ul>
     * 
-    * @example  The following code shows a node being set to completely opaque,
+    * @example  The following code shows a object being set to completely opaque,
     *           1 (100% opacity), before it is faded out. It assumes that there
     *           is a ScreenController named <code>screen_controller</code> and
     *           that there is an object named <code>#container</code> within the
@@ -290,19 +254,15 @@ package com.soren.exib.effect {
     **/
     public function opacity(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) { node.alpha = options['alpha'] }
+      for each (var object:DisplayObject in targets) { object.alpha = options['alpha'] }
     }
 
     /**
     * Pulse will fluxuate the opacity of one or more objects a set number of
     * times. Multiples of two will return the object(s) to their initial opacity.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>pulse_from -> Starting opacity, between 0 - 1.</li>
@@ -325,11 +285,10 @@ package com.soren.exib.effect {
     **/
     public function pulse(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
+      for each (var object:DisplayObject in targets) {
         var times:uint = (options.hasOwnProperty('times')) ? uint(options['times']) : 1000
-        _tween.add(node, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], times)
+        _tween.add(object, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], times)
       }
     }
     
@@ -339,17 +298,14 @@ package com.soren.exib.effect {
     * does not. This is not a timed effect.
     * <p>Multiple objects will be registered individually according to their own
     * relative sizes. After the registration has been changed any new effects
-    * applied to the node(s), namely scale, will be applied from the new
+    * applied to the object(s), namely scale, will be applied from the new
     * registration point.</p>
-    * <p>This effect is really only intended for graphic and text nodes, nodes
+    * <p>This effect is really only intended for graphic and text objects 
     * that only have one child which is visible all the time. The nature of
     * registration points in flash makes changing the registration of more 
     * complex nodes too difficult at this time.</p>
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>registration -> Any of the following registration
@@ -367,29 +323,28 @@ package com.soren.exib.effect {
     **/
     public function register(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
       
       var reg_x:int, reg_y:int
       
-      for each (var node:Node in targets) {
+      for each (var object:DisplayObjectContainer in targets) {
         
         switch (options['registration'].replace(' ', '')) {
-          case 'center':       reg_x = node.width / 2; reg_y = node.height / 2; break
-          case 'top_left':     reg_x = 0;              reg_y = 0; break
-          case 'top_mid':      reg_x = node.width / 2; reg_y = 0; break
-          case 'top_right':    reg_x = node.width;     reg_y = 0; break
-          case 'right_mid':    reg_x = node.width;     reg_y = node.height / 2; break
-          case 'left_mid' :    reg_x = 0;              reg_y = node.height / 2; break
-          case 'bottom_left':  reg_x = 0;              reg_y = node.height; break
-          case 'bottom_mid':   reg_x = node.width / 2; reg_y = node.height; break
-          case 'bottom_right': reg_x = node.width;     reg_y = node.height; break
+          case 'center':       reg_x = object.width / 2; reg_y = object.height / 2; break
+          case 'top_left':     reg_x = 0;                reg_y = 0; break
+          case 'top_mid':      reg_x = object.width / 2; reg_y = 0; break
+          case 'top_right':    reg_x = object.width;     reg_y = 0; break
+          case 'right_mid':    reg_x = object.width;     reg_y = object.height / 2; break
+          case 'left_mid' :    reg_x = 0;                reg_y = object.height / 2; break
+          case 'bottom_left':  reg_x = 0;                reg_y = object.height; break
+          case 'bottom_mid':   reg_x = object.width / 2; reg_y = object.height; break
+          case 'bottom_right': reg_x = object.width;     reg_y = object.height; break
           default: throw new Error('Invalid registration string: ' + options['registration'])
         }
 
-        node.getChildAt(0).x -= reg_x
-        node.getChildAt(0).y -= reg_y
-        node.x += reg_x
-        node.y += reg_y
+        object.getChildAt(0).x -= reg_x
+        object.getChildAt(0).y -= reg_y
+        object.x += reg_x
+        object.y += reg_y
       }
     }
     
@@ -398,10 +353,7 @@ package com.soren.exib.effect {
     * the specified object(s) the given rotation. For a timed version of the
     * rotate effect use spin.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>rotate -> A positiive or negative integer. Negative
@@ -423,10 +375,17 @@ package com.soren.exib.effect {
     **/
     public function rotate(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
       
-      for each (var node:Node in targets) {
-        node.rotation = (options['relative']) ? node.rotation + options['rotation'] : options['rotation']
+      var axis:String
+      switch (options['axis']) {
+        case 'x': axis = 'rotationX'; break
+        case 'y': axis = 'rotationY'; break
+        case 'z': axis = 'rotationZ'; break
+        default:  axis = 'rotation'
+      }
+      
+      for each (var object:DisplayObject in targets) {
+        object[axis] = (options['relative']) ? object[axis] + options['rotate'] : options['rotate']
       }
     }
     
@@ -434,10 +393,7 @@ package com.soren.exib.effect {
     * Change the size of an object or objects over a period of time. Scaling is
     * locked to be uniform, meaning the x and y value remain the same.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>scale -> A numerical percentage, i.e. 1 = 100%,
@@ -455,11 +411,10 @@ package com.soren.exib.effect {
     **/
     public function scale(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
-        _tween.add(node, 'scaleX', options['easing'], node.scaleX, Number(options['scale']), options['duration'])
-        _tween.add(node, 'scaleY', options['easing'], node.scaleY, Number(options['scale']), options['duration'])
+      for each (var object:DisplayObject in targets) {
+        _tween.add(object, 'scaleX', options['easing'], object.scaleX, Number(options['scale']), options['duration'])
+        _tween.add(object, 'scaleY', options['easing'], object.scaleY, Number(options['scale']), options['duration'])
       }
     }
     
@@ -477,7 +432,7 @@ package com.soren.exib.effect {
     * @example  The following code shows immediately showing a set of objects
     *           found within a screen instance. It assumes that there is a
     *           ScreenController named screen_controller and that there are a
-    *           number of nodes in the group <code>objects</code>.
+    *           number of objects in the group <code>objects</code>.
     * 
     * <listing version="3.0">
     * var effect:Effect = new Effect(screen_controller)
@@ -488,19 +443,14 @@ package com.soren.exib.effect {
     * @see opacity
     **/
     public function show(targets:Array, options:Object = null):void {
-      targets = resolveTargets(targets)
-
-      for each (var node:Node in targets) { node.visible = true }
+      for each (var object:DisplayObject in targets) { object.visible = true }
     }
     
     /**
     * Change the size of an object or objects immediately. Sizing, like scaling
     * is locked to be uniform, meaning the x and y value remain the same.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>scale -> A numerical percentage, i.e. 1 = 100%,
@@ -516,10 +466,21 @@ package com.soren.exib.effect {
     **/
     public function size(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
-      
-      for each (var node:Node in targets) {
-        node.scaleX = node.scaleY = Number(options['scale'])
+
+      for each (var object:DisplayObject in targets) {
+        if (options.hasOwnProperty('start_w')) {
+          var start_w:int = (options['relative']) ? object.width + int(options['start_w']) : options['start_w']
+          var end_w:int   = (options['relative']) ? object.width + int(options['end_w'])   : options['end_w']
+          
+          _tween.add(object, 'width', options['easing'], start_w, end_w, options['duration'])
+        }
+
+        if (options.hasOwnProperty('start_h')) {
+          var start_h:uint = (options['relative']) ? object.height + int(options['start_h']) : options['start_h']
+          var end_h:uint   = (options['relative']) ? object.height + int(options['end_h'])   : options['end_h']
+
+          _tween.add(object, 'height', options['easing'], start_h, end_h, options['duration'])
+        }
       }
     }
 
@@ -527,10 +488,7 @@ package com.soren.exib.effect {
     * Move an object or objects from one set of x,y coordinates to another set
     * over time.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>start_x -> X coordinate to start sliding from.</li>
@@ -548,11 +506,11 @@ package com.soren.exib.effect {
     * @example The following code shows one relative and one absolute slide. It
     *           assumes that there is a ScreenController named
     *           <code>screen_controller</code> and that there are a number of
-    *           nodes in the group <code>container</code>.
+    *           objects in the group <code>container</code>.
     * 
     * <listing version='3.0'>
     * var effect:Effect = new Effect(screen_controller)
-    * // Slide a group of nodes from their current location to an x offset of 120 and a y offset of 60
+    * // Slide a group of objects from their current location to an x offset of 120 and a y offset of 60
     * effect.slide([.container], { start_x: 0, end_x: 120, start_y: 0, end_y: 60, relative: true, duration: 1, easing: bounce_out })
     * // Slide the same group back absolutely to the position 20,20
     * effect.slide([.container], { start_x: 140, end_x: 20, start_y: 80, end_y: 20, relative: false, duration: 1, easing: bounce_in })
@@ -560,21 +518,27 @@ package com.soren.exib.effect {
     **/
     public function slide(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
 
-      for each (var node:Node in targets) {
+      for each (var object:DisplayObject in targets) {
         if (options.hasOwnProperty('start_x')) {
-          var start_x:int   = (options['relative']) ? node.x + int(options['start_x']) : options['start_x']
-          var end_x:int     = (options['relative']) ? node.x + int(options['end_x'])   : options['end_x']
+          var start_x:int = (options['relative']) ? object.x + int(options['start_x']) : options['start_x']
+          var end_x:int   = (options['relative']) ? object.x + int(options['end_x'])   : options['end_x']
           
-          _tween.add(node, 'x', options['easing'], start_x, end_x, options['duration'])
+          _tween.add(object, 'x', options['easing'], start_x, end_x, options['duration'])
         }
 
         if (options.hasOwnProperty('start_y')) {
-          var start_y:uint  = (options['relative']) ? node.y + int(options['start_y']) : options['start_y']
-          var end_y:uint    = (options['relative']) ? node.y + int(options['end_y'])   : options['end_y']
+          var start_y:int = (options['relative']) ? object.y + int(options['start_y']) : options['start_y']
+          var end_y:int   = (options['relative']) ? object.y + int(options['end_y'])   : options['end_y']
 
-          _tween.add(node, 'y', options['easing'], start_y, end_y, options['duration'])
+          _tween.add(object, 'y', options['easing'], start_y, end_y, options['duration'])
+        }
+        
+        if (options.hasOwnProperty('start_z')) {
+          var start_z:int = (options['relative']) ? object.z + int(options['start_z']) : options['start_z']
+          var end_z:int   = (options['relative']) ? object.z + int(options['end_z'])   : options['end_z']
+
+          _tween.add(object, 'z', options['easing'], start_z, end_z, options['duration'])
         }
       }
     }
@@ -583,10 +547,7 @@ package com.soren.exib.effect {
     * Rotate an object or objects over a period of time. This is the time based
     * counterpart to rotate.
     * 
-    * @param  targets   An array of display objects or, if a ScreenController is
-    *                   present, a list of object groups and ids that will be used
-    *                   to attempt to resolve display objects from the current
-    *                   screen.
+    * @param  targets   An array of display objects.
     * @param  options   An option hash with any of the following key/value pairs:
     *                   <ul>
     *                   <li>spin -> The angle of rotation. Negative values will 
@@ -599,20 +560,27 @@ package com.soren.exib.effect {
     * 
     * @example  The following code illustrates a typical use of spin. It assumes
     *           that there is a ScreenController named <code>screen_controller</code>
-    *           and that there is a node with the id <code>#icon</code>.
+    *           and that there is a object with the id <code>#icon</code>.
     * 
     * <listing version='3.0'>
     * var effect:Effect = new Effect(screen_controller)
-    * effect.spin([#icon], { rotation: 720, duration: 1.25, easing: linear_in_out })
+    * effect.spin([#icon], { axis: x, rotate: 180, duration: 1.25, easing: linear_in_out })
     * </listing>
     * @see  rotate
     **/
     public function spin(targets:Array, options:Object = null):void {
       options = mergeOptions(options)
-      targets = resolveTargets(targets)
       
-      for each (var node:Node in targets) {
-        _tween.add(node, 'rotation', options['easing'], node.rotation, options['spin'], options['duration'])
+      var axis:String
+      switch (options['axis']) {
+        case 'x': axis = 'rotationX'; break
+        case 'y': axis = 'rotationY'; break
+        case 'z': axis = 'rotationZ'; break
+        default:  axis = 'rotation'
+      }
+      
+      for each (var object:DisplayObject in targets) {
+        _tween.add(object, axis, options['easing'], object[axis], options['rotate'], options['duration'])
       }
     }
 
@@ -622,13 +590,13 @@ package com.soren.exib.effect {
     **/
     public function stop(targets:Array = null):void {
       if (targets) {
-        for each (var node:Node in resolveTargets(targets)) { _tween.stop(node) }
+        for each (var object:DisplayObject in targets) { _tween.stop(object) }
       } else {
         _tween.stop()
       }
     }
     
-    // ---
+    // PRIVATE -----------------------------------------------------------------
     
     /**
     * Merge an option hash with the defaults and return the result.
@@ -687,15 +655,6 @@ package com.soren.exib.effect {
         case 'bounce_out':
           easing_method = Bounce.easeOut
           break
-        case 'circular_in':
-          easing_method = Circular.easeIn
-          break
-        case 'circular_out':
-          easing_method = Circular.easeOut
-          break
-        case 'circular_in_out':
-          easing_method = Circular.easeInOut
-          break
         case 'cubic_in':
           easing_method = Cubic.easeIn
           break
@@ -704,15 +663,6 @@ package com.soren.exib.effect {
           break
         case 'cubic_in_out':
           easing_method = Cubic.easeInOut
-          break
-        case 'elastic_in':
-          easing_method = Elastic.easeIn
-          break
-        case 'elastic_out':
-          easing_method = Elastic.easeOut
-          break
-        case 'elastic_in_out':
-          easing_method = Elastic.easeInOut
           break
         case 'exponential_in':
           easing_method = Exponential.easeIn
@@ -779,33 +729,10 @@ package com.soren.exib.effect {
           break
       }
 
-      if (easing_method == null) throw new Error('No easing method found for string: ' + easing_id)
+      if (easing_method == null) throw new Error('No easing method found for: ' + easing_id)
       
       return easing_method
     }
     
-    /**
-    * Take an array of node ids and groups and returns an array of references to
-    * the actual nodes.
-    **/
-    private function resolveTargets(targets:Array):Array {
-      if (!_screen_controller || targets.length == 0) return targets
-      
-      var screen:Node = _screen_controller.current
-      var resolved:Array = []
-
-      for each (var target:String in targets) {
-        if (GROUP_PATTERN.test(target)) {
-          resolved = resolved.concat(screen.getChildrenByGroup(target.replace(GROUP_PATTERN, "$1")))
-        } else if (MODEL_PATTERN.test(target)) {
-          var evaluatable:IEvaluatable = Space.getSpace().get(target) as IEvaluatable
-          resolved = resolved.concat(screen.getChildById(evaluatable.value))
-        } else {
-          resolved = resolved.concat(screen.getChildById(target))
-        }
-      }
-
-      return resolved
-    }
   }
 }

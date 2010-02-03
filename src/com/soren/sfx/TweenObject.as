@@ -1,16 +1,15 @@
 /**
 * Container class with pre-defined properties. Entirely for performance.
 *
-* Copyright (c) 2009 Parker Selbert
+* @copyright Copyright (c) 2009 Soren LLC
+* @author    Parker Selbert — parker@sorentwo.com
 **/
 
-package com.soren.exib.effect {
-  
-  import com.soren.exib.view.Node
+package com.soren.sfx {
 
   public class TweenObject {
     
-    private var _target:Node
+    private var _target:Object
     private var _property:String
     private var _easing:Function
     private var _begin:Number
@@ -23,7 +22,7 @@ package com.soren.exib.effect {
     private var _yoyoing:Boolean   = false
     private var _filtering:Boolean = false
     
-    public function TweenObject(target:Node, property:String, easing:Function,
+    public function TweenObject(target:Object, property:String, easing:Function,
                                 begin:Number, finish:Number, total_frames:uint,
                                 frame:uint, yoyo_count:uint) {
       _target       = target
@@ -38,7 +37,7 @@ package com.soren.exib.effect {
     }
     
     // Read Only
-    public function get target():Node {
+    public function get target():Object {
       return _target
     }
     
