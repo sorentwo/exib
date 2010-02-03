@@ -12,12 +12,12 @@ package com.soren.exib.core {
   import flash.text.TextField
   import flash.text.TextFormat
   import com.soren.exib.debug.Log
-  import com.soren.exib.effect.*
   import com.soren.exib.helper.*
   import com.soren.exib.manager.*
   import com.soren.exib.model.*
   import com.soren.exib.service.*
   import com.soren.exib.view.*
+  import com.soren.sfx.*
   import com.soren.util.*
 
   public class Generator {

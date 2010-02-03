@@ -13,7 +13,7 @@ package com.soren.exib.core {
   import flash.events.Event
   import flash.utils.ByteArray
   import com.soren.exib.debug.Log
-  import com.soren.exib.effect.*
+  import com.soren.sfx.Effect
   import com.soren.exib.view.*
   
   public class Application extends Sprite {
