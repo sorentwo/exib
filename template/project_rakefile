@@ -1,96 +1,124 @@
-require 'rake'
+require 'rubygems'
 
-DELIVERABLE_DIR    = 'deliver'
-DELIVERABLES       = %w(deploy doc/HOTKEYS.txt)
-ARCHIVE_BASENAME   = ENV['BASE'] || 'deliverable' 
-ARCHIVE_EXTENSION  = ENV['EXT']  || 'zip'
-ARCHIVE_DATE       = ENV['DATE'] || '%Y.%m.%d.%H%M'
+################################################################################
+# Options
+################################################################################
 
-project_path = File.dirname(File.expand_path(File.basename(__FILE__)))
-project_name = File.basename(File.dirname(File.expand_path(__FILE__))).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
+OPT = {}
+OPT[:project_name] = '$$PROJECT_NAME$$'
+OPT[:assets_dir]   = 'assets'
+OPT[:bin_dir]      = 'bin'
+OPT[:lib_dir]      = 'lib'
+OPT[:src_dir]      = 'src'
+OPT[:libraries]    = %W(exib).map { |lib| File.join(OPT[:lib_dir], lib) }.join(',')
 
-# Exib Tasks  ------------------------------------------------------------------
+OPT[:deliverables] = %w(bin/*)
+OPT[:package_date] = '%Y.%m.%d.%H%M'
 
-namespace :exib do
-  
-  desc "Compile and open the EXIB application"
-  task :go => [:embed, :compile, :open]
-  
-  desc "Compile the EXIB Application to SWF"
-  task :compile do
-    mxmlc_bin    = '/opt/flex/bin/mxmlc'
-    source_paths = ['/Users/parker/Work/Code/EXIB/source', '/Applications/Adobe\ Flash\ CS4/Common/Configuration/ActionScript\ 3.0/projects/Flash/src/']
-    
-    cd File.join(project_path, 'source')
-    sh %{#{mxmlc_bin} -frame main #{project_name} -use-network=false -compiler.source-path=#{source_paths.join(',')} -output #{project_name}.swf 'Factory.as'}
-    cd project_path
-    mv "source/#{project_name}.swf", "deploy/#{project_name}.swf"
-  end
-  
-  desc "Open the compiled EXIB Application"
-  task :open do
-    sh %{open deploy/#{project_name}.swf -a '/Applications/Flash\ Player.app'}
-  end
-  
-  desc "Packages the necessary files into a deliverable archive"
-  task :package do
-    require 'time'
-    
-    archive_name = "#{ARCHIVE_BASENAME}_#{Time.now.strftime(ARCHIVE_DATE)}.#{ARCHIVE_EXTENSION}"
-    sh %{7za a -mx=9 -mmt=on #{File.join(DELIVERABLE_DIR, archive_name)} #{DELIVERABLES.join(' ')}}
-  end
-    
-  desc "Automatically embed all available assets"
-  task :embed do
-    font_asset    = { :path => 'assets/fonts',    :glob => '*.{ttf,otf}',         :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', advancedAntiAliasing='true', mimeType='application/x-font')]) }
-    graphic_asset = { :path => 'assets/graphics', :glob => '*.{png,jpg,gif,svg}', :template => %q([Embed(source='#FILE_NAME#')]) }
-    sound_asset   = { :path => 'assets/sounds',   :glob => '*.mp3',               :template => %q([Embed(source='#FILE_NAME#', mimeType='audio/mpeg')]) }
-    video_asset   = { :path => 'assets/videos',   :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#')]) }
-    
-    class_template = 'public var #FILE_NAME#:Class'
-    embed_buffer   = ''
-    
-    # FONT EMBEDDING DISABLED
-    [graphic_asset, sound_asset, video_asset].each do |asset|
-      files = Dir.glob("#{asset[:path]}/#{asset[:glob]}")
-      files.map! { |f| [File.join('..', asset[:path], File.basename(f)), File.basename(f)] }
-      
-      files.each do |file|
-        case asset[:path]
-        when /fonts/ then embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first).gsub('#FONT_NAME#', File.basename(file.last, '.*'))
-        else              embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first)
-        end
-        
-        embed_buffer << "\n" + class_template.gsub('#FILE_NAME#', File.basename(file.last, '.*')) + "\n\n"
-      end
-    end
-    
-    file = File.join(project_path, 'source', "#{project_name}.as")
-    tmp  = file.gsub('.as', '.tmp')
-    
-    begin_embed  = /(\s+)\/\/ BEGIN AUTO EMBED/ # Captures the indentation
-    end_embed    = /\/\/ END AUTO EMBED/
-    remove_embed = false
-    
-    File.open(file, 'r') do |source|
-      File.open(tmp, 'w') do |dest|
-        source.each_line do |line|
-          remove_embed, indent = true, $1 if line =~ begin_embed
-          remove_embed = false if line =~ end_embed
-          
-          dest << line unless remove_embed and line !~ begin_embed
-          dest << embed_buffer.split(/\n/).map! { |l| indent + l }.join("\n") + "\n" if line =~ begin_embed
-        end
-      end
-    end
-    
-    mv tmp, file
-  end
+OPT[:project_file] = "#{OPT[:project_name].capitalize}.as"
+OPT[:output_file]  = "#{OPT[:project_name].downcase}.swf"
+OPT[:factory_file] = 'Factory.as'
+OPT[:project_path] = File.join(OPT[:src_dir], OPT[:project_file])
+OPT[:output_path]  = File.join(OPT[:bin_dir], OPT[:output_file])
+OPT[:factory_path] = File.join(OPT[:src_dir], OPT[:factory_file])
+
+OPT[:flash_player] = '/Applications/Flash\ Player.app'
+
+################################################################################
+# Deploy
+################################################################################
+
+task :default => :go
+
+desc 'Embed and compile for delivery'
+task :deploy => [:embed, :compile]
+
+desc 'Embed, compile for debugging, and open the application'
+task :go => [:embed, :debug, :open]
+
+desc 'Compile the application'
+task :compile do
+  compile(false)
 end
 
-# AS Tasks ---------------------------------------------------------------------
-namespace :as do
-  task :satellite do
-    sh %{open debug/satellite.swf -a '/Applications/Flash\ Player.app'}
+desc 'Compile the application with debugging enabled'
+task :debug do
+  compile(true)
+end
+
+desc 'Open the compiled application'
+task :open do
+  sh %{ fdb #{OPT[:output_path]} }
+end
+
+def compile(debug = false)
+  sh %{ mxmlc -frame main -use-network=false -debug=#{debug} -compiler.source-path=#{OPT[:src_dir]},#{OPT[:libraries]} -output #{OPT[:output_path]} #{OPT[:project_path]} }
+end
+
+################################################################################
+# Embedding
+################################################################################
+
+desc 'Automatically embed all available assets'
+task :embed do
+  require 'tempfile'
+  
+  font_asset    = { :path => 'assets/fonts',    :glob => '*.{ttf,otf}',         :template => %q([Embed(source='#FILE_NAME#', fontName='#FONT_NAME#', advancedAntiAliasing='true', mimeType='application/x-font')]) }
+  graphic_asset = { :path => 'assets/graphics', :glob => '*.{png,jpg,gif,svg}', :template => %q([Embed(source='#FILE_NAME#')]) }
+  sound_asset   = { :path => 'assets/sounds',   :glob => '*.mp3',               :template => %q([Embed(source='#FILE_NAME#', mimeType='audio/mpeg')]) }
+  video_asset   = { :path => 'assets/videos',   :glob => '*.swf',               :template => %q([Embed(source='#FILE_NAME#')]) }
+  
+  class_template = 'public var #FILE_NAME#:Class'
+  embed_buffer   = ''
+
+  [font_asset, graphic_asset, sound_asset, video_asset].each do |asset|
+    files = Dir.glob("#{asset[:path]}/#{asset[:glob]}")
+    files.map! { |f| [File.join('..', asset[:path], File.basename(f)), File.basename(f)] }
+    
+    files.each do |file|
+      case asset[:path]
+      when /fonts/
+        embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first).gsub('#FONT_NAME#', File.basename(file.last, '.*'))
+      else
+        embed_buffer << asset[:template].gsub('#FILE_NAME#', file.first)
+      end
+      
+      embed_buffer << "\n" + class_template.gsub('#FILE_NAME#', File.basename(file.last, '.*')) + "\n\n"
+    end
+  end
+  
+  tmp         = Tempfile.new(OPT[:project_path])
+  begin_embed = /(\s+)\/\/ BEGIN AUTO EMBED/
+  end_embed   = /\/\/ END AUTO EMBED/
+  
+  File.open(OPT[:project_path]) do |file|
+    file.each_line do |line|
+      remove_embed, indent = true, $1 if line =~ begin_embed
+      remove_embed = false if line =~ end_embed
+      
+      tmp << line unless remove_embed and line !~ begin_embed
+      tmp << embed_buffer.split(/\n/).map! { |l| indent + l }.join("\n") + "\n" if line =~ begin_embed
+    end
+  end
+  
+  tmp.open
+  cp tmp.path, OPT[:project_path]
+end
+
+################################################################################
+# Packaging
+################################################################################
+
+desc 'Packages the necessary files into a deliverable archive'
+task :package do
+  require 'time'
+  
+  package_name = "#{OPT[:project_name]}_#{Time.now.strftime(OPT[:package_date])}.zip"
+  package_path = File.join('deliver', package_name)
+  
+  begin
+    sh %{ 7za a -mx=9 -mmt=on #{package_path} #{OPT[:deliverables].join(' ')} }
+  rescue
+    STDERR.puts '7za was not found. Unable to create zip.'
   end
 end
