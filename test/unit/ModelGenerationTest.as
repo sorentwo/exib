@@ -1,4 +1,4 @@
-package generator {
+package unit {
 
   import asunit.framework.TestCase
   import com.soren.exib.core.Generator

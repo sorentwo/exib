@@ -1,4 +1,4 @@
-package generator {
+package unit {
 
   import asunit.framework.TestCase
   import flash.text.TextFormat
