@@ -30,7 +30,9 @@ package com.soren.exib.view {
       var class_name:String = processUrlIntoClassName(url)
       
       try {
-        addChild(new _embed_container[class_name] as Bitmap)
+        var image:Bitmap = new _embed_container[class_name] as Bitmap
+        image.smoothing  = true
+        addChild(image)
       } catch (e:Error) {
         throw new Error('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
@@ -57,7 +59,7 @@ package com.soren.exib.view {
     * @private
     **/
     private function verifyEmbedContainer():void {
-      if (!_embed_container) throw('No embed container set, cannot load embedded assets')
+      if (!_embed_container) throw new Error('No embed container set, cannot load embedded assets')
     }
     
     /**
