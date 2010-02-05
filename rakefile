@@ -130,3 +130,12 @@ namespace :test do
     cp temp.path, File.join(OPT[:test_dir], OPT[:test_suite])
   end
 end
+
+################################################################################
+# Build Tasks
+################################################################################
+
+desc 'Compile exib into a component library'
+task :build do
+  sh %{ compc -source-path #{OPT[:src_dir]} -include-sources #{OPT[:src_dir]}/com/soren/exib/core/ -output='#{OPT[:bin_dir]}/#{OPT[:project_name]}.swc' }
+end

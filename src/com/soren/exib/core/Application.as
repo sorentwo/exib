@@ -12,9 +12,13 @@ package com.soren.exib.core {
   import flash.display.Sprite
   import flash.events.Event
   import flash.utils.ByteArray
-  import com.soren.exib.debug.Log
-  import com.soren.sfx.Effect
+  import com.soren.exib.debug.*
+  import com.soren.exib.helper.*
+  import com.soren.exib.manager.*
+  import com.soren.exib.model.*
+  import com.soren.exib.service.*
   import com.soren.exib.view.*
+  import com.soren.sfx.*
   
   public class Application extends Sprite {
     
@@ -46,10 +50,8 @@ package com.soren.exib.core {
       // Logging
       Log.getLog().level = Log.DEBUG
       Log.getLog().throwOnError = true
-      Log.getLog().clear()
       
       Log.getLog().debug('Extended XML Interface Builder :: Version ' + Version.version())
-      Log.getLog().debug('=============================================')
       
       // Listener for presence on the stage. Necessary for tweening.
       addEventListener(Event.ADDED_TO_STAGE, registerStageForTween)
@@ -66,7 +68,7 @@ package com.soren.exib.core {
     * Register the stage to the tween class
     **/
     private function registerStageForTween(event:Event):void {
-      Tween.getTween().registerStage(stage)
+      Tween.getInstance().registerStage(stage)
     }
     
     /**
@@ -105,9 +107,9 @@ package com.soren.exib.core {
         addChild(_container)
         
         // Push the defaults to the space
-        _space.add(new Effect(scr_con), _default_effect_name)
-        _space.add(Log.getLog(),        _default_log_name)
-        _space.add(scr_con,             _default_screen_name)
+        _space.add(new Effect(),  _default_effect_name)
+        _space.add(Log.getLog(),  _default_log_name)
+        _space.add(scr_con,       _default_screen_name)
       }
     }
     
