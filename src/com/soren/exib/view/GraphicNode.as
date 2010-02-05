@@ -32,7 +32,7 @@ package com.soren.exib.view {
       try {
         addChild(new _embed_container[class_name] as Bitmap)
       } catch (e:Error) {
-        trace('Unable to load embedded graphic: ' + class_name + '\n' + e)
+        throw new Error('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
     }
 

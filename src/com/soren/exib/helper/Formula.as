@@ -151,7 +151,7 @@ package com.soren.exib.helper {
         if (_space.has(value)) {
           return_value = Number(_space.get(value).value)
         } else {
-          throw ('Unknown or unmanaged variable: ' + value)
+          throw new Error('Unknown or unmanaged variable: ' + value)
         }
       }
       
@@ -166,7 +166,7 @@ package com.soren.exib.helper {
     **/
     private function validateFormula(formula:String):void {
       if (!FORMULA_PATTERN.test(formula)) {
-        throw ('Attempt to store invalid formula: ' + formula)
+        throw new Error('Attempt to store invalid formula: ' + formula)
       }
     }
   }

@@ -56,7 +56,7 @@ package com.soren.exib.view {
         var loader:Loader = swf.getChildAt(0) as Loader
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoadComplete)
       } catch (e:Error) {
-        trace('Unable to load embedded graphic: ' + class_name + '\n' + e)
+        throw new Error('Unable to load embedded graphic: ' + class_name + '\n' + e)
       }
     }
     
