@@ -167,10 +167,13 @@ package com.soren.exib.core {
     public function genQueue(xml:XML):Queue {
       var queue:Queue = new Queue()
       
-      for each (var xml_member:XML in xml.*) {
-        var before:Boolean = (xml_member.name() == 'before') ? true : false
-        var parsed:Object  = parseQueueMember(xml_member)
-        queue.enqueue(parsed.effect, parsed.targets, parsed.options, before, parsed.wait)
+      for each (var member:XML in xml.*) {
+        var effect:String  = member.name().toString()
+        var targets:Array  = member.@targets.split(/\s\t/)
+        var options:Object = convertType('{' + member + '}') || {}
+        var wait:Number    = options.wait || NaN
+        
+        queue.enqueue(effect, targets, options, wait)
       }
       
       return queue
@@ -421,7 +424,7 @@ package com.soren.exib.core {
         try {
           object[key_value.key] = convertType(key_value.value.replace(/\s/, ''))
         } catch (e:Error) {
-          throw ('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
+          throw new Error('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
         }
         
       }
@@ -526,17 +529,6 @@ package com.soren.exib.core {
     private function resolveOperator(operator:*):uint {
       operator = operator || 'and'
       return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
-    }
-    
-    private function parseQueueMember(member_string:String):Object {
-      var member_pattern:RegExp = /^(?P<effect>[a-z]+)\s*?\(\s*?(?P<targets>\[.*\])(\s*?,\s*?)?(?P<options>\{.*\})?(,\s*?)?(?P<wait>\.?\d+)?\)/
-      var parsed:Object = member_pattern.exec(member_string)
-
-      parsed.targets = convertType(parsed.targets)
-      parsed.options = convertType(parsed.options.toString()) || {}
-      parsed.wait    = convertType(parsed.wait)               || NaN
-      
-      return parsed
     }
     
     private function retrieveActionable(actionable_id:String):IActionable {

@@ -3,7 +3,6 @@ package {
 	import flash.utils.describeType
 	import asunit.framework.TestSuite
 	import unit.*
-	import generator.*
 	import com.soren.exib.service.Sound
 	import com.soren.exib.view.GraphicNode
 	import com.soren.exib.view.VideoNode
@@ -43,7 +42,7 @@ package {
       super()
       
       var tests:Array = [
-        AbbreviateTest, ActionSetTest, ActionTest, AdvancedMathTest, ButtonNodeTest, ClockModelTest, ConditionalSetTest, ConditionalTest, ConversionUtilTest, CronTest, DaemonTest, DateUtilTest, DialNodeTest, EvaluatorTest, ExtendedArrayTest, FormulaTest, GraphicNodeTest, HistoryModelTest, HotkeyTest, KeyUtilTest, ManagerTest, MeterNodeTest, MultiNodeTest, NodeTest, PadTest, PresetModelTest, ProgressNodeTest, ScreenControllerTest, ScreenNodeTest, SoundTest, StateModelTest, StringUtilTest, TaskTest, TextNodeTest, ValueModelTest, VectorNodeTest, VideoNodeTest, ViewTest // AUTO
+        AbbreviateTest, ActionSetTest, ActionTest, AdvancedMathTest, ButtonNodeTest, ClockModelTest, ConditionalSetTest, ConditionalTest, ConversionUtilTest, CronTest, DaemonTest, DateUtilTest, DialNodeTest, EvaluatorTest, ExtendedArrayTest, FormulaTest, GraphicNodeTest, HelperGeneratorTest, HistoryModelTest, HotkeyTest, KeyUtilTest, ManagerTest, MediaGeneratorTest, MeterNodeTest, ModelGenerationTest, MultiNodeTest, NodeTest, PadTest, PresetModelTest, ProgressNodeTest, QueueGeneratorTest, ScreenControllerTest, ScreenNodeTest, ServiceGeneratorTest, SoundTest, StateModelTest, StringUtilTest, TaskTest, TextNodeTest, ValueModelTest, VectorNodeTest, VideoNodeTest, ViewTest // AUTO
       ]
 
       iterateTestArray(tests)

@@ -28,6 +28,13 @@ package com.soren.sfx {
     public function Queue() {}
     
     /**
+    * Retrieve the total number of items in the queue
+    **/
+    public function get length():int {
+      return _enqueued.length
+    }
+    
+    /**
     * Add an effect, plus sundries, to the queue.
     * @param  effect    A string representing an effect name.
     * @param  targets   An array of objects.
