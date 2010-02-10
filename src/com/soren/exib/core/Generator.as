@@ -460,7 +460,7 @@ package com.soren.exib.core {
     }
     
     private function parseAction(action_string:String):Object {
-      if (action_string == 'break') return { actionable: 'return', method: '', arguments: [] }
+      if (/^(return|break).*/.test(action_string)) return { actionable: 'return', method: '', arguments: [] }
       
       var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*?)\)(\s+if\s+(?P<conditional>.*))?$/
       if (!action_pattern.test(action_string)) {
