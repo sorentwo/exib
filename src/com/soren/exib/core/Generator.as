@@ -460,14 +460,20 @@ package com.soren.exib.core {
     }
     
     private function parseAction(action_string:String):Object {
-      if (/^(return|break).*/.test(action_string)) return { actionable: 'return', method: '', arguments: [] }
+      var parsed:Object
+      var return_pattern:RegExp = /^(return|break)(\s+if\s+(?P<conditional>.*))?$/
+      if (return_pattern.test(action_string)) {
+        parsed = return_pattern.exec(action_string)
+        
+        return { actionable: 'return', method: '', arguments: [], conditional: parsed.conditional }
+      }
       
       var action_pattern:RegExp = /^(?P<actionable>[\w_@#$+*]+)\.(?P<method>[\w_]+)\((?P<arguments>.*?)\)(\s+if\s+(?P<conditional>.*))?$/
       if (!action_pattern.test(action_string)) {
         throw new Error(action_string)
       }
       
-      var parsed:Object = action_pattern.exec(action_string)
+      parsed = action_pattern.exec(action_string)
 
       var args:Array = parsed.arguments.toString().split(/[\s\t]?(,|\[.*\]|\{.*\})[\s\t]?/)
       var conv:Array = []
