@@ -1,9 +1,9 @@
 syntax: glob
+
+# OS X cruft
 *._*
 *.DS_Store
 
-# TODO should remain between branches
-doc/TODO.txt
-
-# Compiled .swf files aren't needed
+# Binaries
+bin/*.swc
 test/*.swf
