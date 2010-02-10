@@ -51,7 +51,8 @@ package com.soren.exib.helper {
     **/
     public function act():void {
       for each (var action:Action in _actions) {
-        action.act()
+        var response:Boolean = action.act()
+        if (response == false) break
       }
     }    
 	}

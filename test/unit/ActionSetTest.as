@@ -70,5 +70,19 @@ package unit {
       assertEquals('off', mod_a.value)
       assertEquals('on', mod_b.value)
     }
+    
+    public function testShortCircuit():void {
+      var mod_a:StateModel = new StateModel('on', 'off')
+      var act_a:Action = new Action('return', '', [])
+      var act_b:Action = new Action(mod_a, 'set', 'off')
+      
+      var act_set:ActionSet = new ActionSet()
+      act_set.push(act_a)
+      act_set.push(act_b)
+      
+      act_set.act()
+      
+      assertEquals('on', mod_a.value)
+    }
   }
 }

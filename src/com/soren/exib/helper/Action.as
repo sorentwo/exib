@@ -56,9 +56,10 @@ package com.soren.exib.helper {
     * Applies the action to the actionable. If the action refers to an object
     * with a value accessor the value is used as the action.
     **/
-    public function act():void {
-      if (_conditional_set && !_conditional_set.evaluate()) return
-
+    public function act():Boolean {
+      if (_conditional_set && !_conditional_set.evaluate()) return true
+      if (_actionable_id == 'return') return false
+      
       var values:Array = _arguments.map(toValue)
       
       if (_actionable_id != null && _actionable == null) {
@@ -79,6 +80,8 @@ package com.soren.exib.helper {
                           "caught: "     + e)
         }
       }
+      
+      return true
     }
     
     // ---
