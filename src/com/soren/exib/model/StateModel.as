@@ -36,9 +36,7 @@ package com.soren.exib.model {
     * 
     * @param  value A string representing the name of a state
     **/
-    public override function set value(value:*):void {
-      value = value.toLowerCase()
-      
+    public override function set value(value:*):void {    
       var index:int = _states.indexOf(value)
       
       if (index == -1) {
@@ -60,9 +58,7 @@ package com.soren.exib.model {
     * 
     * @param  value A string representing the name of a state
     **/
-    public function set initial(value:String):void {
-      value = value.toLowerCase()
-      
+    public function set initial(value:String):void {    
       var index:int = _states.indexOf(value)
       
       if (index == -1) {
@@ -117,9 +113,7 @@ package com.soren.exib.model {
     * 
     * @param  new_state  A string representing the new state to add
     **/
-    public function add(state:String):void {
-      state = state.toLowerCase()
-      
+    public function add(state:String):void {      
       if (_states.indexOf(state) != -1) {
         throw new Error("State name: " + state + " already exists")
       } else {
@@ -182,6 +176,13 @@ package com.soren.exib.model {
     **/
     public function set(state:String):void {
       this.value = state
+    }
+    
+    /**
+    * Toggle the model's state between two values.
+    **/
+    public function toggle(a:String, b:String):void {      
+      this.value = (this.value == a) ? b : a
     }
     
     // ---
