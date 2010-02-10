@@ -52,8 +52,8 @@ end
 
 task :copy_files => [:copy_config, :copy_rake, :copy_satellite, :copy_app]
 
-task(:copy_config)   { cp 'template/config_template.exml',  File.join(DESTINATION, 'assets/config/config.exml') }
-task(:copy_rake)     { cp 'template/project_rakefile',      File.join(DESTINATION, 'rakefile')                  }
+task(:copy_config)   { cp 'template/config.exml',  File.join(DESTINATION, 'assets/config/config.exml') }
+task(:copy_rake)     { cp 'template/rakefile',     File.join(DESTINATION, 'rakefile')                  }
 
 task(:copy_app) do
   application_name  = File.basename(DESTINATION).gsub(/\/(.?)/) { "::" + $1.upcase}.gsub(/(^|_)(.)/) { $2.upcase }
@@ -61,8 +61,8 @@ task(:copy_app) do
   factory_dest      = File.join(DESTINATION, 'source/Factory.as')
   application_token = '#APPLICATION_NAME#'
   
-  write_and_replace_token('template/application_template.as', application_dest, application_token, application_name)
-  write_and_replace_token('template/factory_template.as', factory_dest, application_token, application_name)
+  write_and_replace_token('template/application.as', application_dest, application_token, application_name)
+  write_and_replace_token('template/factory.as', factory_dest, application_token, application_name)
 end
 
 # Generate Documentation -------------------------------------------------------
