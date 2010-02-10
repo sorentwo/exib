@@ -9,7 +9,6 @@
 package com.soren.exib.view {
   
   import flash.display.Bitmap
-  import com.soren.exib.debug.Log
   
   public class GraphicNode extends Node {
     

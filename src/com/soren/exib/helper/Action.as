@@ -11,14 +11,12 @@
 
 package com.soren.exib.helper {
   
-  import com.soren.exib.debug.Log
-  import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.core.Space
   
   public class Action {
 	
-    private var _actionable:IActionable
+    private var _actionable:*
     private var _actionable_id:String
     private var _method:String
     private var _arguments:Array
@@ -41,9 +39,8 @@ package com.soren.exib.helper {
     public function Action(actionable:*, method:String, ...args) {
       if ((args.length != 0) && (args[0] is Array)) args = args[0]
       
-      if (actionable is String)           { _actionable_id = actionable }
-      else if (actionable is IActionable) { _actionable = actionable }
-      else                                { throw new Error('Invalid object supplied as actionable' + actionable) }
+      if (actionable is String) { _actionable_id = actionable }
+      else                      { _actionable = actionable }
       
       _method     = method
       _arguments  = args

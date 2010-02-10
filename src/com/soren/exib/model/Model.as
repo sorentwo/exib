@@ -10,10 +10,9 @@ package com.soren.exib.model {
 
   import flash.events.Event
   import flash.events.EventDispatcher
-  import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   
-  public class Model extends EventDispatcher implements IModel, IActionable, IEvaluatable {
+  public class Model extends EventDispatcher implements IModel, IEvaluatable {
     
     public static var CHANGED:String = 'CHANGED'
     

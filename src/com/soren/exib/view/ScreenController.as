@@ -13,13 +13,12 @@ package com.soren.exib.view {
   import flash.display.Sprite
   import flash.events.Event
   import flash.events.EventDispatcher
-  import com.soren.exib.core.IActionable
   import com.soren.exib.core.IEvaluatable
   import com.soren.exib.manager.Manager
   import com.soren.exib.model.Model  
   import com.soren.exib.model.HistoryModel
 
-  public class ScreenController extends EventDispatcher implements IActionable, IEvaluatable {
+  public class ScreenController extends EventDispatcher implements IEvaluatable {
 
     private static const EVENT_TYPE:String = Model.CHANGED
     

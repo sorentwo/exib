@@ -11,7 +11,6 @@ package com.soren.exib.core {
   import flash.display.DisplayObject
   import flash.text.TextField
   import flash.text.TextFormat
-  import com.soren.exib.debug.Log
   import com.soren.exib.helper.*
   import com.soren.exib.manager.*
   import com.soren.exib.model.*
@@ -169,7 +168,7 @@ package com.soren.exib.core {
       
       for each (var member:XML in xml.*) {
         var effect:String  = member.name().toString()
-        var targets:Array  = member.@targets.split(/\s\t/)
+        var targets:Array  = member.@targets.split(',')
         var options:Object = convertType('{' + member + '}') || {}
         var wait:Number    = options.wait || NaN
         
@@ -531,7 +530,7 @@ package com.soren.exib.core {
       return (operator == 'and') ? ConditionalSet.LOGICAL_AND : ConditionalSet.LOGICAL_OR
     }
     
-    private function retrieveActionable(actionable_id:String):IActionable {
+    private function retrieveActionable(actionable_id:String):* {
       return _space.get(actionable_id)
     }
   

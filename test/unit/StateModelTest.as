@@ -126,13 +126,13 @@ package unit {
     
     public function testToggle():void {
       _instance.add(TEST_STATE_C)
-      _instance.toggle('off, auto')
+      _instance.toggle('off', 'auto')
       assertEquals('off', _instance.value)
       
-      _instance.toggle('off, auto')
+      _instance.toggle('off', 'auto')
       assertEquals('auto', _instance.value)
       
-      _instance.toggle('off, auto')
+      _instance.toggle('off', 'auto')
       assertEquals('off', _instance.value)
     }
     

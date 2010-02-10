@@ -12,10 +12,8 @@ package com.soren.exib.view {
   import flash.display.Loader
   import flash.display.MovieClip
   import flash.events.Event
-  import com.soren.exib.debug.Log
-  import com.soren.exib.core.IActionable
 
-  public class VideoNode extends Node implements IActionable {
+  public class VideoNode extends Node {
 
     private static const VALID_URL:RegExp     = /\w+\.swf$/
     

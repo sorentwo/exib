@@ -8,10 +8,8 @@
 **/
 
 package com.soren.exib.debug {
-  
-  import com.soren.exib.core.IActionable
 
-  public class Log implements IActionable {
+  public class Log {
     
     public static const DEBUG:uint = 0
     public static const WARN:uint  = 1

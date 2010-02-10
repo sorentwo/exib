@@ -11,7 +11,6 @@
 package com.soren.exib.view {
 
   import flash.events.Event
-  import com.soren.exib.debug.Log
   import com.soren.exib.model.Model
   import com.soren.exib.model.ValueModel
   

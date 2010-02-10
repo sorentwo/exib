@@ -14,9 +14,8 @@ package com.soren.exib.service {
   import flash.events.TimerEvent
   import com.soren.exib.helper.ActionSet
   import com.soren.exib.helper.ConditionalSet
-  import com.soren.exib.core.IActionable
 
-  public class Cron implements IActionable {
+  public class Cron {
 	
     private var _timer:Timer
     private var _event_set:ActionSet

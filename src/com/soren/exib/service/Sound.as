@@ -11,10 +11,8 @@ package com.soren.exib.service {
   
   import flash.media.Sound
   import flash.media.SoundChannel
-  import com.soren.exib.debug.Log
-  import com.soren.exib.core.IActionable
   
-  public class Sound implements IActionable {
+  public class Sound {
 
     private static const VALID_URL:RegExp = /\w+\.mp3/i
     private static var _embed_container:*
@@ -78,7 +76,7 @@ package com.soren.exib.service {
     * @private
     **/
     private function verifyEmbedContainer():void {
-      if (!_embed_container) Log.getLog().fatal('No embed container set, cannot load embedded assets')
+      if (!_embed_container) throw new Error('No embed container set, cannot load embedded assets')
     }
     
     /**

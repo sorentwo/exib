@@ -8,8 +8,6 @@
 **/
 
 package com.soren.exib.model {
-
-  import com.soren.exib.debug.Log
   
   public class ValueModel extends Model {
 

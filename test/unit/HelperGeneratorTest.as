@@ -3,7 +3,6 @@ package unit {
   import asunit.framework.TestCase
   import flash.display.Sprite
   import com.soren.exib.core.*
-  import com.soren.exib.debug.Log
   import com.soren.exib.helper.*
   import com.soren.exib.model.*
 

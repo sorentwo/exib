@@ -1,7 +1,6 @@
 package unit {
 
   import asunit.framework.TestCase
-  import com.soren.exib.debug.Log
   import com.soren.math.AdvancedMath
 
   public class AdvancedMathTest extends TestCase {

@@ -38,9 +38,9 @@ package unit {
     public function testPublicMethods():void {
       var mod_a:StateModel = new StateModel('on', 'off')
       var mod_b:StateModel = new StateModel('on', 'off')
-      var act_a:Action = new Action(mod_a, 'set', 'OFF')
-      var act_b:Action = new Action(mod_b, 'set', 'OFF')
-      var act_c:Action = new Action(mod_b, 'set', 'ON')
+      var act_a:Action = new Action(mod_a, 'set', 'off')
+      var act_b:Action = new Action(mod_b, 'set', 'off')
+      var act_c:Action = new Action(mod_b, 'set', 'on')
       
       var act_set:ActionSet = new ActionSet()
       

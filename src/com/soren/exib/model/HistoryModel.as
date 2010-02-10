@@ -13,8 +13,6 @@
 
 package com.soren.exib.model {
   
-  import com.soren.exib.core.IActionable
-  
   public class HistoryModel extends Model {
     
     private var _states:Array          = []

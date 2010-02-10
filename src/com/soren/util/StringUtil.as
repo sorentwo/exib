@@ -7,7 +7,6 @@
 package com.soren.util {
 
   import com.soren.math.AdvancedMath
-  import com.soren.exib.debug.Log
   
   public class StringUtil {
     

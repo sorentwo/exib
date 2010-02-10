@@ -11,16 +11,15 @@ package com.soren.exib.core {
 
   public class Version {
     
-    public static const MAJOR_VERSION:uint = 0
-    public static const MINOR_VERSION:uint = 8
-    
-    public function Version() {}
+    public static const MAJOR:uint    = 0
+    public static const MINOR:uint    = 8
+    public static const REVISION:uint = 1
     
     /**
     * Returns the current version as a single string.
     **/
     public static function version():String {
-      return MAJOR_VERSION + '.' + MINOR_VERSION
+      return [MAJOR, MINOR, REVISION].join('.')
     }
   }
 }

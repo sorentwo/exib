@@ -10,11 +10,9 @@
 
 package com.soren.exib.helper {
 
-  import com.soren.exib.debug.Log
-  import com.soren.exib.core.IActionable
   import com.soren.exib.core.Space
 
-  public class Formula implements IActionable {
+  public class Formula {
     public static const NO_ROUND:uint = 0
     public static const ROUND:uint    = 1
     public static const CEIL:uint     = 2

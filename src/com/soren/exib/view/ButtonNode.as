@@ -12,7 +12,6 @@ package com.soren.exib.view {
   import flash.events.Event
   import flash.events.MouseEvent
   import com.soren.exib.helper.ActionSet
-  import com.soren.exib.debug.Log
   
   public class ButtonNode extends Node {
 

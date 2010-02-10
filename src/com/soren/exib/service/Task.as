@@ -8,10 +8,9 @@
 
 package com.soren.exib.service {
 
-  import com.soren.exib.core.IActionable
   import com.soren.exib.helper.ActionSet
 
-  public class Task implements IActionable{
+  public class Task {
 
     private var _action_set:ActionSet
     

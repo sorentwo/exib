@@ -1,0 +1,9 @@
+== TODO
+* if / else / elsif
+* First position 'or' evaluation
+* Nested folder usage
+	- Allow assets to be grouped in folders underneath the assets/graphics/ path
+* Formula parsing / usage inside of conditional statements
+	- "if _model == _other_model * 2 and _alt_model == _something % 3"
+	- "if _model[1] % 8 == 0"
+* Refactor HistoryModel
