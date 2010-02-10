@@ -163,7 +163,7 @@ package com.soren.exib.core {
     }
     
     // Queue -->
-    public function genQueue(xml:XML):Queue {
+    public function genQueue(xml:XML, root:Node):Queue {
       var queue:Queue = new Queue()
       
       for each (var member:XML in xml.*) {
@@ -172,7 +172,16 @@ package com.soren.exib.core {
         var options:Object = convertType('{' + member + '}') || {}
         var wait:Number    = options.wait || NaN
         
-        queue.enqueue(effect, targets, options, wait)
+        var resolved:Array = []
+        for each (var target:String in targets) {
+          if (/\..+/.test(target)) {
+            resolved = resolved.concat(root.getChildrenByGroup(target.replace(/\.(.+)/, "$1")))
+          } else {
+            resolved = resolved.concat(root.getChildById(target.replace(/\#(.+)/, "$1")))
+          }
+        }
+        
+        queue.enqueue(effect, resolved, options, wait)
       }
       
       return queue
@@ -189,8 +198,8 @@ package com.soren.exib.core {
       return context
     }
     
-    public function genContainer(xml_list:XMLList):CompositeNode {
-      var container:CompositeNode = new CompositeNode()
+    public function genContainer(xml_list:XMLList):Node {
+      var container:Node = new Node()
       container.position(xml_list.@pos)
       
       return container

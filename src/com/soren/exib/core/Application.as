@@ -24,7 +24,7 @@ package com.soren.exib.core {
     
     private var _space:Space = Space.getSpace()
     private var _generator:Generator = new Generator()
-    private var _container:Sprite
+    private var _container:Node
     
     protected var _default_screen_name:String = '_screen'
     protected var _default_effect_name:String = '_effect'
@@ -92,10 +92,10 @@ package com.soren.exib.core {
       populateModels(config.models)
       populateFormats(config.formats)
       populateMedia(config.media)
-      populateQueues(config.queues)
       populateServices(config.services)
       populateHotkeys(config.hotkeys)
       populateView(config.view)
+      populateQueues(config.queues) // Brittle, must be run after populateView
       
       post(config)
     }
@@ -110,6 +110,7 @@ package com.soren.exib.core {
         _space.add(new Effect(),  _default_effect_name)
         _space.add(Log.getLog(),  _default_log_name)
         _space.add(scr_con,       _default_screen_name)
+        _space.add(_container,    'root')
       }
     }
     
@@ -163,7 +164,7 @@ package com.soren.exib.core {
     
     private function populateQueues(queues:XMLList):void {
       for each (var xml_queue:XML in queues.*) {
-        _space.add(_generator.genQueue(xml_queue), xml_queue.@id)
+        _space.add(_generator.genQueue(xml_queue, _container), xml_queue.@id)
       }
     }
     
