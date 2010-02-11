@@ -73,7 +73,7 @@ package unit {
     }
     
     public function testStartingGeneratedQueue():void {
-      var xml:XML = <queue id='myqueue'><fade targets='#child_a, .group_b'>from: 0, to: 1, wait: 1.5</fade></queue>
+      var xml:XML = <queue id='myqueue'><hide targets='#child_a, .group_b'>dummy: 0</hide></queue>
       
       var queue:Queue = _gen.genQueue(xml, _root)
       queue.start()

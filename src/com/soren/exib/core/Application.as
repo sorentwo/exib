@@ -110,7 +110,6 @@ package com.soren.exib.core {
         _space.add(new Effect(),  _default_effect_name)
         _space.add(Log.getLog(),  _default_log_name)
         _space.add(scr_con,       _default_screen_name)
-        _space.add(_container,    'root')
       }
     }
     
@@ -163,8 +162,10 @@ package com.soren.exib.core {
     }
     
     private function populateQueues(queues:XMLList):void {
+      // HACK to have objects resolve
+      var context:Node = _space.get('context')
       for each (var xml_queue:XML in queues.*) {
-        _space.add(_generator.genQueue(xml_queue, _container), xml_queue.@id)
+        _space.add(_generator.genQueue(xml_queue, context), xml_queue.@id)
       }
     }
     
@@ -186,7 +187,8 @@ package com.soren.exib.core {
     private function populateView(view:XMLList):void {
       populateScreens(view.screens.screen)
       
-      var context:Sprite = _generator.genContext(view.context)
+      var context:Node = _generator.genContext(view.context)
+      _space.add(context, 'context')
       addChildAt(context, 0)
 
       // Mask?

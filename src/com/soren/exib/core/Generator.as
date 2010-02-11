@@ -192,15 +192,15 @@ package com.soren.exib.core {
           }
         }
         
-        queue.enqueue(effect, resolved, options, wait)
+        queue.enqueue(effect, all_resolved, options, wait)
       }
       
       return queue
     }
     
     // View -->
-    public function genContext(xml_list:XMLList):CompositeNode {
-      var context:CompositeNode = new CompositeNode()
+    public function genContext(xml_list:XMLList):Node {
+      var context:Node = new Node()
       
       if (xml_list.@bg != undefined) context.addChild(new GraphicNode(xml_list.@bg))
       
@@ -445,29 +445,31 @@ package com.soren.exib.core {
         } catch (e:Error) {
           throw new Error('Object parse failed: ' + element + '\n' + key_value + '\n' + e)
         }
-        
       }
       
       return object
     }
     
     private function convertType(element:*):* {
-      if (/^\d+$/.test(element))           return int(element)
-      if (/^[\d\.]+$/.test(element))       return Number(element)
+      var int_pattern:RegExp    = /^\d+$/
+      var float_pattern:RegExp  = /^[\d\.]+$/
+      var array_pattern:RegExp  = /\[(.*)\]/
+      var object_pattern:RegExp = /\{\s?(.*)\s?\}/
       
-      var array_pattern:RegExp = /\[(.*)\]/
-      if (array_pattern.test(element)) {
+      if (int_pattern.test(element)) {
+        return int(element)
+      } else if (float_pattern.test(element)) {
+        return Number(element)
+      } else if (array_pattern.test(element)) {
         var arr:Array = element.replace(array_pattern, "$1").split(/[\s\t]?,[\s\t]?/)
         var conv:Array = []
         for each (var elem:* in arr) { conv.push(convertType(elem)) }
         return conv
+      } else if (object_pattern.test(element)) {
+        return arrToObject(element.replace(object_pattern, "$1").split(/[\s\t]*,[\s\t]*/))
+      } else {
+        return String(element)
       }
-      
-      var object_pattern:RegExp = /\{\s?(.*)\s?\}/
-      if (object_pattern.test(element))    return arrToObject(element.replace(object_pattern, "$1").split(/[\s\t]*,[\s\t]*/))
-      
-      // None of the above, just return the contents as string
-      return String(element)
     }
     
     private function parseAction(action_string:String):Object {
