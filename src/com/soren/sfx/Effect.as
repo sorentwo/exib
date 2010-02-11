@@ -24,7 +24,7 @@ package com.soren.sfx {
     public static const DEFAULT_GLOW_ALPHA_TO:uint   = 1
     public static const DEFAULT_GLOW_BLUR_FROM:uint  = 0
     public static const DEFAULT_GLOW_BLUR_TO:uint    = 6
-    public static const DEFAULT_PULSE_COUNT:uint     = 4
+    public static const DEFAULT_TIMES:uint           = 3
     public static const DEFAULT_PULSE_FROM:uint      = 1
     public static const DEFAULT_PULSE_TO:uint        = 0
     public static const DEFAULT_RELATIVE:Boolean     = true
@@ -42,7 +42,7 @@ package com.soren.sfx {
     * Create an instance of the Effect class.
     **/
     public function Effect() { }
-
+    
     /**
     * Perform a timed blur on one or more objects.
     *
@@ -287,8 +287,7 @@ package com.soren.sfx {
       options = mergeOptions(options)
 
       for each (var object:DisplayObject in targets) {
-        var times:uint = (options.hasOwnProperty('times')) ? uint(options['times']) : 1000
-        _tween.add(object, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], times)
+        _tween.add(object, 'alpha', options['easing'], options['pulse_from'], options['pulse_to'], options['duration'], options['times'])
       }
     }
     
@@ -613,7 +612,7 @@ package com.soren.sfx {
       merged_options['easing']       = DEFAULT_EASING
       merged_options['fade_from']    = DEFAULT_FADE_FROM
       merged_options['fade_to']      = DEFAULT_FADE_TO
-      merged_options['times']        = DEFAULT_PULSE_COUNT
+      merged_options['times']        = DEFAULT_TIMES
       merged_options['pulse_from']   = DEFAULT_PULSE_FROM
       merged_options['pulse_to']     = DEFAULT_PULSE_TO
       merged_options['relative']     = DEFAULT_RELATIVE

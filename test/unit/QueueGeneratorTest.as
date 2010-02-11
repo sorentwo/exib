@@ -31,6 +31,9 @@ package unit {
       _child_b.id = 'child_b'
       _child_b.groups = ['group_b']
       
+      _root.addChild(_child_a)
+      _root.addChild(_child_b)
+      
       _gen = new Generator()
     }
 
@@ -67,6 +70,13 @@ package unit {
       
       var queue:Queue = _gen.genQueue(xml, _root)
       assertEquals(1, queue.length)
+    }
+    
+    public function testStartingGeneratedQueue():void {
+      var xml:XML = <queue id='myqueue'><fade targets='#child_a, .group_b'>from: 0, to: 1, wait: 1.5</fade></queue>
+      
+      var queue:Queue = _gen.genQueue(xml, _root)
+      queue.start()
     }
   }
 }
