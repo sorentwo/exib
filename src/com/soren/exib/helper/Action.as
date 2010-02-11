@@ -57,27 +57,29 @@ package com.soren.exib.helper {
     * with a value accessor the value is used as the action.
     **/
     public function act():Boolean {
-      if (_conditional_set && !_conditional_set.evaluate()) return true
-      if (_actionable_id == 'return') return false
-      
-      var values:Array = _arguments.map(toValue)
-      
-      if (_actionable_id != null && _actionable == null) {
-        _actionable    = Space.getSpace().get(_actionable_id)
-        _actionable_id = null
-      }
-     
-      try {
-        _actionable[_method].apply(_actionable, values)
-      } catch (e:Error) {
+      if (!_conditional_set || (_conditional_set && _conditional_set.evaluate())) {
+
+        if (_actionable_id == 'return') return false
+
+        var values:Array = _arguments.map(toValue)
+
+        if (_actionable_id != null && _actionable == null) {
+          _actionable    = Space.getSpace().get(_actionable_id)
+          _actionable_id = null
+        }
+
         try {
-          _actionable[_method]()
+          _actionable[_method].apply(_actionable, values)
         } catch (e:Error) {
-          throw new Error("Invalid method signature: "       +
-                          "actionable: " + _actionable       + ", " +
-                          "method: "     + _method           + ", " +
-                          "arguments: "  + values.toString() + "\n" +
-                          "caught: "     + e)
+          try {
+            _actionable[_method]()
+          } catch (e:Error) {
+            throw new Error("Invalid method signature: "       +
+                            "actionable: " + _actionable       + ", " +
+                            "method: "     + _method           + ", " +
+                            "arguments: "  + values.toString() + "\n" +
+                            "caught: "     + e)
+          }
         }
       }
       
