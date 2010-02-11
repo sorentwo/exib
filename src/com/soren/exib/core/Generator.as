@@ -164,20 +164,31 @@ package com.soren.exib.core {
     
     // Queue -->
     public function genQueue(xml:XML, root:Node):Queue {
-      var queue:Queue = new Queue()
+      var queue:Queue          = new Queue()
+      var group_pattern:RegExp = /\.(.+)/
+      var id_pattern:RegExp    = /#(.+)/
       
       for each (var member:XML in xml.*) {
         var effect:String  = member.name().toString()
-        var targets:Array  = member.@targets.split(',')
+        var targets:Array  = member.@targets.split(/\s*,\s*/)
         var options:Object = convertType('{' + member + '}') || {}
         var wait:Number    = options.wait || NaN
         
-        var resolved:Array = []
+        var all_resolved:Array = []
         for each (var target:String in targets) {
-          if (/\..+/.test(target)) {
-            resolved = resolved.concat(root.getChildrenByGroup(target.replace(/\.(.+)/, "$1")))
+          var resolved:Array
+          if (group_pattern.test(target)) {
+            resolved = root.getChildrenByGroup(target.replace(/\.(.+)/, "$1"))
+          } else if (id_pattern.test(target)) {
+            resolved = [root.getChildById(target.replace(/#(.+)/, "$1"))]
           } else {
-            resolved = resolved.concat(root.getChildById(target.replace(/\#(.+)/, "$1")))
+            throw new Error("Target didn't match as a group or an id")
+          }
+          
+          if (resolved != null && resolved.length > 0) {
+            all_resolved = all_resolved.concat(resolved)
+          } else {
+            throw new Error('No targets were resolved with the pattern: ' + target)
           }
         }
         
