@@ -55,7 +55,7 @@ package com.soren.exib.view {
                              height:uint = 0, charcase:String = null,
                              wordwrap:Boolean = false) {
       
-      _text_field.antiAliasType = AntiAliasType.ADVANCED
+      _text_field.antiAliasType = (format.size < 48) ? AntiAliasType.ADVANCED : AntiAliasType.NORMAL
       _text_field.embedFonts    = true
       _text_field.selectable    = false
       
