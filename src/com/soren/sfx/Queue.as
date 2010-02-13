@@ -48,12 +48,17 @@ package com.soren.sfx {
     **/
     public function enqueue(effect:String, targets:Array, options:Object,
                             delay:Number = NaN, callback:Object = null):void {
+      
+      var duration:Number = options.duration || NaN
+      delay    = (Boolean(delay))    ? delay * 1000 : 0
+      duration = (Boolean(duration)) ? duration * 1000 : 0
+      
       var item:Object = { effect: effect,
                           targets: targets,
                           options: options,
                           delay: delay,
                           callback: callback,
-                          duration: options.duration
+                          duration: duration
                         }
       
       _enqueued.push(item)
@@ -66,20 +71,19 @@ package com.soren.sfx {
       if (_waiting.length > 0) return
       
       for each (var eo:Object in _enqueued) {
-        eo.delay    = (Boolean(eo.delay))    ? eo.delay * 1000 : 0
-        eo.duration = (Boolean(eo.duration)) ? eo.duration * 1000 : 0
-        
         var delay_timer:Timer = new Timer(eo.delay, 1)
         delay_timer.addEventListener(TimerEvent.TIMER_COMPLETE, delayCompleteListener)
         delay_timer.start()
-
-        var callback_timer:Timer = new Timer(eo.delay + eo.duration, 1)
-        callback_timer.addEventListener(TimerEvent.TIMER_COMPLETE, callbackCompleteListener)
-        callback_timer.start()
         
-        // Store the timer with a strong reference
-        _timers[delay_timer]       = delay_timer
-        _callbacks[callback_timer] = { timer: callback_timer, callback: eo.callback }
+        _timers[delay_timer] = delay_timer
+
+        if (eo.callback) {
+          var callback_timer:Timer = new Timer(eo.delay + eo.duration, 1)
+          callback_timer.addEventListener(TimerEvent.TIMER_COMPLETE, callbackCompleteListener)
+          callback_timer.start()
+          
+          _callbacks[callback_timer] = { timer: callback_timer, callback: eo.callback } 
+        }
 
         _waiting.push(eo)
       }
@@ -100,7 +104,7 @@ package com.soren.sfx {
     private function callbackCompleteListener(e:TimerEvent):void {
       var object:Object = _callbacks[e.target]
       
-      if (object.callback) object.callback()
+      object.callback()
       delete _callbacks[e.target]
     }
   }
