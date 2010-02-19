@@ -8,7 +8,7 @@ OPT = {}
 OPT[:project_name] = 'exib'
 OPT[:src_dir]      = 'src'
 OPT[:bin_dir]      = 'bin'
-OPT[:libraries]    = %W(/opt/aslib/asunit)
+OPT[:libraries]    = %W(/opt/aslib/asunit).join(' ')
 
 OPT[:test_dir]     = 'test'
 OPT[:test_suite]   = 'UnitTests.as'
