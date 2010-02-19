@@ -8,11 +8,11 @@ package unit {
   
   public class PresetModelTest extends TestCase {
   
-    public static const OUNCES:String      = 'ounces'
-    public static const CUPS:String        = 'cups'
-    public static const DEFAULT_VALUE:uint = 8
-    public static const MIN_VALUE:uint     = 0
-    public static const MAX_VALUE:uint     = 16
+    public static const OUNCES:String   = 'ounces'
+    public static const CUPS:String     = 'cups'
+    public static const BASE_VALUE:uint = 8
+    public static const MIN_VALUE:uint  = 0
+    public static const MAX_VALUE:uint  = 16
 
     private var _instance:PresetModel
     private var _watched_state:StateModel
@@ -33,7 +33,7 @@ package unit {
     **/
     protected override function setUp():void {
       _watched_state = new StateModel([OUNCES, CUPS])
-      _watched_value = new ValueModel(DEFAULT_VALUE, MIN_VALUE, MAX_VALUE)
+      _watched_value = new ValueModel(BASE_VALUE, MIN_VALUE, MAX_VALUE)
       _instance      = new PresetModel()
     }
 
@@ -59,6 +59,22 @@ package unit {
       assertNull(error)
     }
     
+    public function testWatchWithDefault():void {
+      var default_value:uint = 10
+      _instance.watch(_watched_value, default_value)
+      
+      assertEquals(10, _instance.value[0])
+    }
+    
+    public function testWatchAndSaveOverDefault():void {
+      var default_value:uint = 10
+      
+      _instance.watch(_watched_value, default_value)
+      _instance.save()
+      
+      assertEquals(BASE_VALUE, _instance.value[0])
+    }
+    
     public function testSavePreset():void {
       _instance.watch(_watched_value)
       _instance.watch(_watched_state)
@@ -69,7 +85,7 @@ package unit {
       
       _instance.save()
             
-      assertEquals(DEFAULT_VALUE, _instance.value[0])
+      assertEquals(BASE_VALUE, _instance.value[0])
       assertEquals(OUNCES, _instance.value[1])
     }
     
