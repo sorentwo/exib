@@ -59,11 +59,38 @@ package unit {
       assertNull(error)
     }
     
-    public function testWatchWithDefault():void {
+    public function testWatchWithNumericalDefault():void {
       var default_value:uint = 10
       _instance.watch(_watched_value, default_value)
       
       assertEquals(10, _instance.value[0])
+    }
+    
+    public function testWatchWithStringDefault():void {
+      var default_value:String = 'cups'
+      _instance.watch(_watched_state, default_value)
+      
+      assertEquals('cups', _instance.value[0])
+      
+      _instance.load()
+      
+      assertEquals('cups', _watched_state.value)
+    }
+    
+    public function testWatchWithTwoDefaults():void {
+      var def_int:uint = 10
+      var def_str:String = 'cups'
+      
+      _instance.watch(_watched_value, def_int)
+      _instance.watch(_watched_state, def_str)
+      
+      assertEquals(def_int, _instance.value[0])
+      assertEquals(def_str, _instance.value[1])
+      
+      _instance.load()
+      
+      assertEquals(def_int, _watched_value.value)
+      assertEquals(def_str, _watched_state.value)
     }
     
     public function testWatchAndSaveOverDefault():void {

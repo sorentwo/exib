@@ -53,15 +53,25 @@ package unit {
     
     public function testPresetGenerator():void {
       _xml = <preset id='preset' default_text='--'>
-               <model id='value_model' value='1' />
+               <model id='value_model' def='1' />
+               <model id='state_model' def='ounce' />
              </preset>
       
-      _space.add(new ValueModel(0, 0, 1), 'value_model')
+      var val:ValueModel = new ValueModel(0, 0, 1)
+      var sta:StateModel = new StateModel('cup','ounce')
+      
+      _space.add(val, 'value_model')
+      _space.add(sta, 'state_model')
+      
       var preset:PresetModel = _generator.genPresetModel(_xml)
       
-      assertEquals('--', preset.value.toString())
-      preset.save()
-      assertEquals('0', preset.value.toString())
+      assertEquals(1, preset.value[0])
+      assertEquals('ounce', preset.value[1])
+      
+      preset.load()
+      
+      assertEquals(1, val.value)
+      assertEquals('ounce', sta.value)
     }
     
     public function testStateGenerator():void {

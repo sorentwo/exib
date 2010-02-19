@@ -58,14 +58,8 @@ package com.soren.exib.core {
       
       if (xml.@default_text != undefined) model.default_text = xml.@default_text
       
-      var value:*
       for each (var xml_model:XML in xml.model) {
-        if (xml_model.@def != undefined) {
-          value = xml_model.@def
-        } else {
-          value = null
-        }
-        
+        var value:* = (xml_model.@def != undefined) ? xml_model.@def : null
         model.watch(_space.get(xml_model.@id), value)
       }
       

@@ -26,7 +26,7 @@ package com.soren.exib.model {
     public function StateModel(...args) {
       var ea:Array = new ExtendedArray(args).flatten()
       
-      for each (var state:String in ea) { this.add(state) }
+      for each (var state:String in ea) { this.add(state.replace(/\s+/, '')) }
     }
 
     /**
@@ -37,10 +37,9 @@ package com.soren.exib.model {
     * @param  value A string representing the name of a state
     **/
     public override function set value(value:*):void {    
-      var index:int = _states.indexOf(value)
-      
+      var index:int = _states.indexOf(value.toString())
       if (index == -1) {
-        throw new Error("State: " + value + " was not found")
+        throw new Error("State: '" + value + "' was not found in " + _states.join(','))
       } else {
         this.pointer = index
       }
@@ -113,7 +112,7 @@ package com.soren.exib.model {
     * 
     * @param  new_state  A string representing the new state to add
     **/
-    public function add(state:String):void {      
+    public function add(state:String):void {
       if (_states.indexOf(state) != -1) {
         throw new Error("State name: " + state + " already exists")
       } else {
