@@ -1,7 +1,6 @@
 # EXIB (Extended Interface Builder)
-### Project API
 
----
+## This is an older internal project and documentation is extremely poor. Hopefully we'll have need to put more development time in soon!
 
 ## Models
 
