@@ -12,8 +12,8 @@ package com.soren.exib.core {
   public class Version {
     
     public static const MAJOR:uint    = 0
-    public static const MINOR:uint    = 8
-    public static const REVISION:uint = 1
+    public static const MINOR:uint    = 9
+    public static const REVISION:uint = 0
     
     /**
     * Returns the current version as a single string.
